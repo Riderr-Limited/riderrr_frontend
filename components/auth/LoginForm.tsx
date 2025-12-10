@@ -37,17 +37,17 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="md:max-w-[500px] space-y-4">
       <div>
-        <label className="text-sm">Email</label>
+        <label className="text-md">Email</label>
         <Input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@business.com"
+          placeholder="email@gmail.com"
         />
       </div>
       <div>
-        <label className="text-sm">Password</label>
+        <label className="text-md">Password</label>
         <Input
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -55,9 +55,9 @@ export default function LoginForm() {
           type="password"
         />
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex w-full justify-between items-center">
         <div />
-        <Button className="bg-indigo-600 text-white" type="submit">
+        <Button className="w-full text-white" type="submit">
           Sign in
         </Button>
       </div>

@@ -89,91 +89,87 @@ export default function OrgRegistration({
   return (
     <div className="space-y-6">
       {/* Step indicator */}
-      <div className="flex gap-3 text-sm">
+      <div className="flex gap-3 text-md">
         <div
-          className={`px-3 py-1 rounded ${
-            step === 1 ? "bg-indigo-600 text-white" : "bg-slate-100"
+          className={`md:px-3 px-2 text-[12px] md:text-[16px] text-center py-1 rounded ${
+            step === 1 ? "bg-[#1E91D6] text-white" : "border-gray-400 border"
           }`}
         >
-          1. Account
+          Account Details
         </div>
         <div
-          className={`px-3 py-1 rounded ${
-            step === 2 ? "bg-indigo-600 text-white" : "bg-slate-100"
+          className={`md:px-3 px-2 py-1 text-[12px] md:text-[16px] text-center rounded ${
+            step === 2 ? "bg-[#1E91D6] text-white" : "border border-gray-400"
           }`}
         >
-          2. Business
+          Contact Address
         </div>
-        <div
-          className={`px-3 py-1 rounded ${
-            step === 3 ? "bg-indigo-600 text-white" : "bg-slate-100"
+        {/* <div
+          className={`md:px-3 px-2 text-[12px] md:text-[16px] text-center py-1 rounded ${
+            step === 3 ? "bg-[#1E91D6] text-white" : "border-gray-400 border"
           }`}
         >
-          3. Documents
-        </div>
+          Documents
+        </div> */}
         <div
-          className={`px-3 py-1 rounded ${
-            step === 4 ? "bg-indigo-600 text-white" : "bg-slate-100"
+          className={`md:px-3 px-2 py-1 text-[12px] md:text-[16px] text-center rounded ${
+            step === 3 ? "bg-[#1E91D6] text-white" : "border-gray-400 border"
           }`}
         >
-          4. Bank
+          Bank Details
         </div>
       </div>
 
       {step === 1 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="text-sm">Business name</label>
+            <label className="text-md">Business name</label>
             <Input
               value={form.businessName}
               onChange={(e) => update("businessName", e.target.value)}
+              placeholder="Riderr"
             />
           </div>
           <div>
-            <label className="text-sm">Business type</label>
-            <select
-              value={form.businessType}
-              onChange={(e) =>
-                update(
-                  "businessType",
-                  e.target.value as OrgForm["businessType"]
-                )
-              }
-              className="w-full border rounded px-3 py-2"
-            >
-              <option>Restaurant</option>
-              <option>Retail</option>
-              <option>Logistics</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label className="text-sm">Contact person</label>
-            <Input
-              value={form.contactName}
-              onChange={(e) => update("contactName", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="text-sm">Phone</label>
+            <label className="text-md">Company Phone</label>
             <Input
               value={form.phone}
               onChange={(e) => update("phone", e.target.value)}
+              placeholder="+234808047228"
             />
           </div>
           <div>
-            <label className="text-sm">Email</label>
+            <label className="text-md">Contact Phone</label>
+            <Input
+              value={form.phone}
+              onChange={(e) => update("phone", e.target.value)}
+              placeholder="+234808047228"
+            />
+          </div>
+          <div>
+            <label className="text-md">Email</label>
             <Input
               value={form.email}
               onChange={(e) => update("email", e.target.value)}
+              placeholder="email@gmail.com"
             />
           </div>
           <div>
-            <label className="text-sm">Password</label>
+            <label className="text-md">Password</label>
             <Input
               type="password"
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
+              placeholder="....."
+            />
+          </div>
+          <div>
+            <label className="text-md">Confirm Password</label>
+            <Input
+              type="password"
+              value={form.password}
+              onChange={(e) => update("password", e.target.value)}
+              placeholder="....."
             />
           </div>
         </div>
@@ -182,11 +178,11 @@ export default function OrgRegistration({
       {step === 2 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label>Address (Google Places)</label>
+            <label>Address</label>
             <Input
               value={form.address}
               onChange={(e) => update("address", e.target.value)}
-              placeholder="Start typing to search..."
+              placeholder="123, Example Street"
             />
           </div>
           <div>
@@ -194,6 +190,7 @@ export default function OrgRegistration({
             <Input
               value={form.city}
               onChange={(e) => update("city", e.target.value)}
+              placeholder="Abuja"
             />
           </div>
           <div>
@@ -201,6 +198,7 @@ export default function OrgRegistration({
             <Input
               value={form.regNumber}
               onChange={(e) => update("regNumber", e.target.value)}
+              placeholder="RC12345678"
             />
           </div>
           <div>
@@ -208,10 +206,11 @@ export default function OrgRegistration({
             <Input
               value={form.taxId}
               onChange={(e) => update("taxId", e.target.value)}
+              placeholder="TIN12345678"
             />
           </div>
-          <div>
-            <label>Upload logo (min 200x200)</label>
+          <div className="">
+            <Button className="text-white mb-2">Upload logo</Button>
             <input
               type="file"
               accept="image/*"
@@ -221,7 +220,7 @@ export default function OrgRegistration({
         </div>
       )}
 
-      {step === 3 && (
+      {/* {step === 3 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label>Business registration certificate</label>
@@ -251,15 +250,16 @@ export default function OrgRegistration({
             />
           </div>
         </div>
-      )}
+      )} */}
 
-      {step === 4 && (
+      {step === 3 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label>Bank name</label>
             <Input
               value={form.bankName}
               onChange={(e) => update("bankName", e.target.value)}
+              placeholder="Access Bank"
             />
           </div>
           <div>
@@ -267,6 +267,7 @@ export default function OrgRegistration({
             <Input
               value={form.accountNumber}
               onChange={(e) => update("accountNumber", e.target.value)}
+              placeholder="0123456789"
             />
           </div>
           <div>
@@ -274,6 +275,7 @@ export default function OrgRegistration({
             <Input
               value={form.accountName}
               onChange={(e) => update("accountName", e.target.value)}
+              placeholder="Riderr Limited"
             />
           </div>
         </div>
@@ -281,19 +283,26 @@ export default function OrgRegistration({
 
       <div className="flex justify-between items-center">
         <div>
-          {step > 1 && <Button onClick={() => setStep(step - 1)}>Back</Button>}
+          {step > 1 && (
+            <Button
+              className="bg-transparent underline hover:bg-transparent"
+              onClick={() => setStep(step - 1)}
+            >
+              Back
+            </Button>
+          )}
         </div>
         <div>
-          {step < 4 ? (
+          {step < 3 ? (
             <Button
-              className="bg-indigo-600 text-white"
+              className="bg-[#1E91D6] text-white"
               onClick={() => setStep(step + 1)}
             >
               Next
             </Button>
           ) : (
             <Button
-              className="bg-green-600 text-white"
+              className=" text-white"
               onClick={submitRegistration}
               disabled={loading}
             >

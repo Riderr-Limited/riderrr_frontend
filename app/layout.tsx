@@ -30,8 +30,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ToastProvider>
-          <SiteHeader />
-          <main className="max-w-7xl mx-auto p-6">{children}</main>
+          <main className="">{children}</main>
         </ToastProvider>
       </body>
     </html>
