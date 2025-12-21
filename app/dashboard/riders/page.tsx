@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
 import axios from "axios";
-import RiderList from "@/components/riders/RiderList";
 import AddRiderModal from "@/components/riders/AddRiderModal";
+import { RiderList } from "@/components/riders/RiderList";
 interface Rider {
   id: string | number;
   name: string;
@@ -13,24 +13,54 @@ interface Rider {
   active?: boolean;
 }
 
+// dummy-data/riders.ts
+
+export const DUMMY_RIDERS = [
+  {
+    id: 1,
+    name: "Samuel Ade",
+    online: true,
+    location: "Lekki Phase 1",
+    activeDeliveries: 2,
+    rating: 4.8,
+  },
+  {
+    id: 2,
+    name: "John Musa",
+    online: false,
+    location: null,
+    activeDeliveries: 0,
+    rating: 4.2,
+  },
+  {
+    id: 3,
+    name: "Ibrahim Lawal",
+    online: true,
+    location: "Yaba",
+    activeDeliveries: 1,
+    rating: 4.6,
+  },
+  {
+    id: 4,
+    name: "Ahmed Bello",
+    online: true,
+    location: "Ikeja",
+    activeDeliveries: 3,
+    rating: 4.9,
+  },
+  {
+    id: 5,
+    name: "Peter Okoye",
+    online: false,
+    location: "Surulere",
+    activeDeliveries: 0,
+    rating: null,
+  },
+];
+
 export default function RidersPage() {
   const [open, setOpen] = useState(false);
-  const [riders, setRiders] = useState<Rider[]>([]);
   const { toast } = useToast();
-
-  useEffect(() => {
-    // load riders
-    async function load() {
-      try {
-        const res = await axios.get("/api/riders");
-        setRiders(res.data || []);
-      } catch (err) {
-        toast({ title: "Could not load riders" });
-        console.error(err);
-      }
-    }
-    load();
-  }, [toast]);
 
   function onAdded(newRider: Rider) {
     setRiders((s) => [newRider, ...s]);
@@ -43,17 +73,9 @@ export default function RidersPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Riders</h2>
-        <Button
-          className="bg-indigo-600 text-white"
-          onClick={() => setOpen(true)}
-        >
-          Add New Rider
-        </Button>
-      </div>
+      <div className="flex justify-between items-center mb-4"></div>
 
-      <RiderList riders={riders} />
+      <RiderList open={open} setOpen={setOpen} />
       <AddRiderModal
         open={open}
         onClose={() => setOpen(false)}

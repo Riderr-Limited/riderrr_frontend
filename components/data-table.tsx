@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-
 import {
   flexRender,
   getCoreRowModel,
@@ -29,20 +28,15 @@ import {
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/Button";
 
-type ModalProps = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
 /* ---------------------------------------------
  Schema
 ---------------------------------------------- */
 export const schema = z.object({
   id: z.number(),
-  name: z.string(),
-  number: z.string(),
-  rating: z.string(),
-  status: z.enum(["online", "offline"]),
+  pickup: z.string(),
+  dropoff: z.string(),
+  rider: z.string(),
+  status: z.enum(["Delivered", "In Transit", "Pending"]),
 });
 
 /* ---------------------------------------------
@@ -51,31 +45,31 @@ export const schema = z.object({
 const DELIVERY_DATA: z.infer<typeof schema>[] = [
   {
     id: 1,
-    name: "Lekki Phase 1",
-    number: "043938943232",
-    rating: "3.00",
-    status: "online",
+    pickup: "Lekki Phase 1",
+    dropoff: "Yaba",
+    rider: "Samuel Ade",
+    status: "Delivered",
   },
   {
     id: 2,
-    name: "Ikeja",
-    number: "2341312131",
-    rating: "0.00",
-    status: "offline",
+    pickup: "Ikeja",
+    dropoff: "Surulere",
+    rider: "John Musa",
+    status: "In Transit",
   },
   {
     id: 3,
-    name: "43233431223",
-    number: "Victoria Island",
-    rating: "5.00",
-    status: "offline",
+    pickup: "Ajah",
+    dropoff: "Victoria Island",
+    rider: "Ibrahim Lawal",
+    status: "Pending",
   },
   {
     id: 4,
-    name: "Maryland",
-    number: "4324234234",
-    rating: "4.00",
-    status: "online",
+    pickup: "Maryland",
+    dropoff: "Ikoyi",
+    rider: "Ahmed Bello",
+    status: "Delivered",
   },
 ];
 
@@ -84,16 +78,16 @@ const DELIVERY_DATA: z.infer<typeof schema>[] = [
 ---------------------------------------------- */
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
-    accessorKey: "name",
-    header: "Name",
+    accessorKey: "pickup",
+    header: "Pickup Location",
   },
   {
-    accessorKey: "number",
-    header: "Phone Number",
+    accessorKey: "dropoff",
+    header: "Dropoff Location",
   },
   {
-    accessorKey: "rating",
-    header: "Rating",
+    accessorKey: "rider",
+    header: "Rider",
   },
   {
     accessorKey: "status",
@@ -103,7 +97,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         variant="outline"
         className="flex w-fit items-center gap-1 px-2 text-muted-foreground"
       >
-        {row.original.status === "online" ? (
+        {row.original.status === "Delivered" ? (
           <IconCircleCheckFilled className="size-4 fill-green-500" />
         ) : (
           <IconLoader className="size-4" />
@@ -117,7 +111,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     header: "",
     cell: () => (
       <Button size="sm" variant="outline">
-        View Profile
+        View details
       </Button>
     ),
   },
@@ -126,7 +120,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
 /* ---------------------------------------------
  Component
 ---------------------------------------------- */
-export function RiderList({ open, setOpen }: ModalProps) {
+export function RecentDeliveriesTable() {
   const [data] = React.useState(DELIVERY_DATA);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -146,13 +140,8 @@ export function RiderList({ open, setOpen }: ModalProps) {
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between px-4 lg:px-6">
-        <h2 className="text-sm font-semibold">Your Riders</h2>
-        <Button
-          className="bg-indigo-600 text-white"
-          onClick={() => setOpen(true)}
-        >
-          Add New Rider
-        </Button>
+        <h2 className="text-sm font-semibold">Recent Deliveries</h2>
+        <Button className="border p-2 cursor-pointer">Assign Delivery</Button>
       </div>
 
       {/* Table */}
@@ -197,7 +186,7 @@ export function RiderList({ open, setOpen }: ModalProps) {
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    You have not registered any rider
+                    No recent deliveries
                   </TableCell>
                 </TableRow>
               )}

@@ -1,45 +1,15 @@
-import Card from "@/components/ui/Card";
-import Link from "next/link";
+import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import { SectionCards } from "@/components/section-cards";
+import { RecentDeliveriesTable } from "@/components/data-table";
 
-export default function DashboardHome() {
+const page = () => {
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Overview</h1>
-        <div>
-          <Link href="/dashboard/riders" className="text-sm underline">
-            Manage Riders
-          </Link>
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-3 gap-4">
-        <Card>
-          <h3 className="font-semibold">Total Revenue</h3>
-          <div className="text-xl mt-2">₦1,480,000</div>
-        </Card>
-        <Card>
-          <h3 className="font-semibold">Total Deliveries</h3>
-          <div className="text-xl mt-2">1,234</div>
-        </Card>
-        <Card>
-          <h3 className="font-semibold">Active Riders</h3>
-          <div className="text-xl mt-2">45</div>
-        </Card>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <Card>
-          <h3 className="font-semibold">Recent Deliveries</h3>
-          <div className="text-sm text-slate-600 mt-2">
-            List or small table here
-          </div>
-        </Card>
-        <Card>
-          <h3 className="font-semibold">Top Riders</h3>
-          <div className="text-sm text-slate-600 mt-2">Ranking and metrics</div>
-        </Card>
-      </div>
+    <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+      <SectionCards />
+      <div className="px-4 lg:px-6">{/* <ChartAreaInteractive /> */}</div>
+      <RecentDeliveriesTable />
     </div>
   );
-}
+};
+
+export default page;
