@@ -1,5 +1,6 @@
 // app/page.tsx
 import { AppleCardsCarouselDemo } from "@/components/AppleCardsCarouselDemo";
+import { FAQ } from "@/components/FAQ";
 import FeatureCard from "@/components/FeatureCard";
 import ForOrganizations from "@/components/ForOrganizations";
 import HeroSectionOne from "@/components/hero-section-demo-1";
@@ -7,6 +8,7 @@ import { ImagesSliderDemo } from "@/components/ImagesSliderDemo";
 import CallToAction from "@/components/layout/CallToAction";
 import ContactUs from "@/components/layout/ContactUs";
 import Footer from "@/components/layout/Footer";
+import { Stats } from "@/components/Stats";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
@@ -57,44 +59,6 @@ export default function Landing() {
       <AppleCardsCarouselDemo />
       <ForOrganizations />
       {/* <AnimatedTestimonials testimonials={testimonials} /> */}
-      <section className="grid md:grid-cols-2 gap-8 items-center">
-        <div>
-          <h1 className="text-4xl font-extrabold mb-4">
-            Run deliveries & riders from one platform
-          </h1>
-          <p className="text-lg text-slate-600 mb-6">
-            Register your business, manage riders, assign deliveries and track
-            your revenue — all from a single dashboard tailored for restaurants,
-            retail, logistics and more.
-          </p>
-          <div className="flex gap-3">
-            <Link href="/onboarding">
-              <Button className="bg-indigo-600 text-white hover:bg-indigo-700">
-                Get Started
-              </Button>
-            </Link>
-            <a
-              href="#features"
-              className="inline-flex items-center px-4 py-2 border rounded"
-            >
-              Learn more
-            </a>
-          </div>
-          <div className="mt-6 text-sm text-slate-500">
-            Trusted by dozens of businesses across the country.
-          </div>
-        </div>
-
-        <div className="rounded-lg bg-white p-6 shadow">
-          <h3 className="font-semibold mb-3">Quick overview</h3>
-          <ul className="space-y-2 text-sm text-slate-600">
-            <li>Multi-step Organization registration & verification</li>
-            <li>Rider management: add, suspend, QR login, SMS credentials</li>
-            <li>Delivery assignment with auto-assign and manual assign</li>
-            <li>Revenue and Delivery Analytics — exportable reports</li>
-          </ul>
-        </div>
-      </section>
 
       <section id="features" className="grid md:grid-cols-3 gap-6">
         <FeatureCard
@@ -126,7 +90,9 @@ export default function Landing() {
           </Link>
         </div>
       </section>
+      <Stats />
       <CallToAction />
+      <FAQ />
       <ContactUs />
       <Footer />
     </div>
