@@ -1,7 +1,11 @@
 // app/page.tsx
 import { AppleCardsCarouselDemo } from "@/components/AppleCardsCarouselDemo";
 import FeatureCard from "@/components/FeatureCard";
+import ForOrganizations from "@/components/ForOrganizations";
 import HeroSectionOne from "@/components/hero-section-demo-1";
+import { ImagesSliderDemo } from "@/components/ImagesSliderDemo";
+import CallToAction from "@/components/layout/CallToAction";
+import ContactUs from "@/components/layout/ContactUs";
 import Footer from "@/components/layout/Footer";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { Button } from "@/components/ui/Button";
@@ -49,8 +53,10 @@ export default function Landing() {
   return (
     <div className="space-y-12">
       <HeroSectionOne />
+      <ImagesSliderDemo />
       <AppleCardsCarouselDemo />
-      <AnimatedTestimonials testimonials={testimonials} />
+      <ForOrganizations />
+      {/* <AnimatedTestimonials testimonials={testimonials} /> */}
       <section className="grid md:grid-cols-2 gap-8 items-center">
         <div>
           <h1 className="text-4xl font-extrabold mb-4">
@@ -120,6 +126,8 @@ export default function Landing() {
           </Link>
         </div>
       </section>
+      <CallToAction />
+      <ContactUs />
       <Footer />
     </div>
   );
