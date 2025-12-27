@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 /* ---------------------------------------------
  Schema
@@ -141,7 +142,12 @@ export function RecentDeliveriesTable() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 lg:px-6">
         <h2 className="text-sm font-semibold">Recent Deliveries</h2>
-        <Button className="border p-2 cursor-pointer">Assign Delivery</Button>
+        <Link
+          href="/dashboard/deliveries"
+          className="p-2 border-none cursor-pointer"
+        >
+          View All
+        </Link>
       </div>
 
       {/* Table */}

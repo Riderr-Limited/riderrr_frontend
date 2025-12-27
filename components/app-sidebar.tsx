@@ -56,11 +56,11 @@ const data = {
       url: "/dashboard/deliveries",
       icon: IconChartBar,
     },
-    {
-      title: "Reports",
-      url: "/dashboard/reports",
-      icon: IconReport,
-    },
+    // {
+    //   title: "Feed",
+    //   url: "/dashboard/reports",
+    //   icon: IconReport,
+    // },
   ],
   navClouds: [
     {
@@ -148,7 +148,11 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar
+      className="bg-linear-to-bl to-[#0072BB] from-[#1E91D6]"
+      collapsible="offcanvas"
+      {...props}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
