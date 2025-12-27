@@ -87,51 +87,66 @@ export default function OrgRegistration({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto flex flex-col justify-center items-center">
       {/* Step indicator */}
-      <div className="flex gap-3 text-md">
-        <div
-          className={`md:px-3 px-2 text-[12px] md:text-[16px] text-center py-1 rounded ${
-            step === 1 ? "bg-[#1E91D6] text-white" : "border-gray-400 border"
-          }`}
-        >
-          Account Details
+      <div className="flex gap-8 text-md">
+        <div className="flex flex-col items-center justify-center">
+          <div
+            className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${
+              step === 1
+                ? "bg-[#337BFF] text-white"
+                : "border-gray-400 bg-[#BCBCBC] border"
+            }`}
+          >
+            1
+          </div>
+          <p className="text-[14px] font-semibold">Account Details</p>
         </div>
-        <div
-          className={`md:px-3 px-2 py-1 text-[12px] md:text-[16px] text-center rounded ${
-            step === 2 ? "bg-[#1E91D6] text-white" : "border border-gray-400"
-          }`}
-        >
-          Contact Address
+        <div className="flex flex-col items-center justify-center">
+          <div
+            className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${
+              step === 2
+                ? "bg-[#337BFF] text-white"
+                : "border bg-[#BCBCBC] border-gray-400"
+            }`}
+          >
+            2
+          </div>
+          <p className="text-[14px] font-semibold">Contact Address</p>
         </div>
         {/* <div
-          className={`md:px-3 px-2 text-[12px] md:text-[16px] text-center py-1 rounded ${
-            step === 3 ? "bg-[#1E91D6] text-white" : "border-gray-400 border"
+          className={`md:px-3 px-2 text-[12px] md:text-[16px] text-center py-4 rounded-full ${
+            step === 3 ? "bg-[#337BFF] text-white" : "border-gray-400 border"
           }`}
         >
           Documents
         </div> */}
-        <div
-          className={`md:px-3 px-2 py-1 text-[12px] md:text-[16px] text-center rounded ${
-            step === 3 ? "bg-[#1E91D6] text-white" : "border-gray-400 border"
-          }`}
-        >
-          Bank Details
+        <div className="flex flex-col items-center justify-center">
+          <div
+            className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${
+              step === 3
+                ? "bg-[#337BFF] text-white"
+                : "border-gray-400 bg-[#BCBCBC] border"
+            }`}
+          >
+            3
+          </div>
+          <p className="text-[14px] font-semibold">Bank Details</p>
         </div>
       </div>
 
       {step === 1 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="text-md">Business name</label>
+            <label className="text-[14px] font-medium">Business name</label>
             <Input
               value={form.businessName}
               onChange={(e) => update("businessName", e.target.value)}
-              placeholder="Riderr"
+              placeholder="Abcd Logistics"
             />
           </div>
           <div>
-            <label className="text-md">Company Phone</label>
+            <label className="text-[14px] font-medium">Phone Number</label>
             <Input
               value={form.phone}
               onChange={(e) => update("phone", e.target.value)}
@@ -139,7 +154,9 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label className="text-md">Contact Phone</label>
+            <label className="text-[14px] font-medium">
+              Phone Number2 (optional)
+            </label>
             <Input
               value={form.phone}
               onChange={(e) => update("phone", e.target.value)}
@@ -147,7 +164,7 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label className="text-md">Email</label>
+            <label className="text-[14px] font-medium">Email</label>
             <Input
               value={form.email}
               onChange={(e) => update("email", e.target.value)}
@@ -155,21 +172,21 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label className="text-md">Password</label>
+            <label className="text-[14px] font-medium">Password</label>
             <Input
               type="password"
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
-              placeholder="....."
+              placeholder="........"
             />
           </div>
           <div>
-            <label className="text-md">Confirm Password</label>
+            <label className="text-[14px] font-medium">Confirm Password</label>
             <Input
               type="password"
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
-              placeholder="....."
+              placeholder="........"
             />
           </div>
         </div>
@@ -178,7 +195,7 @@ export default function OrgRegistration({
       {step === 2 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label>Address</label>
+            <label className="text-[14px] font-medium">Address</label>
             <Input
               value={form.address}
               onChange={(e) => update("address", e.target.value)}
@@ -186,7 +203,7 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label>City / LGA</label>
+            <label className="text-[14px] font-medium">City / LGA</label>
             <Input
               value={form.city}
               onChange={(e) => update("city", e.target.value)}
@@ -194,7 +211,9 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label>Business reg. number</label>
+            <label className="text-[14px] font-medium">
+              Business reg. number
+            </label>
             <Input
               value={form.regNumber}
               onChange={(e) => update("regNumber", e.target.value)}
@@ -202,7 +221,7 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label>Tax ID (optional)</label>
+            <label className="text-[14px] font-medium">Tax ID (optional)</label>
             <Input
               value={form.taxId}
               onChange={(e) => update("taxId", e.target.value)}
@@ -210,11 +229,12 @@ export default function OrgRegistration({
             />
           </div>
           <div className="">
-            <Button className="text-white mb-2">Upload logo</Button>
-            <input
+            <label className="text-[14px] font-medium">Upload Your Logo</label>
+            <Input
               type="file"
               accept="image/*"
               onChange={(e) => update("logo", e.target.files?.[0] || null)}
+              className="p-2"
             />
           </div>
         </div>
@@ -223,7 +243,7 @@ export default function OrgRegistration({
       {/* {step === 3 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label>Business registration certificate</label>
+            <label className="text-[14px] font-medium">Business registration certificate</label>
             <input
               type="file"
               onChange={(e) =>
@@ -232,7 +252,7 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label>ID of director/owner</label>
+            <label className="text-[14px] font-medium">ID of director/owner</label>
             <input
               type="file"
               onChange={(e) =>
@@ -241,7 +261,7 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label>Utility bill (address proof)</label>
+            <label className="text-[14px] font-medium">Utility bill (address proof)</label>
             <input
               type="file"
               onChange={(e) =>
@@ -255,7 +275,7 @@ export default function OrgRegistration({
       {step === 3 && (
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label>Bank name</label>
+            <label className="text-[14px] font-medium">Bank name</label>
             <Input
               value={form.bankName}
               onChange={(e) => update("bankName", e.target.value)}
@@ -263,7 +283,7 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label>Account number</label>
+            <label className="text-[14px] font-medium">Account number</label>
             <Input
               value={form.accountNumber}
               onChange={(e) => update("accountNumber", e.target.value)}
@@ -271,7 +291,7 @@ export default function OrgRegistration({
             />
           </div>
           <div>
-            <label>Account name</label>
+            <label className="text-[14px] font-medium">Account name</label>
             <Input
               value={form.accountName}
               onChange={(e) => update("accountName", e.target.value)}
@@ -281,28 +301,28 @@ export default function OrgRegistration({
         </div>
       )}
 
-      <div className="flex justify-between items-center">
+      <div className="flex w-full justify-between items-center">
         <div>
           {step > 1 && (
             <Button
-              className="bg-transparent underline hover:bg-transparent"
+              className="bg-[#BCBCBC]  hover:opacity-40 rounded"
               onClick={() => setStep(step - 1)}
             >
-              Back
+              Previous
             </Button>
           )}
         </div>
         <div>
           {step < 3 ? (
             <Button
-              className="bg-[#1E91D6] text-white"
+              className="bg-[#337BFF] text-white rounded"
               onClick={() => setStep(step + 1)}
             >
               Next
             </Button>
           ) : (
             <Button
-              className=" text-white"
+              className=" text-white bg-[#337BFF] rounded"
               onClick={submitRegistration}
               disabled={loading}
             >

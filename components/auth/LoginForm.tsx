@@ -57,7 +57,7 @@ export default function LoginForm() {
       </div>
       <div className="flex w-full justify-between items-center">
         <div />
-        <Button className="w-full text-white" type="submit">
+        <Button className="w-full bg-[#337BFF] text-white" type="submit">
           Sign in
         </Button>
       </div>
