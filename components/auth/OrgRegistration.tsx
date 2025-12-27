@@ -87,7 +87,7 @@ export default function OrgRegistration({
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto flex flex-col justify-center items-center">
+    <div className="space-y-6 p-2 max-w-4xl mx-auto flex flex-col justify-center items-center">
       {/* Step indicator */}
       <div className="flex gap-8 text-md">
         <div className="flex flex-col items-center justify-center">
