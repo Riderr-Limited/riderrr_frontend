@@ -1,16 +1,20 @@
 // app/page.tsx
 import { AppleCardsCarouselDemo } from "@/components/AppleCardsCarouselDemo";
+import { DownloadCTA } from "@/components/DownloadCTA";
 import { FAQ } from "@/components/FAQ";
 import FeatureCard from "@/components/FeatureCard";
+import { Features } from "@/components/Features";
 import ForOrganizations from "@/components/ForOrganizations";
 import HeroSectionOne from "@/components/hero-section-demo-1";
 import { ImagesSliderDemo } from "@/components/ImagesSliderDemo";
 import CallToAction from "@/components/layout/CallToAction";
 import ContactUs from "@/components/layout/ContactUs";
 import Footer from "@/components/layout/Footer";
+import { PartnerCTA } from "@/components/PartnerCTA";
 import { Stats } from "@/components/Stats";
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { Button } from "@/components/ui/Button";
+import { WhoItsFor } from "@/components/WhoItsFor";
 import Link from "next/link";
 
 const testimonials = [
@@ -58,8 +62,11 @@ export default function Landing() {
       <ImagesSliderDemo />
       <AppleCardsCarouselDemo />
       <ForOrganizations />
+      <PartnerCTA />
+      <DownloadCTA />
+      <Features />
+      <WhoItsFor />
       {/* <AnimatedTestimonials testimonials={testimonials} /> */}
-
       <section id="features" className="grid md:grid-cols-3 gap-6">
         <FeatureCard
           title="Rider Management"
@@ -74,7 +81,6 @@ export default function Landing() {
           description="Revenue charts, top routes, CSV / PDF exports."
         />
       </section>
-
       <section className="py-8">
         <div className="bg-white rounded-lg p-6 shadow">
           <h2 className="text-2xl font-semibold mb-2">

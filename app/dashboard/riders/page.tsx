@@ -1,19 +1,8 @@
 // app/dashboard/riders/page.tsx
 "use client";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/Button";
-import { useToast } from "@/components/ToastProvider";
-import axios from "axios";
+import { useState } from "react";
 import AddRiderModal from "@/components/riders/AddRiderModal";
 import { RiderList } from "@/components/riders/RiderList";
-interface Rider {
-  id: string | number;
-  name: string;
-  phone?: string;
-  active?: boolean;
-}
-
-// dummy-data/riders.ts
 
 export const DUMMY_RIDERS = [
   {
@@ -60,16 +49,6 @@ export const DUMMY_RIDERS = [
 
 export default function RidersPage() {
   const [open, setOpen] = useState(false);
-  const { toast } = useToast();
-
-  function onAdded(newRider: Rider) {
-    setRiders((s) => [newRider, ...s]);
-    setOpen(false);
-    toast({
-      title: "Rider added",
-      description: "Credentials were sent via SMS.",
-    });
-  }
 
   return (
     <div>
@@ -79,7 +58,7 @@ export default function RidersPage() {
       <AddRiderModal
         open={open}
         onClose={() => setOpen(false)}
-        onAdded={onAdded}
+        // onAdded={onAdded}
       />
     </div>
   );
