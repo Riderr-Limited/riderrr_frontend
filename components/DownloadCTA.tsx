@@ -1,8 +1,8 @@
 export function DownloadCTA() {
   return (
-    <section className="py-20 bg-brand-700 text-white text-center">
+    <section className="py-20  text-white text-center">
       <h2 className="text-3xl font-bold mb-4">Download Our App</h2>
-      <p className="text-blue-100 mb-8">
+      <p className="text-[#337BFF] mb-8">
         Available on iOS and Android. Start delivering smarter today.
       </p>
       <div className="flex justify-center gap-4">

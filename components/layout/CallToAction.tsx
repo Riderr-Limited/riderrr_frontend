@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function CallToAction() {
   return (
-    <section className="relative w-full overflow-hidden bg-linear-to-br from-brand-700 via-brand-800 to-brand-900 text-white">
+    <section className="relative w-full overflow-hidden ">
       {/* Decorative Background */}
       <div className="absolute inset-0 opacity-15">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-white rounded-full blur-3xl" />
@@ -20,7 +20,7 @@ export default function CallToAction() {
               Deliver Faster. Earn More. Scale Smarter.
             </h2>
 
-            <p className="text-blue-100 text-lg max-w-xl">
+            <p className="text-[#337BFF] text-lg max-w-xl">
               Request deliveries in seconds, connect with nearby riders at the
               best cost, or partner with us to manage riders and deliveries
               efficiently—all in one powerful platform.
@@ -30,36 +30,29 @@ export default function CallToAction() {
             <div className="flex flex-wrap gap-4 pt-4">
               <Link
                 href="#download"
-                className="px-7 py-4 bg-white text-brand-900 font-semibold rounded-xl hover:bg-blue-50 transition"
+                className="px-7 py-4 bg-[#337BFF] text-white font-semibold rounded-xl hover:bg-blue-50 transition"
               >
                 Download the App
               </Link>
 
               <Link
                 href="#partners"
-                className="px-7 py-4 bg-white/10 border border-white/20 rounded-xl font-semibold hover:bg-white/20 transition"
+                className="px-7 py-4 bg-gray-50 border border-white/20 rounded-xl font-semibold hover:bg-white/20 transition"
               >
                 Become a Partner
-              </Link>
-
-              <Link
-                href="#get-started"
-                className="px-7 py-4 bg-transparent underline underline-offset-4 text-blue-100 hover:text-white transition"
-              >
-                Get Started
               </Link>
             </div>
 
             {/* App Store Badges */}
             <div className="flex items-center gap-4 pt-6">
               <Image
-                src="/appstore.svg"
+                src="/app-store.svg"
                 alt="Download on App Store"
                 width={150}
                 height={50}
               />
               <Image
-                src="/playstore.svg"
+                src="/google-play.svg"
                 alt="Get it on Google Play"
                 width={150}
                 height={50}
@@ -71,7 +64,7 @@ export default function CallToAction() {
           <div className="relative flex justify-center">
             <div className="bg-white/10 border border-white/20 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
               <Image
-                src="/app-mockup.png"
+                src="/deliveries.png"
                 alt="Delivery App Preview"
                 width={360}
                 height={720}
