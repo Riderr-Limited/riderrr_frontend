@@ -59,7 +59,7 @@ export default function Landing() {
   return (
     <div className="space-y-12">
       <HeroSectionOne />
-      <ImagesSliderDemo />
+      {/* <ImagesSliderDemo /> */}
       <AppleCardsCarouselDemo />
       <ForOrganizations />
       <PartnerCTA />
