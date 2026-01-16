@@ -7,32 +7,32 @@ const orgFeatures = [
     title: "Manage Riders at Scale",
     description:
       "Register, verify, and manage all your riders from a single dashboard. Track availability, performance, and delivery history in real time.",
-    image: "/org-riders.png",
+    image: "/4.jpeg",
   },
   {
     title: "Real-Time Delivery Insights",
     description:
       "Monitor active deliveries, completed orders, and rider locations with live updates that help you make faster operational decisions.",
-    image: "/org-tracking.png",
+    image: "/3.jpeg",
   },
   {
     title: "Increase Revenue Opportunities",
     description:
       "Get access to more delivery requests from users on the platform and maximize rider utilization without additional marketing costs.",
-    image: "/org-growth.png",
+    image: "/3.jpeg",
   },
 ];
 
 export default function ForOrganizations() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-[#1E5FD8] rounded-t-[32px]">
       <div className="container mx-auto px-6 md:px-12 lg:px-20">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Built for Logistics Organizations
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-600 text-lg text-white ">
             Powerful tools to help logistics companies manage riders, optimize
             operations, and grow revenue—all from one platform.
           </p>
@@ -67,7 +67,7 @@ export default function ForOrganizations() {
                 <h3 className="text-2xl md:text-3xl font-bold mb-4">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 text-lg leading-relaxed mb-6">
+                <p className="text-600 text-lg leading-relaxed mb-6 text-white">
                   {item.description}
                 </p>
 
