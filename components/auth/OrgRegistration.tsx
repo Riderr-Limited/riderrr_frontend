@@ -1,8 +1,7 @@
 // components/auth/OrgRegistration.tsx
 "use client";
 import { useState } from "react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+
 import { useToast } from "@/components/ToastProvider";
 import axios from "axios";
 
@@ -139,7 +138,8 @@ export default function OrgRegistration({
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="text-[14px] font-medium">Business name</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.businessName}
               onChange={(e) => update("businessName", e.target.value)}
               placeholder="Abcd Logistics"
@@ -147,7 +147,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">Phone Number</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.phone}
               onChange={(e) => update("phone", e.target.value)}
               placeholder="+234808047228"
@@ -157,7 +158,8 @@ export default function OrgRegistration({
             <label className="text-[14px] font-medium">
               Phone Number2 (optional)
             </label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.phone}
               onChange={(e) => update("phone", e.target.value)}
               placeholder="+234808047228"
@@ -165,7 +167,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">Email</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.email}
               onChange={(e) => update("email", e.target.value)}
               placeholder="email@gmail.com"
@@ -173,7 +176,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">Password</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               type="password"
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
@@ -182,7 +186,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">Confirm Password</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               type="password"
               value={form.password}
               onChange={(e) => update("password", e.target.value)}
@@ -196,7 +201,8 @@ export default function OrgRegistration({
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="text-[14px] font-medium">Address</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.address}
               onChange={(e) => update("address", e.target.value)}
               placeholder="123, Example Street"
@@ -204,7 +210,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">City / LGA</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.city}
               onChange={(e) => update("city", e.target.value)}
               placeholder="Abuja"
@@ -214,7 +221,8 @@ export default function OrgRegistration({
             <label className="text-[14px] font-medium">
               Business reg. number
             </label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.regNumber}
               onChange={(e) => update("regNumber", e.target.value)}
               placeholder="RC12345678"
@@ -222,7 +230,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">Tax ID (optional)</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.taxId}
               onChange={(e) => update("taxId", e.target.value)}
               placeholder="TIN12345678"
@@ -230,11 +239,11 @@ export default function OrgRegistration({
           </div>
           <div className="">
             <label className="text-[14px] font-medium">Upload Your Logo</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               type="file"
               accept="image/*"
               onChange={(e) => update("logo", e.target.files?.[0] || null)}
-              className="p-2"
             />
           </div>
         </div>
@@ -276,7 +285,8 @@ export default function OrgRegistration({
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="text-[14px] font-medium">Bank name</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.bankName}
               onChange={(e) => update("bankName", e.target.value)}
               placeholder="Access Bank"
@@ -284,7 +294,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">Account number</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.accountNumber}
               onChange={(e) => update("accountNumber", e.target.value)}
               placeholder="0123456789"
@@ -292,7 +303,8 @@ export default function OrgRegistration({
           </div>
           <div>
             <label className="text-[14px] font-medium">Account name</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.accountName}
               onChange={(e) => update("accountName", e.target.value)}
               placeholder="Riderr Limited"
@@ -304,30 +316,30 @@ export default function OrgRegistration({
       <div className="flex w-full justify-between items-center">
         <div>
           {step > 1 && (
-            <Button
-              className="bg-[#BCBCBC]  hover:opacity-40 rounded"
+            <button
+              className="bg-[#BCBCBC] hover:opacity-40 rounded px-3 py-1"
               onClick={() => setStep(step - 1)}
             >
               Previous
-            </Button>
+            </button>
           )}
         </div>
         <div>
           {step < 3 ? (
-            <Button
-              className="bg-[#337BFF] text-white rounded"
+            <button
+              className="bg-[#337BFF] text-white rounded px-3 py-1"
               onClick={() => setStep(step + 1)}
             >
               Next
-            </Button>
+            </button>
           ) : (
-            <Button
-              className=" text-white bg-[#337BFF] rounded"
+            <button
+              className="text-white bg-[#337BFF] rounded px-3 py-1"
               onClick={submitRegistration}
               disabled={loading}
             >
               {loading ? "Submitting..." : "Submit for review"}
-            </Button>
+            </button>
           )}
         </div>
       </div>

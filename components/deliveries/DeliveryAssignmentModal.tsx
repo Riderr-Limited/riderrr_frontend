@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Button } from "@/components/ui/Button";
+
 
 export interface Rider {
   id: string;
@@ -105,19 +105,19 @@ export default function DeliveryAssignmentModal({ delivery, onClose }: Props) {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button className="bg-indigo-600 text-white">Assign</Button>
+                  <button className="bg-indigo-600 text-white px-3 py-1 rounded text-sm">Assign</button>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="mt-4 flex justify-between">
-            <Button>Assign Manually</Button>
+            <button className="px-3 py-1 border rounded text-sm">Assign Manually</button>
             <div className="flex gap-2">
-              <Button className="bg-indigo-600 text-white">
+              <button className="bg-indigo-600 text-white px-3 py-1 rounded text-sm">
                 Auto-assign Nearest
-              </Button>
-              <Button className="border">Reject Request</Button>
+              </button>
+              <button className="border px-3 py-1 rounded text-sm">Reject Request</button>
             </div>
           </div>
         </div>

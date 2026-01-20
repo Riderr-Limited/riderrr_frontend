@@ -17,17 +17,7 @@ import {
   IconLoader,
 } from "@tabler/icons-react";
 
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/Button";
+
 
 type ModalProps = {
   open: boolean;
@@ -99,26 +89,23 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <Badge
-        variant="outline"
-        className="flex w-fit items-center gap-1 px-2 text-muted-foreground"
-      >
+      <span className="flex w-fit items-center gap-1 px-2 text-muted-foreground border rounded">
         {row.original.status === "online" ? (
           <IconCircleCheckFilled className="size-4 fill-green-500" />
         ) : (
           <IconLoader className="size-4" />
         )}
         {row.original.status}
-      </Badge>
+      </span>
     ),
   },
   {
     id: "actions",
     header: "",
     cell: () => (
-      <Button size="sm" variant="outline">
+      <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">
         View Profile
-      </Button>
+      </button>
     ),
   },
 ];
@@ -143,88 +130,83 @@ export function RiderList({ open, setOpen }: ModalProps) {
   });
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col gap-6">
+    <div className="w-full flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between px-4 lg:px-6">
         <h2 className="text-sm font-semibold">Your Riders</h2>
-        <Button
-          className="bg-indigo-600 text-white"
+        <button
+          className="bg-indigo-600 text-white px-3 py-1 rounded text-sm"
           onClick={() => setOpen(true)}
         >
           Add New Rider
-        </Button>
+        </button>
       </div>
 
       {/* Table */}
-      <TabsContent
-        value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
+      <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
-          <Table>
-            <TableHeader className="bg-muted">
+          <table className="w-full">
+            <thead className="bg-muted">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <th key={header.id} className="p-3 text-left">
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                    </TableHead>
+                    </th>
                   ))}
-                </TableRow>
+                </tr>
               ))}
-            </TableHeader>
+            </thead>
 
-            <TableBody>
+            <tbody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <tr key={row.id} className="border-b">
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <td key={cell.id} className="p-3">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
                         )}
-                      </TableCell>
+                      </td>
                     ))}
-                  </TableRow>
+                  </tr>
                 ))
               ) : (
-                <TableRow>
-                  <TableCell
+                <tr>
+                  <td
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="h-24 text-center p-3"
                   >
                     You have not registered any rider
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination */}
         <div className="flex items-center justify-end gap-2">
-          <Button
-            variant="outline"
-            size="icon"
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <IconChevronLeft />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
+          </button>
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             <IconChevronRight />
-          </Button>
+          </button>
         </div>
-      </TabsContent>
-    </Tabs>
+      </div>
+    </div>
   );
 }

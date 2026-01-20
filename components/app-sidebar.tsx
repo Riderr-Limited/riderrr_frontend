@@ -23,15 +23,7 @@ import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+
 
 const data = {
   user: {
@@ -146,36 +138,22 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }) {
   return (
-    <Sidebar
-      className="bg-linear-to-bl to-[#0072BB] from-[#1E91D6]"
-      collapsible="offcanvas"
-      {...props}
-    >
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-            >
-              <a href="#">
-                <IconInnerShadowTop className="size-5!" />
-                <span className="text-base font-semibold">Riderr</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
+    <div className="w-64 h-full bg-gradient-to-bl to-[#0072BB] from-[#1E91D6] text-white flex flex-col">
+      <div className="p-4">
+        <div className="flex items-center gap-2">
+          <IconInnerShadowTop className="size-5" />
+          <span className="text-base font-semibold">Riderr</span>
+        </div>
+      </div>
+      <div className="flex-1">
         <NavMain items={data.navMain} />
-        {/* <NavDocuments items={data.documents} /> */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
+      </div>
+      <div className="p-2">
         <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+      </div>
+    </div>
   );
 }

@@ -10,16 +10,7 @@ import {
 } from "@tanstack/react-table";
 import { z } from "zod";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/Button";
+
 
 /* ---------------------------------------------
  Schema
@@ -90,9 +81,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     id: "actions",
     header: "",
     cell: () => (
-      <Button size="sm" variant="outline">
+      <button className="px-3 py-1 text-sm border rounded hover:bg-gray-50">
         View details
-      </Button>
+      </button>
     ),
   },
 ];
@@ -117,77 +108,71 @@ export function OngoingDeliveries() {
   });
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col gap-6">
-      {/* Table */}
-      <TabsContent
-        value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
+    <div className="w-full flex-col gap-6">
+      <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
-          <Table>
-            <TableHeader className="bg-muted">
+          <table className="w-full">
+            <thead className="bg-muted">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <th key={header.id} className="p-3 text-left">
                       {flexRender(
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                    </TableHead>
+                    </th>
                   ))}
-                </TableRow>
+                </tr>
               ))}
-            </TableHeader>
+            </thead>
 
-            <TableBody>
+            <tbody>
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
+                  <tr key={row.id} className="border-b">
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <td key={cell.id} className="p-3">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
                         )}
-                      </TableCell>
+                      </td>
                     ))}
-                  </TableRow>
+                  </tr>
                 ))
               ) : (
-                <TableRow>
-                  <TableCell
+                <tr>
+                  <td
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className="h-24 text-center p-3"
                   >
                     No recent deliveries
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               )}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination */}
         <div className="flex items-center justify-end gap-2">
-          <Button
-            variant="outline"
-            size="icon"
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             <IconChevronLeft />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
+          </button>
+          <button
+            className="p-2 border rounded hover:bg-gray-50 disabled:opacity-50"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
             <IconChevronRight />
-          </Button>
+          </button>
         </div>
-      </TabsContent>
-    </Tabs>
+      </div>
+    </div>
   );
 }

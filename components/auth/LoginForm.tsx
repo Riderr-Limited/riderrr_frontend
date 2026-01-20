@@ -4,8 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@/components/ToastProvider";
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
+
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -40,7 +39,8 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit} className="md:max-w-[500px] space-y-4">
       <div>
         <label className="text-md">Email</label>
-        <Input
+        <input
+          className="w-full border rounded px-3 py-2"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="email@gmail.com"
@@ -48,7 +48,8 @@ export default function LoginForm() {
       </div>
       <div>
         <label className="text-md">Password</label>
-        <Input
+        <input
+          className="w-full border rounded px-3 py-2"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••"
@@ -57,9 +58,9 @@ export default function LoginForm() {
       </div>
       <div className="flex w-full justify-between items-center">
         <div />
-        <Button className="w-full bg-[#337BFF] text-white" type="submit">
+        <button className="w-full bg-[#337BFF] text-white px-3 py-2 rounded" type="submit">
           Sign in
-        </Button>
+        </button>
       </div>
     </form>
   );

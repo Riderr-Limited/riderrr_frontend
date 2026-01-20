@@ -1,8 +1,7 @@
 // components/riders/AddRiderModal.tsx
 "use client";
 import { useState, type ChangeEvent } from "react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+
 import axios from "axios";
 
 type VehicleType = "Bike" | "Car" | "Truck";
@@ -67,7 +66,8 @@ export default function AddRiderModal({
         <div className="grid md:grid-cols-2 gap-3">
           <div>
             <label className="text-sm">Full name</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.name}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setForm({ ...form, name: e.target.value })
@@ -76,7 +76,8 @@ export default function AddRiderModal({
           </div>
           <div>
             <label className="text-sm">Phone</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.phone}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setForm({ ...form, phone: e.target.value })
@@ -85,7 +86,8 @@ export default function AddRiderModal({
           </div>
           <div>
             <label className="text-sm">Email (optional)</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.email}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setForm({ ...form, email: e.target.value })
@@ -108,7 +110,8 @@ export default function AddRiderModal({
           </div>
           <div>
             <label className="text-sm">Plate</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.plate}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setForm({ ...form, plate: e.target.value })
@@ -117,7 +120,8 @@ export default function AddRiderModal({
           </div>
           <div>
             <label className="text-sm">Color</label>
-            <Input
+            <input
+              className="w-full border rounded px-3 py-2"
               value={form.color}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setForm({ ...form, color: e.target.value })
@@ -127,14 +131,14 @@ export default function AddRiderModal({
         </div>
 
         <div className="flex justify-end gap-3 mt-4">
-          <Button onClick={onClose}>Cancel</Button>
-          <Button
-            className="bg-indigo-600 text-white"
+          <button className="px-3 py-1 border rounded text-sm" onClick={onClose}>Cancel</button>
+          <button
+            className="bg-indigo-600 text-white px-3 py-1 rounded text-sm"
             onClick={submit}
             disabled={loading}
           >
             {loading ? "Adding..." : "Add Rider"}
-          </Button>
+          </button>
         </div>
       </div>
     </div>
