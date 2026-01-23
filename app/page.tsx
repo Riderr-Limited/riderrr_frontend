@@ -19,7 +19,7 @@ import { WhoItsFor } from "@/components/WhoItsFor";
 
 export default function Landing() {
   return (
-    <div className="space-y-12">
+    <div >
       <Navbar />
       <HeroSectionOne />
       <HowItWorks />
