@@ -29,7 +29,7 @@ export default function LoginForm() {
   const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/dashboard/dashboard";
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
 
   const checkIdentifierType = (value: string) => {
     // Remove spaces for phone validation
