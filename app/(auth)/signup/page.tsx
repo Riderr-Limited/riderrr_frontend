@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -8,18 +8,14 @@ import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 import { useOrgStore } from "@/store/orgRegistration.store";
 
-export default function OrgRegistration({
-  onComplete,
-}: {
-  onComplete?: () => void;
-}) {
+export default function OrgRegistration() {
   const router = useRouter();
   const { toast } = useToast();
-  
+
   // Use stores
   const { step, loading, form, setStep, update, setLoading } = useOrgStore();
   const { setAuth } = useAuthStore();
-  
+
   // Local states for verification flow
   const [showVerification, setShowVerification] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -28,128 +24,154 @@ export default function OrgRegistration({
 
   function validateField(field: string, value: string) {
     const newErrors = { ...errors };
-    
+
     switch (field) {
-      case 'email':
+      case "email":
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
-          newErrors.email = 'Please enter a valid email address';
+          newErrors.email = "Please enter a valid email address";
         } else {
           delete newErrors.email;
         }
         break;
-        
-      case 'phone':
-      case 'companyPhone':
+
+      case "phone":
+      case "companyPhone":
         // Accept exactly: 08012345678 (11 digits) or +2348012345678 (14 digits)
         const phoneRegex = /^(?:\+234\d{10}|0\d{10})$/;
         if (value && !phoneRegex.test(value)) {
-          newErrors[field] = 'Please use format: 08012345678 (11 digits) or +2348012345678 (14 digits)';
+          newErrors[field] =
+            "Please use format: 08012345678 (11 digits) or +2348012345678 (14 digits)";
         } else {
           // Additional length check
-          if (value && value.startsWith('0') && value.length !== 11) {
-            newErrors[field] = `Phone number must be exactly 11 digits when starting with 0. You entered ${value.length} digits.`;
-          } else if (value && value.startsWith('+234') && value.length !== 14) {
-            newErrors[field] = `Phone number must be exactly 14 digits when starting with +234. You entered ${value.length} digits.`;
+          if (value && value.startsWith("0") && value.length !== 11) {
+            newErrors[field] =
+              `Phone number must be exactly 11 digits when starting with 0. You entered ${value.length} digits.`;
+          } else if (value && value.startsWith("+234") && value.length !== 14) {
+            newErrors[field] =
+              `Phone number must be exactly 14 digits when starting with +234. You entered ${value.length} digits.`;
           } else {
             delete newErrors[field];
           }
         }
         break;
-        
-      case 'password':
+
+      case "password":
         if (value.length < 6) {
-          newErrors.password = 'Password must be at least 6 characters';
+          newErrors.password = "Password must be at least 6 characters";
         } else {
           delete newErrors.password;
         }
         break;
-        
-      case 'accountNumber':
+
+      case "accountNumber":
         if (value && !/^\d{10}$/.test(value)) {
-          newErrors.accountNumber = 'Account number must be 10 digits';
+          newErrors.accountNumber = "Account number must be 10 digits";
         } else {
           delete newErrors.accountNumber;
         }
         break;
-        
+
       default:
-        if (!value && field !== 'taxId' && field !== 'bankName' && 
-            field !== 'accountName' && field !== 'accountNumber') {
-          newErrors[field] = 'This field is required';
+        if (
+          !value &&
+          field !== "taxId" &&
+          field !== "bankName" &&
+          field !== "accountName" &&
+          field !== "accountNumber"
+        ) {
+          newErrors[field] = "This field is required";
         } else {
           delete newErrors[field];
         }
     }
-    
+
     setErrors(newErrors);
   }
 
   // Validate all required fields for current step
   function validateStep(step: number): boolean {
     const newErrors: Record<string, string> = {};
-    
+
     if (step === 1) {
-      const step1Fields = ['companyName', 'name', 'phone', 'email', 'password'];
-      step1Fields.forEach(field => {
+      const step1Fields = ["companyName", "name", "phone", "email", "password"];
+      step1Fields.forEach((field) => {
         if (!form[field as keyof typeof form]) {
-          newErrors[field] = 'This field is required';
+          newErrors[field] = "This field is required";
         }
       });
-      
+
       // Email format validation
       if (form.email) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(form.email)) {
-          newErrors.email = 'Please enter a valid email address';
+          newErrors.email = "Please enter a valid email address";
         }
       }
-      
+
       // Phone format validation
       if (form.phone) {
         const phoneRegex = /^(?:\+234\d{10}|0\d{10})$/;
         if (!phoneRegex.test(form.phone)) {
-          newErrors.phone = 'Please use format: 08012345678 (11 digits) or +2348012345678 (14 digits)';
+          newErrors.phone =
+            "Please use format: 08012345678 (11 digits) or +2348012345678 (14 digits)";
         } else {
           // Length check
-          if (form.phone.startsWith('0') && form.phone.length !== 11) {
+          if (form.phone.startsWith("0") && form.phone.length !== 11) {
             newErrors.phone = `Phone number must be exactly 11 digits when starting with 0. You entered ${form.phone.length} digits.`;
-          } else if (form.phone.startsWith('+234') && form.phone.length !== 14) {
+          } else if (
+            form.phone.startsWith("+234") &&
+            form.phone.length !== 14
+          ) {
             newErrors.phone = `Phone number must be exactly 14 digits when starting with +234. You entered ${form.phone.length} digits.`;
           }
         }
       }
-      
+
       // Password length validation
       if (form.password && form.password.length < 6) {
-        newErrors.password = 'Password must be at least 6 characters';
+        newErrors.password = "Password must be at least 6 characters";
       }
     }
-    
+
     if (step === 2) {
-      const step2Fields = ['address', 'city', 'state', 'lga', 'businessLicense', 'companyPhone'];
-      step2Fields.forEach(field => {
+      const step2Fields = [
+        "address",
+        "city",
+        "state",
+        "lga",
+        "businessLicense",
+        "companyPhone",
+      ];
+      step2Fields.forEach((field) => {
         if (!form[field as keyof typeof form]) {
-          newErrors[field] = 'This field is required';
+          newErrors[field] = "This field is required";
         }
       });
-      
+
       // Company phone format validation
       if (form.companyPhone) {
         const phoneRegex = /^(?:\+234\d{10}|0\d{10})$/;
         if (!phoneRegex.test(form.companyPhone)) {
-          newErrors.companyPhone = 'Please use format: 08012345678 (11 digits) or +2348012345678 (14 digits)';
+          newErrors.companyPhone =
+            "Please use format: 08012345678 (11 digits) or +2348012345678 (14 digits)";
         } else {
           // Length check
-          if (form.companyPhone.startsWith('0') && form.companyPhone.length !== 11) {
+          if (
+            form.companyPhone.startsWith("0") &&
+            form.companyPhone.length !== 11
+          ) {
             newErrors.companyPhone = `Company phone must be exactly 11 digits when starting with 0. You entered ${form.companyPhone.length} digits.`;
-          } else if (form.companyPhone.startsWith('+234') && form.companyPhone.length !== 14) {
+          } else if (
+            form.companyPhone.startsWith("+234") &&
+            form.companyPhone.length !== 14
+          ) {
             newErrors.companyPhone = `Company phone must be exactly 14 digits when starting with +234. You entered ${form.companyPhone.length} digits.`;
           }
         }
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -162,7 +184,7 @@ export default function OrgRegistration({
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields correctly",
-        variant: "destructive"
+        type: "error",
       });
     }
   }
@@ -178,7 +200,7 @@ export default function OrgRegistration({
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields correctly",
-        variant: "destructive"
+        type: "error",
       });
       return;
     }
@@ -193,7 +215,7 @@ export default function OrgRegistration({
         password: form.password,
         phone: form.phone.trim(),
         role: "company_admin",
-        
+
         // Company fields
         companyName: form.companyName.trim(),
         address: form.address.trim(),
@@ -203,26 +225,29 @@ export default function OrgRegistration({
         businessLicense: form.businessLicense.trim(),
         taxId: form.taxId?.trim() || "",
         companyPhone: form.companyPhone.trim(),
-        
+
         // Bank details (optional)
         bankName: form.bankName?.trim() || "",
         accountName: form.accountName?.trim() || "",
         accountNumber: form.accountNumber?.trim() || "",
       };
 
-      console.log('📤 Sending registration data:', JSON.stringify(payload, null, 2));
-
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/signup", 
-        payload, 
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+      console.log(
+        "📤 Sending registration data:",
+        JSON.stringify(payload, null, 2),
       );
 
-      console.log('✅ Registration successful:', response.data);
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/signup",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      console.log("✅ Registration successful:", response.data);
 
       // Store auth data in stores
       if (response.data.data?.accessToken && response.data.data?.refreshToken) {
@@ -233,69 +258,76 @@ export default function OrgRegistration({
           email: response.data.data.user?.email,
           accessToken: response.data.data.accessToken,
           refreshToken: response.data.data.refreshToken,
-          requiresVerification: response.data.requiresVerification || true
+          requiresVerification: response.data.requiresVerification || true,
         });
-        
+
         // Store in localStorage for persistence
-        localStorage.setItem('accessToken', response.data.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.data.refreshToken);
-        localStorage.setItem('userId', response.data.data.user?._id || '');
-        localStorage.setItem('userEmail', form.email.trim().toLowerCase());
-        
+        localStorage.setItem("accessToken", response.data.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.data.refreshToken);
+        localStorage.setItem("userId", response.data.data.user?._id || "");
+        localStorage.setItem("userEmail", form.email.trim().toLowerCase());
+
         if (response.data.data.user) {
-          localStorage.setItem('user', JSON.stringify(response.data.data.user));
+          localStorage.setItem("user", JSON.stringify(response.data.data.user));
         }
       }
 
       // AUTOMATICALLY SHOW VERIFICATION SCREEN
       setShowVerification(true);
-      
+
       toast({
         title: "Verification Required",
         description: "Please verify your email to complete registration",
       });
+    } catch (err: unknown) {
+      console.error("❌ Registration error:", err);
 
-    } catch (err: any) {
-      console.error('❌ Registration error:', err);
-      
       let errorMessage = "Registration failed. Please try again.";
-      
-      if (err.response) {
-        console.error('Error response:', err.response.data);
-        
-        if (err.response.status === 422) {
+
+      if (err && typeof err === "object" && "response" in err) {
+        const error = err as {
+          response?: {
+            data?: { message?: string; errors?: Record<string, string>[] };
+            status?: number;
+          };
+        };
+        console.error("Error response:", error.response?.data);
+
+        if (error.response?.status === 422) {
           // Validation errors from backend
-          const errorData = err.response.data;
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorMessage = errorData.errors.map((e: any) => {
-              // Show field-specific errors
-              const field = Object.keys(e)[0];
-              const message = e[field];
-              return `${field}: ${message}`;
-            }).join(', ');
-          } else if (errorData.message) {
+          const errorData = error.response.data;
+          if (errorData?.errors && Array.isArray(errorData.errors)) {
+            errorMessage = errorData.errors
+              .map((e: Record<string, string>) => {
+                // Show field-specific errors
+                const field = Object.keys(e)[0];
+                const message = e[field];
+                return `${field}: ${message}`;
+              })
+              .join(", ");
+          } else if (errorData?.message) {
             errorMessage = errorData.message;
           }
-        } else if (err.response.status === 409) {
+        } else if (error.response?.status === 409) {
           errorMessage = "User with this email or phone already exists";
-        } else if (err.response.status === 400) {
-          errorMessage = err.response.data.message || "Bad request";
-        } else if (err.response.status === 500) {
+        } else if (error.response?.status === 400) {
+          errorMessage = error.response.data?.message || "Bad request";
+        } else if (error.response?.status === 500) {
           errorMessage = "Server error. Please try again later.";
-          console.error('Server error details:', err.response.data);
-        } else if (err.response.data?.message) {
-          errorMessage = err.response.data.message;
+          console.error("Server error details:", error.response.data);
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
         }
-      } else if (err.request) {
+      } else if (err && typeof err === "object" && "request" in err) {
         errorMessage = "No response from server. Please check your connection.";
-      } else if (err.message) {
-        errorMessage = err.message;
+      } else if (err && typeof err === "object" && "message" in err) {
+        errorMessage = (err as Error).message;
       }
-      
+
       toast({
         title: "Registration Error",
         description: errorMessage,
-        variant: "destructive"
+        type: "error",
       });
     } finally {
       setLoading(false);
@@ -308,7 +340,7 @@ export default function OrgRegistration({
       toast({
         title: "Invalid Code",
         description: "Please enter a valid 6-digit verification code",
-        variant: "destructive"
+        type: "error",
       });
       return;
     }
@@ -317,7 +349,7 @@ export default function OrgRegistration({
       toast({
         title: "Session Error",
         description: "Please start the registration process again",
-        variant: "destructive"
+        type: "error",
       });
       return;
     }
@@ -332,61 +364,65 @@ export default function OrgRegistration({
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      console.log('✅ Email verification successful:', response.data);
+      console.log("✅ Email verification successful:", response.data);
 
       // Update auth store with verified user
       if (response.data.data?.accessToken) {
         setAuth({
           accessToken: response.data.data.accessToken,
           user: response.data.data.user,
-          isVerified: true
         });
-        
+
         // Update localStorage
-        localStorage.setItem('accessToken', response.data.data.accessToken);
-        localStorage.setItem('isVerified', 'true');
-        
+        localStorage.setItem("accessToken", response.data.data.accessToken);
+        localStorage.setItem("isVerified", "true");
+
         if (response.data.data.user) {
-          localStorage.setItem('user', JSON.stringify(response.data.data.user));
+          localStorage.setItem("user", JSON.stringify(response.data.data.user));
         }
       }
 
       toast({
         title: "Email Verified!",
-        description: response.data.message || "Your email has been verified successfully",
+        description:
+          response.data.message || "Your email has been verified successfully",
       });
 
       // AUTOMATICALLY REDIRECT TO DASHBOARD AFTER 1.5 SECONDS
       setTimeout(() => {
-        router.push('/dashboard');
+        router.push("/dashboard");
       }, 1500);
+    } catch (err: unknown) {
+      console.error("❌ Verification error:", err);
 
-    } catch (err: any) {
-      console.error('❌ Verification error:', err);
-      
       let errorMessage = "Verification failed. Please try again.";
-      
-      if (err.response) {
-        console.error('Error response:', err.response.data);
-        
-        if (err.response.status === 400) {
-          errorMessage = err.response.data.message || "Invalid or expired verification code";
-        } else if (err.response.status === 404) {
+
+      if (err && typeof err === "object" && "response" in err) {
+        const error = err as {
+          response?: { data?: { message?: string }; status?: number };
+        };
+        console.error("Error response:", error.response?.data);
+
+        if (error.response?.status === 400) {
+          errorMessage =
+            error.response.data?.message ||
+            "Invalid or expired verification code";
+        } else if (error.response?.status === 404) {
           errorMessage = "User not found. Please register again.";
-        } else if (err.response.data?.message) {
-          errorMessage = err.response.data.message;
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
         }
       }
-      
+
       toast({
         title: "Verification Error",
         description: errorMessage,
-        variant: "destructive"
+        type: "error",
       });
     } finally {
       setVerificationLoading(false);
@@ -403,31 +439,37 @@ export default function OrgRegistration({
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      console.log('✅ Resend code successful:', response.data);
+      console.log("✅ Resend code successful:", response.data);
 
       toast({
         title: "Code Resent",
         description: "A new verification code has been sent to your email",
       });
+    } catch (err: unknown) {
+      console.error("❌ Resend code error:", err);
 
-    } catch (err: any) {
-      console.error('❌ Resend code error:', err);
-      
       let errorMessage = "Failed to resend code. Please try again.";
-      
-      if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
+
+      if (
+        err &&
+        typeof err === "object" &&
+        "response" in err &&
+        (err as { response?: { data?: { message?: string } } }).response?.data
+          ?.message
+      ) {
+        errorMessage = (err as { response?: { data?: { message?: string } } })
+          .response!.data!.message!;
       }
-      
+
       toast({
         title: "Resend Failed",
         description: errorMessage,
-        variant: "destructive"
+        type: "error",
       });
     }
   }
@@ -445,25 +487,30 @@ export default function OrgRegistration({
         <div className="w-full max-w-md">
           {/* Verification Header */}
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Verify Your Email</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Verify Your Email
+            </h2>
             <p className="text-gray-600">
-              We've sent a 6-digit verification code to <strong>{form.email}</strong>
+              We&apos;ve sent a 6-digit verification code to{" "}
+              <strong>{form.email}</strong>
             </p>
             <p className="text-sm text-gray-500 mt-2">
-              Please check your inbox (and spam folder) for the verification email.
-              The code expires in 10 minutes.
+              Please check your inbox (and spam folder) for the verification
+              email. The code expires in 10 minutes.
             </p>
           </div>
-          
+
           {/* Verification Card */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Enter Verification Code</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Enter Verification Code
+              </h3>
               <p className="text-gray-600 text-sm">
                 Enter the 6-digit code sent to your email address.
               </p>
             </div>
-            
+
             {/* Verification Input */}
             <div className="space-y-4">
               <div>
@@ -476,7 +523,7 @@ export default function OrgRegistration({
                   maxLength={6}
                   placeholder="123456"
                   onChange={(e) => {
-                    const value = e.target.value.replace(/\D/g, '');
+                    const value = e.target.value.replace(/\D/g, "");
                     setVerificationCode(value);
                   }}
                   className="text-center text-2xl tracking-widest"
@@ -486,7 +533,7 @@ export default function OrgRegistration({
                   6-digit code (numbers only)
                 </p>
               </div>
-              
+
               <Button
                 className="bg-[#337BFF] text-white w-full"
                 onClick={handleVerifyEmail}
@@ -501,18 +548,18 @@ export default function OrgRegistration({
                   "Verify Email"
                 )}
               </Button>
-              
+
               <div className="text-center">
                 <button
                   type="button"
                   onClick={handleResendCode}
                   className="text-sm text-[#337BFF] hover:text-[#2a6ce6]"
                 >
-                  Didn't receive code? Resend
+                  Didn&apos;t receive code? Resend
                 </button>
               </div>
             </div>
-            
+
             <div className="mt-6 pt-6 border-t border-gray-200">
               <button
                 type="button"
@@ -523,22 +570,35 @@ export default function OrgRegistration({
               </button>
             </div>
           </div>
-          
+
           {/* Registration Summary */}
           <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold text-gray-800 mb-2">Registration Summary</h4>
+            <h4 className="font-semibold text-gray-800 mb-2">
+              Registration Summary
+            </h4>
             <div className="space-y-1 text-sm text-gray-600">
-              <p><span className="font-medium">Company:</span> {form.companyName}</p>
-              <p><span className="font-medium">Email:</span> {form.email}</p>
-              <p><span className="font-medium">Status:</span> Awaiting verification</p>
+              <p>
+                <span className="font-medium">Company:</span> {form.companyName}
+              </p>
+              <p>
+                <span className="font-medium">Email:</span> {form.email}
+              </p>
+              <p>
+                <span className="font-medium">Status:</span> Awaiting
+                verification
+              </p>
             </div>
           </div>
-          
+
           {/* Success Message (shown briefly before redirect) */}
           {verificationLoading && (
             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg text-center animate-pulse">
-              <p className="text-green-700 font-medium">✓ Verification successful!</p>
-              <p className="text-green-600 text-sm mt-1">Redirecting to dashboard...</p>
+              <p className="text-green-700 font-medium">
+                ✓ Verification successful!
+              </p>
+              <p className="text-green-600 text-sm mt-1">
+                Redirecting to dashboard...
+              </p>
             </div>
           )}
         </div>
@@ -551,7 +611,9 @@ export default function OrgRegistration({
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900">Company Registration</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Company Registration
+          </h1>
           <p className="mt-2 text-gray-600">
             Register your company account in 3 simple steps
           </p>
@@ -560,21 +622,27 @@ export default function OrgRegistration({
         {/* Step indicator */}
         <div className="flex flex-wrap gap-6 md:gap-8 justify-center mb-12">
           <div className="flex flex-col items-center">
-            <div className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${step === 1 ? "bg-[#337BFF] text-white" : "border-gray-400 bg-[#BCBCBC] border"}`}>
+            <div
+              className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${step === 1 ? "bg-[#337BFF] text-white" : "border-gray-400 bg-[#BCBCBC] border"}`}
+            >
               1
             </div>
             <p className="text-[14px] font-semibold mt-2">Account Details</p>
           </div>
-          
+
           <div className="flex flex-col items-center">
-            <div className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${step === 2 ? "bg-[#337BFF] text-white" : "border bg-[#BCBCBC] border-gray-400"}`}>
+            <div
+              className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${step === 2 ? "bg-[#337BFF] text-white" : "border bg-[#BCBCBC] border-gray-400"}`}
+            >
               2
             </div>
             <p className="text-[14px] font-semibold mt-2">Company Details</p>
           </div>
-          
+
           <div className="flex flex-col items-center">
-            <div className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${step === 3 ? "bg-[#337BFF] text-white" : "border-gray-400 bg-[#BCBCBC] border"}`}>
+            <div
+              className={`p-4 flex items-center justify-center text-[18px] md:text-[22px] font-semibold text-center h-14 w-14 rounded-full ${step === 3 ? "bg-[#337BFF] text-white" : "border-gray-400 bg-[#BCBCBC] border"}`}
+            >
               3
             </div>
             <p className="text-[14px] font-semibold mt-2">Bank Details</p>
@@ -586,7 +654,9 @@ export default function OrgRegistration({
           {/* Step 1: Account Details */}
           {step === 1 && (
             <div className="w-full">
-              <h3 className="text-xl font-semibold mb-6">Account Information</h3>
+              <h3 className="text-xl font-semibold mb-6">
+                Account Information
+              </h3>
               <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
@@ -602,10 +672,12 @@ export default function OrgRegistration({
                     className={errors.companyName ? "border-red-500" : ""}
                   />
                   {errors.companyName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.companyName}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.companyName}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Contact Person Name *
@@ -623,7 +695,7 @@ export default function OrgRegistration({
                     <p className="text-red-500 text-sm mt-1">{errors.name}</p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Contact Phone *
@@ -641,10 +713,11 @@ export default function OrgRegistration({
                     <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    Format: 08012345678 (11 digits) or +2348012345678 (14 digits)
+                    Format: 08012345678 (11 digits) or +2348012345678 (14
+                    digits)
                   </p>
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Company Phone *
@@ -659,13 +732,16 @@ export default function OrgRegistration({
                     className={errors.companyPhone ? "border-red-500" : ""}
                   />
                   {errors.companyPhone && (
-                    <p className="text-red-500 text-sm mt-1">{errors.companyPhone}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.companyPhone}
+                    </p>
                   )}
                   <p className="text-xs text-gray-500 mt-1">
-                    Format: 08012345678 (11 digits) or +2348012345678 (14 digits)
+                    Format: 08012345678 (11 digits) or +2348012345678 (14
+                    digits)
                   </p>
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Email *
@@ -684,7 +760,7 @@ export default function OrgRegistration({
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Password *
@@ -700,15 +776,18 @@ export default function OrgRegistration({
                     className={errors.password ? "border-red-500" : ""}
                   />
                   {errors.password && (
-                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.password}
+                    </p>
                   )}
                 </div>
               </div>
-              
+
               <div className="mt-6">
                 <p className="text-sm text-gray-600">
-                  <span className="font-semibold">Note:</span> All fields marked with * are required.
-                  Your phone number will be used for account verification.
+                  <span className="font-semibold">Note:</span> All fields marked
+                  with * are required. Your phone number will be used for
+                  account verification.
                 </p>
               </div>
             </div>
@@ -717,7 +796,9 @@ export default function OrgRegistration({
           {/* Step 2: Company Details */}
           {step === 2 && (
             <div className="w-full">
-              <h3 className="text-xl font-semibold mb-6">Company Information</h3>
+              <h3 className="text-xl font-semibold mb-6">
+                Company Information
+              </h3>
               <div className="grid md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
@@ -733,10 +814,12 @@ export default function OrgRegistration({
                     className={errors.address ? "border-red-500" : ""}
                   />
                   {errors.address && (
-                    <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.address}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     City *
@@ -754,7 +837,7 @@ export default function OrgRegistration({
                     <p className="text-red-500 text-sm mt-1">{errors.city}</p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     State *
@@ -772,7 +855,7 @@ export default function OrgRegistration({
                     <p className="text-red-500 text-sm mt-1">{errors.state}</p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     LGA (Local Government Area) *
@@ -790,7 +873,7 @@ export default function OrgRegistration({
                     <p className="text-red-500 text-sm mt-1">{errors.lga}</p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Business License / Registration Number *
@@ -805,10 +888,12 @@ export default function OrgRegistration({
                     className={errors.businessLicense ? "border-red-500" : ""}
                   />
                   {errors.businessLicense && (
-                    <p className="text-red-500 text-sm mt-1">{errors.businessLicense}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.businessLicense}
+                    </p>
                   )}
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Tax ID (optional)
@@ -827,16 +912,19 @@ export default function OrgRegistration({
           {step === 3 && (
             <div className="w-full">
               <h3 className="text-xl font-semibold mb-6">Bank Information</h3>
-              
+
               {/* Bank Details Section */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-blue-800 mb-2">Bank Details (Optional)</h3>
+                <h3 className="font-semibold text-blue-800 mb-2">
+                  Bank Details (Optional)
+                </h3>
                 <p className="text-sm text-blue-700">
-                  Providing your bank details now will help speed up future payment processing.
-                  You can skip this step and add it later from your account settings.
+                  Providing your bank details now will help speed up future
+                  payment processing. You can skip this step and add it later
+                  from your account settings.
                 </p>
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-8">
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
@@ -848,7 +936,7 @@ export default function OrgRegistration({
                     placeholder="Access Bank"
                   />
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Account Name
@@ -859,7 +947,7 @@ export default function OrgRegistration({
                     placeholder="Riderr Limited"
                   />
                 </div>
-                
+
                 <div>
                   <label className="text-[14px] font-medium mb-2 block">
                     Account Number
@@ -874,21 +962,44 @@ export default function OrgRegistration({
                     className={errors.accountNumber ? "border-red-500" : ""}
                   />
                   {errors.accountNumber && (
-                    <p className="text-red-500 text-sm mt-1">{errors.accountNumber}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.accountNumber}
+                    </p>
                   )}
-                  <p className="text-xs text-gray-500 mt-1">10-digit account number</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    10-digit account number
+                  </p>
                 </div>
               </div>
-              
+
               {/* Registration Summary */}
               <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-semibold text-gray-800 mb-2">Registration Summary</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">
+                  Registration Summary
+                </h4>
                 <div className="space-y-1 text-sm text-gray-600">
-                  <p><span className="font-medium">Company:</span> {form.companyName || "Not provided"}</p>
-                  <p><span className="font-medium">Contact:</span> {form.name || "Not provided"}</p>
-                  <p><span className="font-medium">Email:</span> {form.email || "Not provided"}</p>
-                  <p><span className="font-medium">Phone:</span> {form.phone || "Not provided"}</p>
-                  <p><span className="font-medium">Location:</span> {form.city && form.state ? `${form.city}, ${form.state}` : "Not provided"}</p>
+                  <p>
+                    <span className="font-medium">Company:</span>{" "}
+                    {form.companyName || "Not provided"}
+                  </p>
+                  <p>
+                    <span className="font-medium">Contact:</span>{" "}
+                    {form.name || "Not provided"}
+                  </p>
+                  <p>
+                    <span className="font-medium">Email:</span>{" "}
+                    {form.email || "Not provided"}
+                  </p>
+                  <p>
+                    <span className="font-medium">Phone:</span>{" "}
+                    {form.phone || "Not provided"}
+                  </p>
+                  <p>
+                    <span className="font-medium">Location:</span>{" "}
+                    {form.city && form.state
+                      ? `${form.city}, ${form.state}`
+                      : "Not provided"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -908,7 +1019,7 @@ export default function OrgRegistration({
                 </Button>
               )}
             </div>
-            
+
             <div>
               {step < 3 ? (
                 <Button
@@ -952,7 +1063,7 @@ export default function OrgRegistration({
           <div className="mt-6">
             <div className="flex items-center">
               <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-[#337BFF] transition-all duration-300"
                   style={{ width: `${(step / 3) * 100}%` }}
                 ></div>
