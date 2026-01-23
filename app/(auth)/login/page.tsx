@@ -115,40 +115,25 @@ export default function LoginForm() {
       });
 
       router.push(redirectTo);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Login error:", error);
-      setError(error.message || "Login failed. Please check your credentials.");
+      if (
+        error &&
+        typeof error === "object" &&
+        "message" in error &&
+        typeof (error as { message?: string }).message === "string"
+      ) {
+        setError((error as { message: string }).message);
+      } else {
+        setError("Login failed. Please check your credentials.");
+      }
     } finally {
       setIsLoading(false);
     }
   }
 
-  const handleDemoLogin = async (
-    role: "customer" | "driver" | "company_admin" | "admin",
-  ) => {
-    setIsLoading(true);
-    setError("");
-
-    const demoCredentials = {
-      customer: { emailOrPhone: "customer@demo.com", password: "demo123" },
-      driver: { emailOrPhone: "driver@demo.com", password: "demo123" },
-      company_admin: { emailOrPhone: "company@demo.com", password: "demo123" },
-      admin: { emailOrPhone: "admin@demo.com", password: "demo123" },
-    };
-
-    try {
-      await login(demoCredentials[role]);
-      router.push(redirectTo);
-    } catch (error: any) {
-      console.error("Demo login error:", error);
-      setError(error.message || "Demo login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white rounded-2xl shadow-xl p-8">
         <div>
           <div className="flex justify-center">
