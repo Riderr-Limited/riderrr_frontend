@@ -1,0 +1,312 @@
+'use client'
+
+import React, { useState } from 'react'
+import { 
+  IconDashboard,
+  IconUsers,
+  IconPackage,
+  IconChartBar,
+  IconUser,
+  IconSettings,
+  IconChevronLeft,
+  IconChevronRight,
+  IconBell,
+  IconHelp,
+  IconLogout,
+  IconBuilding
+} from '@tabler/icons-react'
+import { cn } from '@/libs/utils'
+import { useAuth, useRole, useCompany, usePermissions } from '@/contexts/AuthContext'
+import Image from 'next/image'
+ 
+const navItems = [
+  { name: 'Overview', icon: IconDashboard, href: '/dashboard/dashboard' },
+  { name: 'Riders', icon: IconUsers, href: '/dashboard/riders' },
+  { name: 'Deliveries', icon: IconPackage, href: '/dashboard/deliveries' },
+ ]
+
+const bottomItems = [
+  { name: 'Profile', icon: IconUser, href: '/dashboard/profile' },
+  { name: 'Settings', icon: IconSettings, href: '/dashboard/settings' },
+]
+
+const utilityItems = [
+  { name: 'Notifications', icon: IconBell, href: '/dashboard/notifications' },
+  { name: 'Help & Support', icon: IconHelp, href: '/dashboard/help' },
+]
+
+export default function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [activeItem, setActiveItem] = useState('Overview')
+  
+  // Use auth context
+  const { user, logout, isLoading } = useAuth()
+  const { getUserRole, hasRole, canAccess } = useRole()
+  const { company, isCompanyUser } = useCompany()
+  const permissions = usePermissions()
+
+  // Filter nav items based on user role/permissions
+  const getFilteredNavItems = () => {
+    return navItems.filter(item => {
+      if (!user) return false;
+      
+      switch(item.name) {
+        case 'Riders':
+          return permissions.canManageDrivers && (user.role === 'admin' || user.role === 'company_admin')
+        case 'Reports':
+          return permissions.canViewReports
+        case 'Overview':
+          return permissions.canViewDashboard
+        case 'Deliveries':
+          return permissions.canManageDeliveries
+        default:
+          return true
+      }
+    })
+  }
+
+  // Handle logout
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    try {
+      await logout()
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
+  // Get user display name
+  const getUserDisplayName = () => {
+    if (!user) return 'Loading...'
+    return user.name || user.email?.split('@')[0] || 'User'
+  }
+
+  // Get user role display name
+  const getUserRoleDisplay = () => {
+    if (!user) return ''
+    
+    switch(user.role) {
+      case 'admin':
+        return 'Admin'
+      case 'company_admin':
+        return 'Company Admin'
+      case 'driver':
+        return isCompanyUser ? 'Company Rider' : 'Rider'
+      case 'customer':
+        return 'Customer'
+      default:
+        return 'User'
+    }
+  }
+
+  // Get company name if available
+  const getCompanyName = () => {
+    if (company?.name) return company.name
+    if (user?.company?.name) return user.company.name
+    return ''
+  }
+
+  const filteredNavItems = getFilteredNavItems()
+
+  // Get active item from current path
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname
+      const item = navItems.find(item => path.includes(item.href))
+      if (item) {
+        setActiveItem(item.name)
+      }
+    }
+  }, [])
+
+  return (
+    <aside className={cn(
+      "flex flex-col h-screen transition-all duration-300 sticky top-0 ",
+      isCollapsed ? "w-20" : "w-64"
+    )}>
+      {/* Sidebar Container with background */}
+      <div className="flex-1 flex flex-col bg-linear-to-br bg-[#1E5FD8] text-white">
+        
+        {/* Collapse Button */}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="absolute -right-3 top-6 bg-[#03329F ] border-2 border-white text-white p-1.5 rounded-full z-50 hover:bg-[#2a63a5] transition-colors shadow-lg"
+        >
+          {isCollapsed ? <IconChevronRight size={18} /> : <IconChevronLeft size={18} />}
+        </button>
+
+        {/* Logo/Title Section */}
+        <div className={cn(
+          "flex items-center px-6 py-5 border-b border-white/20",
+          isCollapsed && "justify-center px-0"
+        )}>
+          <div className="flex items-center space-x-3">
+            <div className=" rounded-lg">
+            <Image  
+               src='/logo.png' alt='logo'  
+               width={80}
+               height={80}  
+               className=" border-none rounded-full  object-cover"
+            />
+            </div>
+            {!isCollapsed && (
+              <div className="flex flex-col">
+                <h1 className="text-xl font-bold tracking-wide leading-tight">
+                  {isCompanyUser ? `${getCompanyName() || 'Company'}` : 'Rider Dashboard'}
+                </h1>
+                <p className="text-xs text-white/80 mt-0.5">
+                  {user?.role === 'company_admin' ? 'Admin Panel' : 'Management Portal'}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Navigation Section */}
+        <nav className="flex-1 px-4 py-6 space-y-1">
+          {filteredNavItems.map((item) => (
+            <a
+              key={item.name}
+              href={item.href}
+              onClick={() => setActiveItem(item.name)}
+              className={cn(
+                "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
+                activeItem === item.name
+                  ? "bg-white/20 text-white shadow-sm"
+                  : "text-white/90 hover:bg-white/10 hover:text-white"
+              )}
+            >
+              <item.icon className={cn(
+                "h-5 w-5",
+                isCollapsed ? "mx-auto" : "mr-3"
+              )} />
+              {!isCollapsed && (
+                <span className="font-medium">{item.name}</span>
+              )}
+              {isCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+                  {item.name}
+                </div>
+              )}
+            </a>
+          ))}
+          
+           
+        </nav>
+
+        {/* Divider */}
+        <div className="px-4">
+          <div className="border-t border-white/20"></div>
+        </div>
+
+        {/* Utility Items */}
+        <div className="px-4 py-4 space-y-1">
+          {utilityItems.map((item) => (
+            <a
+              key={item.name}
+              href={item.href}
+              className="flex items-center text-white/80 hover:text-white rounded-lg px-4 py-3 hover:bg-white/10 transition-all duration-200 group"
+            >
+              <item.icon className={cn(
+                "h-5 w-5",
+                isCollapsed ? "mx-auto" : "mr-3"
+              )} />
+              {!isCollapsed && (
+                <span className="font-medium">{item.name}</span>
+              )}
+              {isCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+                  {item.name}
+                </div>
+              )}
+            </a>
+          ))}
+          {/* Profile & Settings Section */}
+        <div className="mt-auto border-t border-white/20">
+          <div className="px-4 py-4 space-y-1">
+            {bottomItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                onClick={() => setActiveItem(item.name)}
+                className={cn(
+                  "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
+                  activeItem === item.name
+                    ? "bg-white/20 text-white shadow-sm"
+                    : "text-white/90 hover:bg-white/10 hover:text-white"
+                )}
+              >
+                <item.icon className={cn(
+                  "h-5 w-5",
+                  isCollapsed ? "mx-auto" : "mr-3"
+                )} />
+                {!isCollapsed && (
+                  <span className="font-medium">{item.name}</span>
+                )}
+                {isCollapsed && (
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+                    {item.name}
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+
+          {/* User Profile */}
+          <div className={cn(
+            "px-4 py-4 border-t border-white/20",
+            isCollapsed && "flex justify-center"
+          )}>
+            <div className="flex items-center">
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center overflow-hidden shadow-sm">
+                {user?.avatarUrl ? (
+                  <img 
+                    src={user.avatarUrl} 
+                    alt={getUserDisplayName()}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white font-semibold text-sm">
+                    {getUserDisplayName().charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              {!isCollapsed && (
+                <div className="ml-3 flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">
+                    {isLoading ? 'Loading...' : getUserDisplayName()}
+                  </p>
+                  <p className="text-xs text-white/70 truncate">
+                    {isLoading ? '' : getUserRoleDisplay()}
+                    {getCompanyName() && ` • ${getCompanyName()}`}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center text-white/80 hover:text-white rounded-lg px-4 py-3 hover:bg-white/10 transition-all duration-200 group w-full"
+          >
+            <IconLogout className={cn(
+              "h-5 w-5",
+              isCollapsed ? "mx-auto" : "mr-3"
+            )} />
+            {!isCollapsed && (
+              <span className="font-medium">Logout</span>
+            )}
+            {isCollapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+                Logout
+              </div>
+            )}
+          </button>
+        </div>
+
+         
+      </div>
+    </aside>
+  )
+}
