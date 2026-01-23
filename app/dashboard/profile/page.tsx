@@ -191,9 +191,9 @@ export default function CompanyProfilePage() {
           })
         }
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching profile:', err)
-      setError(err.message || 'Failed to load company profile')
+      setError((err as Error).message || 'Failed to load company profile')
     } finally {
       setLoading(false)
     }
@@ -236,9 +236,9 @@ export default function CompanyProfilePage() {
         setSuccessMessage('Profile updated successfully!')
         setTimeout(() => setSuccessMessage(null), 3000)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating profile:', err)
-      setError(err.message || 'Failed to update profile')
+      setError((err as Error).message || 'Failed to update profile')
     } finally {
       setSaving(false)
     }
@@ -271,9 +271,9 @@ export default function CompanyProfilePage() {
         setSuccessMessage('Settings updated successfully!')
         setTimeout(() => setSuccessMessage(null), 3000)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating settings:', err)
-      setError(err.message || 'Failed to update settings')
+      setError((err as Error).message || 'Failed to update settings')
     } finally {
       setSaving(false)
     }
@@ -306,9 +306,9 @@ export default function CompanyProfilePage() {
         setSuccessMessage('Bank details updated successfully!')
         setTimeout(() => setSuccessMessage(null), 3000)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error updating bank details:', err)
-      setError(err.message || 'Failed to update bank details')
+      setError((err as Error).message || 'Failed to update bank details')
     } finally {
       setSaving(false)
     }
@@ -343,9 +343,9 @@ export default function CompanyProfilePage() {
         setSuccessMessage('Document uploaded successfully!')
         setTimeout(() => setSuccessMessage(null), 3000)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error uploading document:', err)
-      setError(err.message || 'Failed to upload document')
+      setError((err as Error).message || 'Failed to upload document')
     } finally {
       setUploading(false)
     }
