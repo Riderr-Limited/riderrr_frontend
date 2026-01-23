@@ -22,7 +22,7 @@ export default function EmailVerification({
       toast({
         title: "Missing code",
         description: "Please enter the verification code",
-        variant: "destructive",
+        type: "error",
       });
       return;
     }
@@ -31,7 +31,7 @@ export default function EmailVerification({
       toast({
         title: "Invalid session",
         description: "Please register again",
-        variant: "destructive",
+        type: "error",
       });
       return;
     }
@@ -50,11 +50,11 @@ export default function EmailVerification({
       });
 
       onSuccess();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: "Verification failed",
-        description: err.message,
-        variant: "destructive",
+        description: (err as Error).message,
+        type: "error",
       });
     } finally {
       setLoading(false);
