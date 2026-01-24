@@ -314,8 +314,8 @@ export default function RidersPage() {
       
       showToast('Driver account created! Please verify their email.', 'success')
       
-    } catch (error: any) {
-      showToast(error.message || 'Failed to add driver. Please try again.', 'error')
+    } catch (error: unknown) {
+      showToast((error as Error).message || 'Failed to add driver. Please try again.', 'error')
     } finally {
       setIsSubmitting(false)
     }
@@ -369,9 +369,9 @@ export default function RidersPage() {
         fetchDrivers()
       }, 2000)
 
-    } catch (error: any) {
-      showToast(error.message || 'Failed to verify email', 'error')
-      setVerificationError(error.message || 'Failed to verify email')
+    } catch (error: unknown) {
+      showToast((error as Error).message || 'Failed to verify email', 'error')
+      setVerificationError((error as Error).message || 'Failed to verify email')
     } finally {
       setVerificationLoading(false)
     }
@@ -401,9 +401,9 @@ export default function RidersPage() {
       }
 
       showToast('Verification code has been resent to the driver\'s email!', 'success')
-    } catch (error: any) {
-      showToast(error.message || 'Failed to resend verification code', 'error')
-      setVerificationError(error.message || 'Failed to resend code')
+    } catch (error: unknown) {
+      showToast((error as Error).message || 'Failed to resend verification code', 'error')
+      setVerificationError((error as Error).message || 'Failed to resend code')
     } finally {
       setResendLoading(false)
     }
@@ -577,7 +577,7 @@ export default function RidersPage() {
             <div className="flex items-center space-x-4">
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as any)}
+                onChange={(e) => setStatusFilter(e.target.value as 'all' | 'online' | 'offline')}
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="all">All Status</option>

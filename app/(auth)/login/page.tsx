@@ -1,7 +1,6 @@
-// components/auth/LoginForm.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -17,7 +16,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
-export default function LoginForm() {
+function LoginFormContent() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -32,10 +31,7 @@ export default function LoginForm() {
   const redirectTo = searchParams.get("redirect") || "/dashboard";
 
   const checkIdentifierType = (value: string) => {
-    // Remove spaces for phone validation
     const cleanedValue = value.replace(/\s/g, "");
-
-    // Phone regex: starts with +234 or 0, followed by 10 or 11 digits
     const phoneRegex = /^(?:\+234\d{10}|0\d{10})$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -55,20 +51,16 @@ export default function LoginForm() {
   };
 
   const formatPhone = (phone: string): string => {
-    // Remove all non-digits except +
     const cleaned = phone.replace(/[^\d+]/g, "");
 
-    // If starts with 0, keep as is (11 digits)
     if (cleaned.startsWith("0")) {
       return cleaned.substring(0, 11);
     }
 
-    // If starts with 234 (without +), add +
     if (cleaned.startsWith("234") && !cleaned.startsWith("+234")) {
       return `+${cleaned.substring(0, 13)}`;
     }
 
-    // If starts with +234, keep as is (14 digits with +)
     if (cleaned.startsWith("+234")) {
       return cleaned.substring(0, 14);
     }
@@ -104,7 +96,6 @@ export default function LoginForm() {
     try {
       let loginIdentifier = identifier.trim();
 
-      // Format phone number if needed
       if (isPhone) {
         loginIdentifier = formatPhone(identifier);
       }
@@ -133,11 +124,11 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white rounded-2xl shadow-xl p-8">
         <div>
           <div className="flex justify-center">
-            <div className="w-20 h-20    flex items-center justify-center">
+            <div className="w-20 h-20 flex items-center justify-center">
               <Image
                 src="/logo.png"
                 alt="logo"
@@ -308,5 +299,13 @@ export default function LoginForm() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
+      <LoginFormContent />
+    </Suspense>
   );
 }
