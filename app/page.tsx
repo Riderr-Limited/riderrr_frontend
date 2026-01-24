@@ -1,6 +1,7 @@
 // app/page.tsx
 // import { AppleCardsCarouselDemo } from "@/components/AppleCardsCarouselDemo";
 import { DownloadCTA } from "@/components/DownloadCTA";
+import HowItWorks from "@/components/HowItWorks";
 import { FAQ } from "@/components/FAQ";
 import FeatureCard from "@/components/FeatureCard";
 import { Features } from "@/components/Features";
@@ -18,9 +19,10 @@ import { WhoItsFor } from "@/components/WhoItsFor";
 
 export default function Landing() {
   return (
-    <div className="space-y-12">
+    <div >
       <Navbar />
       <HeroSectionOne />
+      <HowItWorks />
       <ForOrganizations />
       <PartnerCTA />
       <Features />
