@@ -290,7 +290,7 @@ function LoginFormContent() {
           <p className="text-sm text-gray-600">
             Don&apos;t have an account?{" "}
             <Link
-              href="/register"
+              href="/signup"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign up
@@ -304,7 +304,13 @@ function LoginFormContent() {
 
 export default function LoginForm() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      }
+    >
       <LoginFormContent />
     </Suspense>
   );
