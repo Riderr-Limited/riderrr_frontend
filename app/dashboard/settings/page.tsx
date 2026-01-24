@@ -1,5 +1,4 @@
-// app/company/settings/page.tsx
-'use client'
+ 'use client'
 
 import React, { useState, useEffect } from 'react'
 import {
@@ -26,6 +25,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/libs/utils'
 import { useAuth } from '@/contexts/AuthContext'
+import { API_CONFIG } from '../../lib/config'
+import { ApiClient } from '../../lib/api-client'
 
 interface OperatingHours {
   start: string
@@ -54,8 +55,6 @@ interface SecuritySettings {
   sessionTimeout: number
   ipWhitelist: string[]
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
 
 export default function CompanySettingsPage() {
   const { user } = useAuth()
@@ -111,25 +110,11 @@ export default function CompanySettingsPage() {
     try {
       setLoading(true)
       setError(null)
-      const token = localStorage.getItem('access_token')
       
-      if (!token) {
-        setError('No authentication token found')
-        return
-      }
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.PROFILE);
       
-      const response = await fetch(`${API_URL}/company/profile`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch settings')
-      }
+      const data = await ApiClient.get(url);
       
       if (data.success && data.data) {
         const profileData = data.data
@@ -176,21 +161,10 @@ export default function CompanySettingsPage() {
       setError(null)
       setSuccessMessage(null)
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/company/settings`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(settings)
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.SETTINGS);
       
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update settings')
-      }
+      const data = await ApiClient.put(url, settings);
       
       if (data.success) {
         setSuccessMessage('General settings updated successfully!')
@@ -216,23 +190,12 @@ export default function CompanySettingsPage() {
       if (notifications.email) channels.push('email')
       if (notifications.sms) channels.push('sms')
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/company/settings`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          notificationChannels: channels
-        })
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.SETTINGS);
       
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update notification settings')
-      }
+      const data = await ApiClient.put(url, {
+        notificationChannels: channels
+      });
       
       if (data.success) {
         setSuccessMessage('Notification settings updated successfully!')
@@ -267,24 +230,13 @@ export default function CompanySettingsPage() {
       setError(null)
       setSuccessMessage(null)
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/auth/change-password`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          currentPassword: passwordForm.currentPassword,
-          newPassword: passwordForm.newPassword
-        })
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.CHANGE_PASSWORD);
       
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to change password')
-      }
+      const data = await ApiClient.post(url, {
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword
+      });
       
       if (data.success) {
         setSuccessMessage('Password changed successfully!')
@@ -312,16 +264,10 @@ export default function CompanySettingsPage() {
       setSaving(true)
       setError(null)
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/auth/logout`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.LOGOUT);
       
-      const data = await response.json()
+      const data = await ApiClient.post(url, {});
       
       if (data.success) {
         localStorage.removeItem('access_token')
@@ -353,7 +299,10 @@ export default function CompanySettingsPage() {
     <div className="min-h-screen bg-gray-50 p-6 md:p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Company Settings</h1>
+          <p className="text-gray-600">Configure your company preferences and security settings</p>
+        </div>
         
         {/* Success Message */}
         {successMessage && (

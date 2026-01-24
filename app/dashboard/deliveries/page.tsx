@@ -15,6 +15,9 @@ import {
   IconSearch,
   IconFilter
 } from '@tabler/icons-react'
+import { API_CONFIG } from "../../lib/config"
+import { ApiClient } from "../../lib/api-client"
+
 
 interface Delivery {
   _id: string
@@ -120,30 +123,23 @@ export default function DeliveriesPage() {
   const fetchStats = async () => {
     try {
       setStatsLoading(true)
-      const token = localStorage.getItem('access_token')
       
-      // Fetch all deliveries to get accurate stats
-      const response = await fetch(
-        'http://localhost:5000/api/deliveries/company/deliveries?page=1&limit=1000',
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
-      )
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.DELIVERIES.COMPANY_DELIVERIES) + '?page=1&limit=1000';
       
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success) {
-          const allDeliveries = data.data
-          setAllStats({
-            totalDeliveries: data.pagination?.total || 0,
-            totalDelivered: allDeliveries.filter((d: Delivery) => d.status === 'delivered').length,
-            totalInProgress: allDeliveries.filter((d: Delivery) => 
-              ['assigned', 'picked_up', 'in_transit'].includes(d.status)
-            ).length,
-            totalPending: allDeliveries.filter((d: Delivery) => d.status === 'pending').length,
-            totalCancelled: allDeliveries.filter((d: Delivery) => d.status === 'cancelled').length
-          })
-        }
+      const data = await ApiClient.get(url);
+      
+      if (data.success) {
+        const allDeliveries = data.data
+        setAllStats({
+          totalDeliveries: data.pagination?.total || 0,
+          totalDelivered: allDeliveries.filter((d: Delivery) => d.status === 'delivered').length,
+          totalInProgress: allDeliveries.filter((d: Delivery) => 
+            ['assigned', 'picked_up', 'in_transit'].includes(d.status)
+          ).length,
+          totalPending: allDeliveries.filter((d: Delivery) => d.status === 'pending').length,
+          totalCancelled: allDeliveries.filter((d: Delivery) => d.status === 'cancelled').length
+        })
       }
     } catch (error) {
       console.error('Error fetching stats:', error)
@@ -155,20 +151,15 @@ export default function DeliveriesPage() {
   const fetchDeliveries = async (page = 1) => {
     try {
       setLoading(true)
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(
-        `http://localhost:5000/api/deliveries/company/deliveries?page=${page}&limit=10`,
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
-      )
       
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success) {
-          setDeliveries(data.data)
-          setPagination(data.pagination)
-        }
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.DELIVERIES.COMPANY_DELIVERIES) + `?page=${page}&limit=10`;
+      
+      const data = await ApiClient.get(url);
+      
+      if (data.success) {
+        setDeliveries(data.data)
+        setPagination(data.pagination)
       }
     } catch (error) {
       console.error('Error fetching deliveries:', error)

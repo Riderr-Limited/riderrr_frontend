@@ -16,7 +16,7 @@ import {
 } from "@tabler/icons-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { formatDate } from "@/libs/utils";
+ import { API_CONFIG } from "./../lib/config";  
 
 interface Delivery {
   _id: string;
@@ -51,7 +51,7 @@ export default function DashboardPage() {
     try {
       const token = localStorage.getItem("access_token");
       const response = await fetch(
-        "http://localhost:5000/api/notifications/unread-count",
+        API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT),
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -70,10 +70,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     // Start with immediate call, then set interval
+    fetchUnreadCount(); // Call immediately
     const interval = setInterval(fetchUnreadCount, 30000);
-    setTimeout(() => {
-      fetchUnreadCount(); // Call immediately after setting up interval
-    }, 0);
+    
     return () => clearInterval(interval);
   }, [fetchUnreadCount]);
 
@@ -92,79 +91,77 @@ export default function DashboardPage() {
     drivers: true,
   });
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading({ stats: true, deliveries: true, drivers: true });
-        const token = localStorage.getItem("access_token");
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      setLoading({ stats: true, deliveries: true, drivers: true });
+      const token = localStorage.getItem("access_token");
 
-        // Fetch deliveries
-        const deliveriesRes = await fetch(
-          "http://localhost:5000/api/deliveries/company/deliveries",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        if (deliveriesRes.ok) {
-          const deliveriesData = await deliveriesRes.json();
-          if (deliveriesData.success) {
-            setDeliveries(deliveriesData.data);
-            setStats((prev) => ({
-              ...prev,
-              totalDeliveries: deliveriesData.pagination?.total || 0,
-            }));
-            setLoading((prev) => ({ ...prev, deliveries: false }));
-          }
-        }
+      // Use Promise.all to fetch data in parallel
+      const [deliveriesRes, driversRes, statsRes] = await Promise.all([
+        fetch(
+          API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.DELIVERIES.COMPANY_DELIVERIES),
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+        fetch(
+          API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DRIVERS),
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+        fetch(
+          API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.STATISTICS),
+          { headers: { Authorization: `Bearer ${token}` } }
+        ),
+      ]);
 
-        // Fetch drivers
-        const driversRes = await fetch(
-          "http://localhost:5000/api/company/drivers",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        if (driversRes.ok) {
-          const driversData = await driversRes.json();
-          if (driversData.success) {
-            setDrivers(driversData.data);
-            const online = driversData.data.filter(
-              (d: Driver) => d.isOnline && d.isActive,
-            ).length;
-            setStats((prev) => ({
-              ...prev,
-              totalDrivers: driversData.data.length,
-              onlineDrivers: online,
-            }));
-            setLoading((prev) => ({ ...prev, drivers: false }));
-          }
+      // Process deliveries response
+      if (deliveriesRes.ok) {
+        const deliveriesData = await deliveriesRes.json();
+        if (deliveriesData.success) {
+          setDeliveries(deliveriesData.data);
+          setStats((prev) => ({
+            ...prev,
+            totalDeliveries: deliveriesData.pagination?.total || 0,
+          }));
+          setLoading((prev) => ({ ...prev, deliveries: false }));
         }
-
-        // Fetch statistics
-        const statsRes = await fetch(
-          "http://localhost:5000/api/company/statistics",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          if (statsData.success) {
-            setStats((prev) => ({
-              ...prev,
-              totalRevenue: statsData.data.summary?.totalRevenue || 0,
-            }));
-            setLoading((prev) => ({ ...prev, stats: false }));
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        setLoading({ stats: false, deliveries: false, drivers: false });
       }
-    };
 
-    fetchDashboardData();
+      // Process drivers response
+      if (driversRes.ok) {
+        const driversData = await driversRes.json();
+        if (driversData.success) {
+          setDrivers(driversData.data);
+          const online = driversData.data.filter(
+            (d: Driver) => d.isOnline && d.isActive,
+          ).length;
+          setStats((prev) => ({
+            ...prev,
+            totalDrivers: driversData.data.length,
+            onlineDrivers: online,
+          }));
+          setLoading((prev) => ({ ...prev, drivers: false }));
+        }
+      }
+
+      // Process statistics response
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        if (statsData.success) {
+          setStats((prev) => ({
+            ...prev,
+            totalRevenue: statsData.data.summary?.totalRevenue || 0,
+          }));
+          setLoading((prev) => ({ ...prev, stats: false }));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      setLoading({ stats: false, deliveries: false, drivers: false });
+    }
   }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
@@ -184,74 +181,8 @@ export default function DashboardPage() {
   };
 
   const refreshData = useCallback(async () => {
-    try {
-      setLoading({ stats: true, deliveries: true, drivers: true });
-      const token = localStorage.getItem("access_token");
-
-      // Fetch deliveries
-      const deliveriesRes = await fetch(
-        "http://localhost:5000/api/deliveries/company/deliveries",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (deliveriesRes.ok) {
-        const deliveriesData = await deliveriesRes.json();
-        if (deliveriesData.success) {
-          setDeliveries(deliveriesData.data);
-          setStats((prev) => ({
-            ...prev,
-            totalDeliveries: deliveriesData.pagination?.total || 0,
-          }));
-          setLoading((prev) => ({ ...prev, deliveries: false }));
-        }
-      }
-
-      // Fetch drivers
-      const driversRes = await fetch(
-        "http://localhost:5000/api/company/drivers",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (driversRes.ok) {
-        const driversData = await driversRes.json();
-        if (driversData.success) {
-          setDrivers(driversData.data);
-          const online = driversData.data.filter(
-            (d: Driver) => d.isOnline && d.isActive,
-          ).length;
-          setStats((prev) => ({
-            ...prev,
-            totalDrivers: driversData.data.length,
-            onlineDrivers: online,
-          }));
-          setLoading((prev) => ({ ...prev, drivers: false }));
-        }
-      }
-
-      // Fetch statistics
-      const statsRes = await fetch(
-        "http://localhost:5000/api/company/statistics",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        if (statsData.success) {
-          setStats((prev) => ({
-            ...prev,
-            totalRevenue: statsData.data.summary?.totalRevenue || 0,
-          }));
-          setLoading((prev) => ({ ...prev, stats: false }));
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-      setLoading({ stats: false, deliveries: false, drivers: false });
-    }
-  }, []);
+    await fetchDashboardData();
+  }, [fetchDashboardData]);
 
   return (
     <div className="space-y-6">
@@ -262,6 +193,9 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold">
               Welcome back, {user?.name || "User"}!
             </h2>
+            <p className="text-blue-100 mt-1">
+              API Base URL: {API_CONFIG.BASE_URL} {/* Optional: Remove in production */}
+            </p>
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <div className="bg-white/20 px-4 py-2 rounded-lg">
@@ -285,6 +219,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Rest of your component remains the same... */}
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatsCard
@@ -575,7 +510,6 @@ export default function DashboardPage() {
   );
 }
 
-// Add this helper function at the end of the file
-function cn(...classes: (string | boolean | undefined | null)[]) {
+ function cn(...classes: (string | boolean | undefined | null)[]) {
   return classes.filter(Boolean).join(" ");
 }
