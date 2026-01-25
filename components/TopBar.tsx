@@ -1,86 +1,95 @@
-'use client'
+"use client";
 
-import { useAuth } from '@/contexts/AuthContext'
-import { IconBell, IconSearch, IconUser, IconLogout, IconSettings } from '@tabler/icons-react'
-import { useState, useEffect } from 'react'
-import NotificationModal from '@/components/notifications/NotificationModal'
-import { useRouter } from 'next/navigation'
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  IconBell,
+  IconSearch,
+  IconUser,
+  IconLogout,
+  IconSettings,
+} from "@tabler/icons-react";
+import { useState, useEffect } from "react";
+import NotificationModal from "@/components/notifications/NotificationModal";
+import { useRouter } from "next/navigation";
 
 export default function TopBar() {
-  const { user, logout } = useAuth()
-  const router = useRouter()
-  const [search, setSearch] = useState('')
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [showUserMenu, setShowUserMenu] = useState(false)
+  const { user, logout } = useAuth();
+  const router = useRouter();
+  const [search, setSearch] = useState("");
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   // Fetch unread notification count
   const fetchUnreadCount = async () => {
     try {
-      const token = localStorage.getItem('access_token')
-      if (!token) return
-      
-      const response = await fetch('http://localhost:5000/api/notifications/unread-count', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+
+      const response = await fetch(
+        "https://api.riderr.ng/api/notifications/unread-count",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (data.success) {
-          setUnreadCount(data.data.count)
+          setUnreadCount(data.data.count);
         }
       }
     } catch (error) {
-      console.error('Error fetching unread count:', error)
+      console.error("Error fetching unread count:", error);
     }
-  }
+  };
 
   // Set up interval for real-time updates
   useEffect(() => {
-    fetchUnreadCount()
-    const interval = setInterval(fetchUnreadCount, 30000) // Refresh every 30 seconds
-    return () => clearInterval(interval)
-  }, [])
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (search.trim()) {
-      console.log('Searching for:', search)
+      console.log("Searching for:", search);
       // Implement search functionality here
       // router.push(`/search?q=${encodeURIComponent(search)}`)
     }
-  }
+  };
 
   // Handle user logout
   const handleLogout = async () => {
-    await logout()
-    router.push('/login')
-  }
+    await logout();
+    router.push("/login");
+  };
 
   // Handle profile click
   const handleProfileClick = () => {
-    router.push('/dashboard/profile')
-    setShowUserMenu(false)
-  }
+    router.push("/dashboard/profile");
+    setShowUserMenu(false);
+  };
 
   // Handle settings click
   const handleSettingsClick = () => {
-    router.push('/dashboard/settings')
-    setShowUserMenu(false)
-  }
+    router.push("/dashboard/settings");
+    setShowUserMenu(false);
+  };
 
   // Close user menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (showUserMenu && !(event.target as Element).closest('.user-menu')) {
-        setShowUserMenu(false)
+      if (showUserMenu && !(event.target as Element).closest(".user-menu")) {
+        setShowUserMenu(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showUserMenu])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showUserMenu]);
 
   return (
     <>
@@ -119,7 +128,7 @@ export default function TopBar() {
                   <IconBell className="h-6 w-6" />
                   {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                      {unreadCount > 9 ? '9+' : unreadCount}
+                      {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                   )}
                 </button>
@@ -134,15 +143,15 @@ export default function TopBar() {
                 >
                   <div className="hidden md:block text-right">
                     <p className="text-sm font-medium text-gray-900 truncate max-w-[150px]">
-                      {user?.name || 'User'}
+                      {user?.name || "User"}
                     </p>
                     <p className="text-xs text-gray-500 capitalize">
-                      {user?.role?.replace('_', ' ') || 'User'}
+                      {user?.role?.replace("_", " ") || "User"}
                     </p>
                   </div>
                   <div className="h-9 w-9 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center">
                     <span className="text-white font-semibold text-sm">
-                      {user?.name?.charAt(0).toUpperCase() || 'U'}
+                      {user?.name?.charAt(0).toUpperCase() || "U"}
                     </span>
                   </div>
                 </button>
@@ -152,13 +161,13 @@ export default function TopBar() {
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                     <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900">
-                        {user?.name || 'User'}
+                        {user?.name || "User"}
                       </p>
                       <p className="text-xs text-gray-500 truncate">
-                        {user?.email || 'user@example.com'}
+                        {user?.email || "user@example.com"}
                       </p>
                     </div>
-                    
+
                     <div className="py-1">
                       <button
                         onClick={handleProfileClick}
@@ -167,7 +176,7 @@ export default function TopBar() {
                         <IconUser className="h-4 w-4 mr-3 text-gray-500" />
                         My Profile
                       </button>
-                      
+
                       <button
                         onClick={handleSettingsClick}
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -176,7 +185,7 @@ export default function TopBar() {
                         Settings
                       </button>
                     </div>
-                    
+
                     <div className="border-t border-gray-100 py-1">
                       <button
                         onClick={handleLogout}
@@ -192,15 +201,13 @@ export default function TopBar() {
             </div>
           </div>
         </div>
-
-     
       </header>
 
       {/* Notification Modal */}
-      <NotificationModal 
-        isOpen={isNotificationOpen} 
-        onClose={() => setIsNotificationOpen(false)} 
+      <NotificationModal
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
       />
     </>
-  )
+  );
 }

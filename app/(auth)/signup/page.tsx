@@ -238,7 +238,7 @@ export default function OrgRegistration() {
       );
 
       const response = await axios.post(
-        "http://localhost:5000/api/auth/signup",
+        "https://api.riderr.ng/api/auth/signup",
         payload,
         {
           headers: {
@@ -357,7 +357,7 @@ export default function OrgRegistration() {
     setVerificationLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/verify-email",
+        "https://api.riderr.ng/api/auth/verify-email",
         {
           email: form.email.trim().toLowerCase(),
           token: verificationCode,
@@ -433,7 +433,7 @@ export default function OrgRegistration() {
   async function handleResendCode() {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/resend-verification",
+        "https://api.riderr.ng/api/auth/resend-verification",
         {
           email: form.email.trim().toLowerCase(),
         },
