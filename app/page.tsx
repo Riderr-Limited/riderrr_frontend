@@ -26,7 +26,6 @@ export default function Landing() {
       <ForOrganizations />
       <PartnerCTA />
       <Features />
-      <WhoItsFor />
       <Stats />
       <CallToAction />
       <FAQ />

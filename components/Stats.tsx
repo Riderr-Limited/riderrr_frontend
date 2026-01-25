@@ -6,14 +6,16 @@ export function Stats() {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="grid md:grid-cols-3 gap-8 text-center max-w-5xl mx-auto">
-        {stats.map((s) => (
-          <div key={s.label}>
-            <h3 className="text-4xl font-bold text-brand-700">{s.value}</h3>
-            <p className="text-gray-600">{s.label}</p>
-          </div>
-        ))}
+    <section className="py-20 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {stats.map((stat) => (
+            <div key={stat.label} className="text-center bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+              <h3 className="text-5xl font-bold text-blue-500 mb-2">{stat.value}</h3>
+              <p className="text-gray-600 font-medium">{stat.label}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
