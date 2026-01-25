@@ -17,6 +17,7 @@ import {
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatusBadge } from "@/components/ui/status-badge";
  import { API_CONFIG } from "./../lib/config";  
+ import { formatDate } from './../lib/utils'
 
 interface Delivery {
   _id: string;
