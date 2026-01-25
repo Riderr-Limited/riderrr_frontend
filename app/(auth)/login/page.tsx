@@ -104,11 +104,11 @@ function LoginFormContent() {
 
       // Using centralized config
       const url = API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN);
-      
+
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           emailOrPhone: loginIdentifier,
@@ -116,25 +116,27 @@ function LoginFormContent() {
         }),
       });
 
+      console.log("respone frjm", response);
+
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || "Login failed");
       }
 
       if (data.success && data.data?.access_token) {
         // Store token
-        localStorage.setItem('access_token', data.data.access_token);
+        localStorage.setItem("access_token", data.data.access_token);
         if (data.data.refresh_token) {
-          localStorage.setItem('refresh_token', data.data.refresh_token);
+          localStorage.setItem("refresh_token", data.data.refresh_token);
         }
 
         // Update auth context
         // ... your auth context logic here
-        
+
         router.push(redirectTo);
       } else {
-        throw new Error('Invalid response from server');
+        throw new Error("Invalid response from server");
       }
     } catch (error: unknown) {
       console.error("Login error:", error);
