@@ -55,15 +55,30 @@ export default function Footer() {
 
             {/* Socials */}
             <div className="flex gap-4">
-              {[FaLinkedinIn, FaInstagram, FaWhatsapp].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
-                >
-                  <Icon />
-                </a>
-              ))}
+              <a
+                href="https://www.linkedin.com/company/riderr-logistics/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+              >
+                <FaLinkedinIn />
+              </a>
+              <a
+                href="https://www.instagram.com/riderr.ng?utm_source=qr&igsh=MTJ0Mjd4aHBlODM0ZQ=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+              >
+                <FaInstagram />
+              </a>
+              <a
+                href="https://wa.link/39ouwk"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+              >
+                <FaWhatsapp />
+              </a>
             </div>
           </div>
 

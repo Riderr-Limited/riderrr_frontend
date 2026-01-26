@@ -29,7 +29,7 @@ export default function Landing() {
       <Stats />
       <CallToAction />
       <FAQ />
-      <ContactUs />
+      {/* <ContactUs /> */}
       <Footer />
     </div>
   );
