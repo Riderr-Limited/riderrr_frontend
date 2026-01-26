@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { 
-  IconBell, 
-  IconCheck, 
-  IconClock, 
+import { useState, useEffect, useRef } from "react";
+import {
+  IconBell,
+  IconCheck,
+  IconClock,
   IconAlertCircle,
   IconPackage,
   IconUser,
@@ -12,144 +12,154 @@ import {
   IconX,
   IconTrash,
   IconChecklist,
-  IconExternalLink
-} from '@tabler/icons-react'
-import { formatDistanceToNow } from 'date-fns'
+  IconExternalLink,
+} from "@tabler/icons-react";
+//import { formatDistanceToNow } from 'date-fns'
 
 interface Notification {
-  _id: string
-  title: string
-  message: string
-  type: string
-  subType?: string
-  read: boolean
-  createdAt: string
-  data?: any
-  priority?: string
-  actionUrl?: string
-  actionLabel?: string
+  _id: string;
+  title: string;
+  message: string;
+  type: string;
+  subType?: string;
+  read: boolean;
+  createdAt: string;
+  data?: any;
+  priority?: string;
+  actionUrl?: string;
+  actionLabel?: string;
 }
 
 interface NotificationModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [loading, setLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all')
-  const [unreadCount, setUnreadCount] = useState(0)
-  const modalRef = useRef<HTMLDivElement>(null)
+export default function NotificationModal({
+  isOpen,
+  onClose,
+}: NotificationModalProps) {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
+  const [unreadCount, setUnreadCount] = useState(0);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Close modal when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        onClose()
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        onClose();
       }
-    }
+    };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside);
     }
-    
+
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isOpen, onClose])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
   const fetchNotifications = async () => {
     try {
-      setLoading(true)
-      const token = localStorage.getItem('access_token')
-      
-      const url = activeTab === 'unread' 
-        ? 'http://localhost:5000/api/notifications?unreadOnly=true'
-        : 'http://localhost:5000/api/notifications'
-      
+      setLoading(true);
+      const token = localStorage.getItem("access_token");
+
+      const url =
+        activeTab === "unread"
+          ? "https://api.riderr.ng/api/notifications?unreadOnly=true"
+          : "https://api.riderr.ng/api/notifications";
+
       const response = await fetch(url, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       if (response.ok) {
-        const data = await response.json()
+        const data = await response.json();
         if (data.success) {
-          setNotifications(data.data || [])
-          setUnreadCount(data.pagination?.unreadCount || 0)
+          setNotifications(data.data || []);
+          setUnreadCount(data.pagination?.unreadCount || 0);
         }
       }
     } catch (error) {
-      console.error('Error fetching notifications:', error)
+      console.error("Error fetching notifications:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (isOpen) {
-      fetchNotifications()
+      fetchNotifications();
     }
-  }, [isOpen, activeTab])
+  }, [isOpen, activeTab]);
 
   const getNotificationIcon = (type: string) => {
-    const iconProps = { className: "h-5 w-5 text-gray-500" }
-    
+    const iconProps = { className: "h-5 w-5 text-gray-500" };
+
     switch (type) {
-      case 'order':
-        return <IconPackage {...iconProps} />
-      case 'payment':
-        return <IconCash {...iconProps} />
-      case 'user':
-        return <IconUser {...iconProps} />
-      case 'alert':
-        return <IconAlertCircle {...iconProps} />
-      case 'task':
-        return <IconChecklist {...iconProps} />
-      case 'success':
-        return <IconCheck {...iconProps} className="h-5 w-5 text-green-500" />
-      case 'pending':
-        return <IconClock {...iconProps} className="h-5 w-5 text-yellow-500" />
+      case "order":
+        return <IconPackage {...iconProps} />;
+      case "payment":
+        return <IconCash {...iconProps} />;
+      case "user":
+        return <IconUser {...iconProps} />;
+      case "alert":
+        return <IconAlertCircle {...iconProps} />;
+      case "task":
+        return <IconChecklist {...iconProps} />;
+      case "success":
+        return <IconCheck {...iconProps} className="h-5 w-5 text-green-500" />;
+      case "pending":
+        return <IconClock {...iconProps} className="h-5 w-5 text-yellow-500" />;
       default:
-        return <IconBell {...iconProps} />
+        return <IconBell {...iconProps} />;
     }
-  }
+  };
 
   const markAsRead = async (notificationId: string) => {
     try {
-      const token = localStorage.getItem('access_token')
-      await fetch(`http://localhost:5000/api/notifications/${notificationId}/read`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      fetchNotifications()
+      const token = localStorage.getItem("access_token");
+      await fetch(
+        `https://api.riderr.ng/api/notifications/${notificationId}/read`,
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      fetchNotifications();
     } catch (error) {
-      console.error('Error marking notification as read:', error)
+      console.error("Error marking notification as read:", error);
     }
-  }
+  };
 
   const markAllAsRead = async () => {
     try {
-      const token = localStorage.getItem('access_token')
-      await fetch('http://localhost:5000/api/notifications/mark-all-read', {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-      })
-      fetchNotifications()
+      const token = localStorage.getItem("access_token");
+      await fetch("https://api.riderr.ng/api/notifications/mark-all-read", {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchNotifications();
     } catch (error) {
-      console.error('Error marking all notifications as read:', error)
+      console.error("Error marking all notifications as read:", error);
     }
-  }
+  };
 
   // ... rest of your functions (deleteNotification, etc.) ...
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50">
       {/* Position the modal as a dropdown from the bell icon */}
       <div className="absolute top-16 right-4 md:right-6">
-        <div 
+        <div
           ref={modalRef}
           className="w-80 md:w-96 bg-white rounded-xl shadow-lg border border-gray-200 ring-1 ring-black ring-opacity-5"
         >
@@ -158,13 +168,15 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
             <div className="flex items-center space-x-2">
               <IconBell className="h-5 w-5 text-gray-700" />
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Notifications
+                </h3>
                 <p className="text-xs text-gray-500">
-                  {activeTab === 'all' ? 'All' : 'Unread'}
+                  {activeTab === "all" ? "All" : "Unread"}
                 </p>
               </div>
             </div>
-            
+
             <button
               onClick={onClose}
               className="p-1 text-gray-400 hover:text-gray-600"
@@ -177,21 +189,21 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
           <div className="border-b border-gray-200">
             <div className="flex">
               <button
-                onClick={() => setActiveTab('all')}
+                onClick={() => setActiveTab("all")}
                 className={`flex-1 px-3 py-2 text-xs font-medium ${
-                  activeTab === 'all'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                  activeTab === "all"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
               >
                 All
               </button>
               <button
-                onClick={() => setActiveTab('unread')}
+                onClick={() => setActiveTab("unread")}
                 className={`flex-1 px-3 py-2 text-xs font-medium ${
-                  activeTab === 'unread'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                  activeTab === "unread"
+                    ? "text-blue-600 border-b-2 border-blue-600"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
               >
                 Unread ({unreadCount})
@@ -215,13 +227,13 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
                 {notifications.slice(0, 10).map((notification) => (
                   <div
                     key={notification._id}
-                    className={`p-3 hover:bg-gray-50 ${!notification.read ? 'bg-blue-50/30' : ''}`}
+                    className={`p-3 hover:bg-gray-50 ${!notification.read ? "bg-blue-50/30" : ""}`}
                   >
                     <div className="flex items-start">
                       <div className="flex-shrink-0 mt-0.5">
                         {getNotificationIcon(notification.type)}
                       </div>
-                      
+
                       <div className="ml-3 flex-1 min-w-0">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -233,11 +245,11 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
                             </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-400">
+                          {/**<span className="text-xs text-gray-400">
                             {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                          </span>
+                          </span> */}
                           <div className="flex items-center space-x-1">
                             {!notification.read && (
                               <button
@@ -262,7 +274,7 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
             <div className="border-t border-gray-200 px-3 py-2">
               <div className="flex items-center justify-between">
                 <button
-                  onClick={() => window.location.href = '/notifications'}
+                  onClick={() => (window.location.href = "/notifications")}
                   className="text-xs text-blue-600 hover:text-blue-800"
                 >
                   View all
@@ -279,5 +291,5 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
         </div>
       </div>
     </div>
-  )
+  );
 }

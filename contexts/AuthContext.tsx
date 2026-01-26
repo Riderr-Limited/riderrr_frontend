@@ -1,14 +1,20 @@
 // contexts/AuthContext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 export interface User {
   _id: string;
   name: string;
   email: string;
   phone?: string;
-  role: 'customer' | 'driver' | 'company_admin' | 'admin';
+  role: "customer" | "driver" | "company_admin" | "admin";
   companyId?: string;
   avatarUrl?: string;
   isVerified?: boolean;
@@ -33,7 +39,7 @@ interface RegisterData {
   email: string;
   phone: string;
   password: string;
-  role?: User['role'];
+  role?: User["role"];
   companyId?: string;
 }
 
@@ -64,13 +70,16 @@ interface AuthContextType {
   resetPassword: (token: string, password: string) => Promise<AuthResponse>;
   verifyEmail: (token: string) => Promise<void>;
   updateProfile: (profileData: Partial<User>) => Promise<AuthResponse>;
-  changePassword: (currentPassword: string, newPassword: string) => Promise<AuthResponse>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string,
+  ) => Promise<AuthResponse>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // API base URL - adjust based on your environment
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.riderr.ng/api";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -86,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await fetchUserProfile();
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        console.error("Auth initialization error:", error);
         clearTokens();
       } finally {
         setIsLoading(false);
@@ -98,49 +107,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Token management
   const getAccessToken = (): string | null => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('access_token');
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("access_token");
   };
 
   const getRefreshToken = (): string | null => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem('refresh_token');
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("refresh_token");
   };
 
   const setTokens = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
+    localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
   };
 
   const clearTokens = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
   };
 
   // Store user data in localStorage for persistence
   const storeUser = (userData: User) => {
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   // API request helper with better error handling
   const apiRequest = async <T,>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<T> => {
     const token = getAccessToken();
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
-    
+
     // Safely merge additional headers
-    if (options.headers && typeof options.headers === 'object' && !Array.isArray(options.headers)) {
+    if (
+      options.headers &&
+      typeof options.headers === "object" &&
+      !Array.isArray(options.headers)
+    ) {
       const additionalHeaders = options.headers as Record<string, string>;
       Object.assign(headers, additionalHeaders);
     }
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
 
     try {
@@ -150,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       // Handle token refresh on 401
-      if (response.status === 401 && !headers['no-refresh']) {
+      if (response.status === 401 && !headers["no-refresh"]) {
         const refreshSuccess = await refreshToken();
         if (refreshSuccess) {
           // Retry the original request with new token
@@ -158,8 +171,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             ...options,
             headers: {
               ...headers,
-              'Authorization': `Bearer ${getAccessToken()}`,
-              'no-refresh': 'true',
+              Authorization: `Bearer ${getAccessToken()}`,
+              "no-refresh": "true",
             },
           });
         }
@@ -168,13 +181,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || `Error ${response.status}: ${response.statusText}`);
+        throw new Error(
+          data.message || `Error ${response.status}: ${response.statusText}`,
+        );
       }
 
       return data;
     } catch (error: any) {
-      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-        throw new Error('Unable to connect to server. Please check your internet connection.');
+      if (
+        error.name === "TypeError" &&
+        error.message.includes("Failed to fetch")
+      ) {
+        throw new Error(
+          "Unable to connect to server. Please check your internet connection.",
+        );
       }
       throw error;
     }
@@ -183,13 +203,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Fetch user profile
   const fetchUserProfile = async () => {
     try {
-      const data = await apiRequest<AuthResponse>('/users/profile');
+      const data = await apiRequest<AuthResponse>("/users/profile");
       if (data.success && data.data.user) {
         setUser(data.data.user);
         storeUser(data.data.user);
       }
     } catch (error) {
-      console.error('Failed to fetch user profile:', error);
+      console.error("Failed to fetch user profile:", error);
       throw error;
     }
   };
@@ -198,8 +218,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginCredentials) => {
     setIsLoading(true);
     try {
-      const data = await apiRequest<AuthResponse>('/auth/login', {
-        method: 'POST',
+      const data = await apiRequest<AuthResponse>("/auth/login", {
+        method: "POST",
         body: JSON.stringify(credentials),
       });
 
@@ -208,10 +228,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(data.data.user);
         storeUser(data.data.user);
       } else {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || "Login failed");
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -222,8 +242,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (registerData: RegisterData) => {
     setIsLoading(true);
     try {
-      const data = await apiRequest<AuthResponse>('/auth/signup', {
-        method: 'POST',
+      const data = await apiRequest<AuthResponse>("/auth/signup", {
+        method: "POST",
         body: JSON.stringify(registerData),
       });
 
@@ -232,10 +252,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(data.data.user);
         storeUser(data.data.user);
       } else {
-        throw new Error(data.message || 'Registration failed');
+        throw new Error(data.message || "Registration failed");
       }
     } catch (error) {
-      console.error('Registration error:', error);
+      console.error("Registration error:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -246,20 +266,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const registerAsRider = async (riderData: any) => {
     setIsLoading(true);
     try {
-      const data = await apiRequest<AuthResponse>('/auth/signup-company-driver', {
-        method: 'POST',
-        body: JSON.stringify(riderData),
-      });
+      const data = await apiRequest<AuthResponse>(
+        "/auth/signup-company-driver",
+        {
+          method: "POST",
+          body: JSON.stringify(riderData),
+        },
+      );
 
       if (data.success && data.data) {
         setTokens(data.data.accessToken, data.data.refreshToken);
         setUser(data.data.user);
         storeUser(data.data.user);
       } else {
-        throw new Error(data.message || 'Rider registration failed');
+        throw new Error(data.message || "Rider registration failed");
       }
     } catch (error) {
-      console.error('Rider registration error:', error);
+      console.error("Rider registration error:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -270,20 +293,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const registerWithCompany = async (companyId: string, userData: any) => {
     setIsLoading(true);
     try {
-      const data = await apiRequest<AuthResponse>(`/auth/signup/company/${companyId}`, {
-        method: 'POST',
-        body: JSON.stringify(userData),
-      });
+      const data = await apiRequest<AuthResponse>(
+        `/auth/signup/company/${companyId}`,
+        {
+          method: "POST",
+          body: JSON.stringify(userData),
+        },
+      );
 
       if (data.success && data.data) {
         setTokens(data.data.accessToken, data.data.refreshToken);
         setUser(data.data.user);
         storeUser(data.data.user);
       } else {
-        throw new Error(data.message || 'Company registration failed');
+        throw new Error(data.message || "Company registration failed");
       }
     } catch (error) {
-      console.error('Company registration error:', error);
+      console.error("Company registration error:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -300,31 +326,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsRefreshing(true);
     try {
       const response = await fetch(`${API_URL}/auth/refresh`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ refreshToken }),
       });
 
       if (!response.ok) {
-        throw new Error('Token refresh failed');
+        throw new Error("Token refresh failed");
       }
 
       const data = await response.json();
-      
+
       if (data.success && data.data?.accessToken) {
-        localStorage.setItem('access_token', data.data.accessToken);
+        localStorage.setItem("access_token", data.data.accessToken);
         // Refresh token might also be rotated
         if (data.data.refreshToken) {
-          localStorage.setItem('refresh_token', data.data.refreshToken);
+          localStorage.setItem("refresh_token", data.data.refreshToken);
         }
         return true;
       }
-      
+
       return false;
     } catch (error) {
-      console.error('Token refresh error:', error);
+      console.error("Token refresh error:", error);
       clearTokens();
       setUser(null);
       return false;
@@ -340,8 +366,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Call logout endpoint if token exists
       const token = getAccessToken();
       if (token) {
-        await apiRequest('/auth/logout', {
-          method: 'POST',
+        await apiRequest("/auth/logout", {
+          method: "POST",
         }).catch(() => {
           // Silently fail if logout API fails
         });
@@ -351,15 +377,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setIsLoading(false);
       // Redirect to login page
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
       }
     }
   };
 
   // Update user data
   const updateUser = (userData: Partial<User>) => {
-    const updatedUser = user ? { ...user, ...userData } : userData as User;
+    const updatedUser = user ? { ...user, ...userData } : (userData as User);
     setUser(updatedUser);
     if (updatedUser) {
       storeUser(updatedUser);
@@ -369,18 +395,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Forgot password
   const forgotPassword = async (emailOrPhone: string) => {
     try {
-      const data = await apiRequest<AuthResponse>('/auth/forgot-password', {
-        method: 'POST',
+      const data = await apiRequest<AuthResponse>("/auth/forgot-password", {
+        method: "POST",
         body: JSON.stringify({ emailOrPhone }),
       });
-      
+
       if (!data.success) {
-        throw new Error(data.message || 'Failed to send reset instructions');
+        throw new Error(data.message || "Failed to send reset instructions");
       }
-      
+
       return data;
     } catch (error) {
-      console.error('Forgot password error:', error);
+      console.error("Forgot password error:", error);
       throw error;
     }
   };
@@ -388,18 +414,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Reset password
   const resetPassword = async (token: string, password: string) => {
     try {
-      const data = await apiRequest<AuthResponse>('/auth/reset-password', {
-        method: 'POST',
+      const data = await apiRequest<AuthResponse>("/auth/reset-password", {
+        method: "POST",
         body: JSON.stringify({ token, password }),
       });
-      
+
       if (!data.success) {
-        throw new Error(data.message || 'Failed to reset password');
+        throw new Error(data.message || "Failed to reset password");
       }
-      
+
       return data;
     } catch (error) {
-      console.error('Reset password error:', error);
+      console.error("Reset password error:", error);
       throw error;
     }
   };
@@ -407,13 +433,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Verify email
   const verifyEmail = async (token: string) => {
     try {
-      const data = await apiRequest<AuthResponse>(`/auth/verify-email/${token}`);
-      
+      const data = await apiRequest<AuthResponse>(
+        `/auth/verify-email/${token}`,
+      );
+
       if (!data.success) {
-        throw new Error(data.message || 'Email verification failed');
+        throw new Error(data.message || "Email verification failed");
       }
     } catch (error) {
-      console.error('Verify email error:', error);
+      console.error("Verify email error:", error);
       throw error;
     }
   };
@@ -421,8 +449,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Update user profile
   const updateProfile = async (profileData: Partial<User>) => {
     try {
-      const data = await apiRequest<AuthResponse>('/users/profile', {
-        method: 'PUT',
+      const data = await apiRequest<AuthResponse>("/users/profile", {
+        method: "PUT",
         body: JSON.stringify(profileData),
       });
 
@@ -430,29 +458,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(data.data.user);
         storeUser(data.data.user);
       }
-      
+
       return data;
     } catch (error) {
-      console.error('Update profile error:', error);
+      console.error("Update profile error:", error);
       throw error;
     }
   };
 
   // Change password
-  const changePassword = async (currentPassword: string, newPassword: string) => {
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ) => {
     try {
-      const data = await apiRequest<AuthResponse>('/users/change-password', {
-        method: 'PUT',
+      const data = await apiRequest<AuthResponse>("/users/change-password", {
+        method: "PUT",
         body: JSON.stringify({ currentPassword, newPassword }),
       });
-      
+
       if (!data.success) {
-        throw new Error(data.message || 'Failed to change password');
+        throw new Error(data.message || "Failed to change password");
       }
-      
+
       return data;
     } catch (error) {
-      console.error('Change password error:', error);
+      console.error("Change password error:", error);
       throw error;
     }
   };
@@ -480,21 +511,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
 
 // Higher-order component for protected routes
 export function withAuth<P extends object>(
-  WrappedComponent: React.ComponentType<P>
+  WrappedComponent: React.ComponentType<P>,
 ) {
   return function WithAuthComponent(props: P) {
     const { isAuthenticated, isLoading } = useAuth();
 
     useEffect(() => {
       if (!isLoading && !isAuthenticated) {
-        window.location.href = '/login';
+        window.location.href = "/login";
       }
     }, [isLoading, isAuthenticated]);
 
@@ -520,15 +551,15 @@ export function withAuth<P extends object>(
 // Hook for role-based access control - ADD THIS
 export function useRole() {
   const { user } = useAuth();
-  
+
   return {
-    isAdmin: user?.role === 'admin',
-    isCompanyAdmin: user?.role === 'company_admin',
-    isDriver: user?.role === 'driver',
-    isCustomer: user?.role === 'customer',
+    isAdmin: user?.role === "admin",
+    isCompanyAdmin: user?.role === "company_admin",
+    isDriver: user?.role === "driver",
+    isCustomer: user?.role === "customer",
     isVerified: user?.isVerified === true,
     isActive: user?.isActive !== false,
-    
+
     hasRole: (roles: string | string[]) => {
       if (!user) return false;
       if (Array.isArray(roles)) {
@@ -536,33 +567,33 @@ export function useRole() {
       }
       return user.role === roles;
     },
-    
+
     canAccess: (requiredRole: string | string[]) => {
       if (!user) return false;
       if (!user.isVerified) return false;
       if (!user.isActive) return false;
-      
+
       if (Array.isArray(requiredRole)) {
         return requiredRole.includes(user.role);
       }
       return user.role === requiredRole;
     },
-    
-    getUserRole: () => user?.role || 'guest',
+
+    getUserRole: () => user?.role || "guest",
   };
 }
 
 // Hook for company-specific features - ADD THIS
 export function useCompany() {
   const { user } = useAuth();
-  
+
   return {
     companyId: user?.companyId,
     company: user?.company,
     isCompanyUser: !!user?.companyId,
-    canManageCompany: user?.role === 'company_admin' || user?.role === 'admin',
-    isCompanyAdmin: user?.role === 'company_admin',
-    isCompanyDriver: user?.role === 'driver' && !!user?.companyId,
+    canManageCompany: user?.role === "company_admin" || user?.role === "admin",
+    isCompanyAdmin: user?.role === "company_admin",
+    isCompanyDriver: user?.role === "driver" && !!user?.companyId,
   };
 }
 
@@ -570,7 +601,7 @@ export function useCompany() {
 export function usePermissions() {
   const { user } = useAuth();
   const { isAdmin, isCompanyAdmin, isDriver, isCustomer } = useRole();
-  
+
   return {
     // Dashboard access
     canViewDashboard: !!user,
@@ -578,24 +609,24 @@ export function usePermissions() {
     canViewCompanyDashboard: isCompanyAdmin || isAdmin,
     canViewDriverDashboard: isDriver,
     canViewCustomerDashboard: isCustomer,
-    
+
     // Management permissions
     canManageUsers: isAdmin,
     canManageCompanies: isAdmin,
     canManageDrivers: isAdmin || isCompanyAdmin,
     canManageDeliveries: isAdmin || isCompanyAdmin || isDriver,
     canManageRides: isAdmin || isCompanyAdmin || isDriver,
-    
+
     // Financial permissions
     canViewRevenue: isAdmin || isCompanyAdmin,
     canProcessPayments: isAdmin,
     canViewReports: isAdmin || isCompanyAdmin,
-    
+
     // Profile permissions
     canEditProfile: !!user,
     canChangePassword: !!user,
     canUploadDocuments: isDriver || isCompanyAdmin,
-    
+
     // Company-specific
     canAddDrivers: isCompanyAdmin || isAdmin,
     canViewCompanyStats: isCompanyAdmin || isAdmin,

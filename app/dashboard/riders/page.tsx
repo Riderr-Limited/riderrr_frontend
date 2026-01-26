@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { IconPlus, IconUser, IconPhone, IconCar, IconCheck, IconX, IconEye, IconRefresh, IconPackage, IconCash, IconMapPin, IconId, IconCalendar, IconCarCrash, IconMail } from '@tabler/icons-react'
-import { formatDate } from '@/libs/utils'
+import { formatDate } from '../../lib/utils'
+import { API_CONFIG } from '../../lib/config'
+import { ApiClient } from '../../lib/api-client'
+
 
 interface Driver {
   _id: string
@@ -208,19 +211,14 @@ export default function RidersPage() {
   const fetchDrivers = async () => {
     try {
       setLoading(true)
-      const token = localStorage.getItem('access_token')
-      const response = await fetch('http://localhost:5000/api/company/drivers', {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
+      
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DRIVERS);
+      
+      const data = await ApiClient.get(url);
 
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success) {
-          setDrivers(data.data || [])
-        }
+      if (data.success) {
+        setDrivers(data.data || [])
       }
     } catch (error) {
       showToast('Failed to load riders', 'error')
@@ -254,32 +252,24 @@ export default function RidersPage() {
     setIsSubmitting(true)
 
     try {
-      const token = localStorage.getItem('access_token')
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.SIGNUP_COMPANY_DRIVER);
       
-      const userResponse = await fetch('http://localhost:5000/api/auth/signup-company-driver', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password,
-          role: 'driver',
-          licenseNumber: formData.licenseNumber,
-          licenseExpiry: formData.licenseExpiry,
-          vehicleType: formData.vehicleType,
-          vehicleMake: formData.vehicleMake,
-          vehicleModel: formData.vehicleModel,
-          vehicleYear: formData.vehicleYear,
-          vehicleColor: formData.vehicleColor,
-          plateNumber: formData.plateNumber
-        })
-      })
-
-      const result = await userResponse.json()
+      const result = await ApiClient.post(url, {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: 'driver',
+        licenseNumber: formData.licenseNumber,
+        licenseExpiry: formData.licenseExpiry,
+        vehicleType: formData.vehicleType,
+        vehicleMake: formData.vehicleMake,
+        vehicleModel: formData.vehicleModel,
+        vehicleYear: formData.vehicleYear,
+        vehicleColor: formData.vehicleColor,
+        plateNumber: formData.plateNumber
+      });
 
       if (!result.success) {
         throw new Error(result.message || 'Failed to create driver account')
@@ -338,18 +328,13 @@ export default function RidersPage() {
     setVerificationLoading(true)
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verify-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: verificationData.email,
-          token: verificationCode
-        })
-      })
-
-      const result = await response.json()
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.VERIFY_EMAIL);
+      
+      const result = await ApiClient.post(url, {
+        email: verificationData.email,
+        token: verificationCode
+      });
 
       if (!result.success) {
         throw new Error(result.message || 'Verification failed')
@@ -384,17 +369,12 @@ export default function RidersPage() {
     setVerificationError('')
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/resend-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: verificationData.email
-        })
-      })
-
-      const result = await response.json()
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.RESEND_VERIFICATION);
+      
+      const result = await ApiClient.post(url, {
+        email: verificationData.email
+      });
 
       if (!result.success) {
         throw new Error(result.message || 'Failed to resend verification code')

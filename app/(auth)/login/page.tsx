@@ -1,3 +1,4 @@
+// app/auth/login/page.tsx
 "use client";
 
 import { useState, Suspense } from "react";
@@ -15,6 +16,7 @@ import {
 import Image from "next/image";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { API_CONFIG } from "../../lib/config";
 
 function LoginFormContent() {
   const [identifier, setIdentifier] = useState("");
@@ -100,12 +102,42 @@ function LoginFormContent() {
         loginIdentifier = formatPhone(identifier);
       }
 
-      await login({
-        emailOrPhone: loginIdentifier,
-        password,
+      // Using centralized config
+      const url = API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN);
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          emailOrPhone: loginIdentifier,
+          password,
+        }),
       });
 
-      router.push(redirectTo);
+      console.log("respone frjm", response);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      if (data.success && data.data?.access_token) {
+        // Store token
+        localStorage.setItem("access_token", data.data.access_token);
+        if (data.data.refresh_token) {
+          localStorage.setItem("refresh_token", data.data.refresh_token);
+        }
+
+        // Update auth context
+        // ... your auth context logic here
+
+        router.push(redirectTo);
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (error: unknown) {
       console.error("Login error:", error);
       if (
@@ -290,7 +322,7 @@ function LoginFormContent() {
           <p className="text-sm text-gray-600">
             Don&apos;t have an account?{" "}
             <Link
-              href="/register"
+              href="/signup"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
               Sign up
@@ -304,7 +336,13 @@ function LoginFormContent() {
 
 export default function LoginForm() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      }
+    >
       <LoginFormContent />
     </Suspense>
   );
