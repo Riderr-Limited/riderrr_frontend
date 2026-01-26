@@ -25,7 +25,7 @@ const orgFeatures = [
 
 export default function ForOrganizations() {
   return (
-    <section className="py-20 bg-white">
+    <section id="organizations" className="py-20 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center max-w-4xl mx-auto mb-16">

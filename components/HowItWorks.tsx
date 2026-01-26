@@ -72,7 +72,7 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="py-28 bg-gradient-to-br from-[#1E5FD8] via-slate-900 to-[#1E5FD8] text-white relative overflow-hidden">
+    <section id="how it works" className="py-28 bg-gradient-to-br from-[#1E5FD8] via-slate-900 to-[#1E5FD8] text-white relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       <div className="absolute top-0 left-1/4 w-72 h-72 bg-[#1E5FD8]/30 rounded-full blur-3xl" />
