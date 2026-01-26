@@ -42,7 +42,7 @@ const steps = [
     description:
       "Enter pickup and drop-off details. Riderr instantly scans nearby riders and logistics partners.",
     icon: MapPinIcon,
-    color: "from-blue-500 to-cyan-500",
+    iconColor: "text-blue-600",
   },
   {
     step: "02",
@@ -50,7 +50,7 @@ const steps = [
     description:
       "Our system matches you with the most efficient rider based on distance, availability, and pricing.",
     icon: UserGroupIcon,
-    color: "from-purple-500 to-pink-500",
+    iconColor: "text-black",
   },
   {
     step: "03",
@@ -58,7 +58,7 @@ const steps = [
     description:
       "Follow your delivery live from pickup to drop-off with real-time status updates.",
     icon: EyeIcon,
-    color: "from-green-500 to-emerald-500",
+    iconColor: "text-yellow-600",
   },
   {
     step: "04",
@@ -66,13 +66,13 @@ const steps = [
     description:
       "Confirm delivery, rate the rider, and keep records — seamless and transparent.",
     icon: CheckCircleIcon,
-    color: "from-orange-500 to-red-500",
+    iconColor: "text-blue-600",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="py-28 bg-gradient-to-br from-[#1E5FD8] via-slate-900 to-[#1E5FD8] text-white relative overflow-hidden">
+    <section id="How it works" className="py-28 bg-gradient-to-br from-[#1E5FD8] via-slate-900 to-[#1E5FD8] text-white relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       <div className="absolute top-0 left-1/4 w-72 h-72 bg-[#1E5FD8]/30 rounded-full blur-3xl" />
@@ -128,8 +128,8 @@ export default function HowItWorks() {
 
                   {/* ICON */}
                   <div className="mb-6">
-                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${item.color} p-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                      <IconComponent className="w-full h-full text-white" />
+                    <div className="w-16 h-16 rounded-2xl bg-white p-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <IconComponent className={`w-full h-full ${item.iconColor}`} />
                     </div>
                   </div>
 

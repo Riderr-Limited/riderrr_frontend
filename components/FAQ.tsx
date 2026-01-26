@@ -15,7 +15,7 @@ export function FAQ() {
   ];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="faqs" className="py-20 bg-gray-50">
       <h2 className="text-3xl font-bold text-center mb-10">FAQs</h2>
       <div className="max-w-3xl mx-auto space-y-4">
         {faqs.map((f) => (

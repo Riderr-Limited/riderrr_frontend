@@ -11,49 +11,43 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-linear-to-br bg-[#1E5FD8] text-white relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
-      </div>
-
-      <div className="container mx-auto px-6 md:px-12 lg:px-20 py-16 relative z-10">
+    <footer className="w-full bg-gray-900 text-white">
+      <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Partners Section */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Our Trusted Partners
           </h2>
-          <p className="text-blue-100 mb-8 text-lg max-w-3xl mx-auto">
+          <p className="text-gray-300 mb-8 text-lg max-w-3xl mx-auto">
             We work with verified logistics companies to deliver fast,
             affordable, and reliable services—connecting users with nearby
             riders while enabling partners to manage operations in real time.
           </p>
 
-          <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center items-center gap-4 md:gap-10">
             {[1, 2, 3, 4, 5].map((num) => (
               <div
                 key={num}
-                className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/20 hover:bg-white/20 transition-all duration-300"
+                className="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover:bg-gray-700 transition-all duration-300"
               >
                 <Image
                   src="/partner-logo-placeholder.svg"
                   alt={`Partner ${num}`}
-                  width={120}
-                  height={50}
-                  className="opacity-80"
+                  width={100}
+                  height={40}
+                  className="opacity-80 w-full h-auto"
                 />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        {/* Main Footer Grid - Mobile: 2 columns, Desktop: 4 columns */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Column 1: Brand */}
-          <div className="space-y-6">
+          <div className="col-span-2 lg:col-span-1 space-y-6">
             <h3 className="text-xl font-bold">About the Platform</h3>
-            <p className="text-blue-100 text-sm leading-relaxed">
+            <p className="text-gray-300 text-sm leading-relaxed">
               An on-demand delivery platform that matches users with nearby
               riders at efficient costs, while empowering logistics partners
               with smart rider and delivery management tools.
@@ -61,22 +55,37 @@ export default function Footer() {
 
             {/* Socials */}
             <div className="flex gap-4">
-              {[FaLinkedinIn, FaInstagram, FaWhatsapp].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-11 h-11 bg-white/10 rounded-full flex items-center justify-center text-lg hover:bg-white/20 transition-all border border-white/20"
-                >
-                  <Icon />
-                </a>
-              ))}
+              <a
+                href="https://www.linkedin.com/company/riderr-logistics/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+              >
+                <FaLinkedinIn />
+              </a>
+              <a
+                href="https://www.instagram.com/riderr.ng?utm_source=qr&igsh=MTJ0Mjd4aHBlODM0ZQ=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+              >
+                <FaInstagram />
+              </a>
+              <a
+                href="https://wa.link/39ouwk"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+              >
+                <FaWhatsapp />
+              </a>
             </div>
           </div>
 
           {/* Column 2: For Users */}
           <div>
-            <h3 className="text-xl font-bold mb-6">For Users</h3>
-            <ul className="space-y-3">
+            <h3 className="text-lg font-semibold mb-4">For Users</h3>
+            <ul className="space-y-2">
               {[
                 "Request a Delivery",
                 "Track Deliveries",
@@ -86,7 +95,7 @@ export default function Footer() {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-blue-100 hover:text-white transition-colors"
+                    className="text-gray-300 hover:text-white transition-colors text-sm"
                   >
                     {item}
                   </a>
@@ -96,9 +105,9 @@ export default function Footer() {
           </div>
 
           {/* Column 3: For Partners */}
-          <div>
-            <h3 className="text-xl font-bold mb-6">For Logistics Partners</h3>
-            <ul className="space-y-3">
+          <div className="col-span-1">
+            <h3 className="text-lg font-semibold mb-4">For Partners</h3>
+            <ul className="space-y-2">
               {[
                 "Become a Partner",
                 "Partner Login",
@@ -108,7 +117,7 @@ export default function Footer() {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-blue-100 hover:text-white transition-colors"
+                    className="text-gray-300 hover:text-white transition-colors text-sm"
                   >
                     {item}
                   </a>
@@ -118,9 +127,9 @@ export default function Footer() {
           </div>
 
           {/* Column 4: Company */}
-          <div>
-            <h3 className="text-xl font-bold mb-6">Company</h3>
-            <ul className="space-y-3">
+          <div className="col-span-1">
+            <h3 className="text-lg font-semibold mb-4">Company</h3>
+            <ul className="space-y-2">
               {[
                 "About Us",
                 "How It Works",
@@ -131,7 +140,7 @@ export default function Footer() {
                 <li key={item}>
                   <a
                     href="#"
-                    className="text-blue-100 hover:text-white transition-colors"
+                    className="text-gray-300 hover:text-white transition-colors text-sm"
                   >
                     {item}
                   </a>
@@ -143,8 +152,8 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="w-full bg-brand-900/50 border-t border-white/10 text-center px-6 md:px-12 lg:px-20 py-6 text-sm text-blue-200">
-        <p>© 2026 Riderr. All rights reserved.</p>
+      <div className="w-full bg-gray-800 border-t border-gray-700 text-center px-6 py-4">
+        <p className="text-sm text-gray-400">© 2026 Riderr. All rights reserved.</p>
       </div>
     </footer>
   );
