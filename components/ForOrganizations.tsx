@@ -25,24 +25,24 @@ const orgFeatures = [
 
 export default function ForOrganizations() {
   return (
-    <section className="py-24 bg-[#1E5FD8]">
-      <div className="container mx-auto px-6 md:px-12 lg:px-20">
+    <section id="organizations" className="py-20 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
-        <div className="text-center max-w-4xl mx-auto mb-20">
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-white leading-tight tracking-tight">
+        <div className="text-center max-w-4xl mx-auto mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
             Built for{" "}
-            <span className="bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent">
+            <span className="text-blue-500">
               Logistics Organizations
             </span>
           </h2>
-          <p className="text-xl md:text-2xl text-blue-100 leading-relaxed font-light max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
             Powerful tools to help logistics companies manage riders, optimize
             operations, and grow revenue—all from one platform.
           </p>
         </div>
 
-        {/* Alternating Rows */}
-        <div className="space-y-24">
+        {/* Features Grid */}
+        <div className="space-y-16">
           {orgFeatures.map((item, index) => (
             <div
               key={item.title}
@@ -52,7 +52,7 @@ export default function ForOrganizations() {
               <div
                 className={`${index % 2 === 0 ? "lg:order-1" : "lg:order-2"}`}
               >
-                <div className="rounded-3xl overflow-hidden shadow-lg border">
+                <div className="rounded-2xl overflow-hidden shadow-lg">
                   <Image
                     src={item.image}
                     alt={item.title}
@@ -67,24 +67,36 @@ export default function ForOrganizations() {
               <div
                 className={`${index % 2 === 0 ? "lg:order-2" : "lg:order-1"}`}
               >
-                <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white leading-tight tracking-tight">
+                <h3 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
                   {item.title}
                 </h3>
-                <p className="text-lg md:text-xl leading-relaxed mb-8 text-blue-100 font-light">
+                <p className="text-lg leading-relaxed mb-6 text-gray-600">
                   {item.description}
                 </p>
 
-                <ul className="space-y-4 text-white">
-                  <li className="flex items-center text-lg font-medium">
-                    <span className="text-yellow-300 mr-3 text-xl">✓</span>
+                <ul className="space-y-3">
+                  <li className="flex items-center text-gray-700">
+                    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                     Centralized rider management
                   </li>
-                  <li className="flex items-center text-lg font-medium">
-                    <span className="text-yellow-300 mr-3 text-xl">✓</span>
+                  <li className="flex items-center text-gray-700">
+                    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                     Live tracking & performance metrics
                   </li>
-                  <li className="flex items-center text-lg font-medium">
-                    <span className="text-yellow-300 mr-3 text-xl">✓</span>
+                  <li className="flex items-center text-gray-700">
+                    <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                     Seamless onboarding & operations
                   </li>
                 </ul>

@@ -4,6 +4,13 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/
 import Image from "next/image";
 import { useState } from "react";
 
+const scrollToSection = (sectionId: string) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
 export default function Navbar() {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
@@ -40,9 +47,9 @@ export default function Navbar() {
           {/* DESKTOP NAV LINKS */}
           <nav className="hidden md:flex items-center gap-1">
             {['Features', 'How it works', 'FAQs', 'Contact'].map((item, index) => (
-              <motion.a
+              <motion.button
                 key={item}
-                href={`#${item.toLowerCase().replace(' ', '')}`}
+                onClick={() => scrollToSection(item.toLowerCase().replace(' ', ''))}
                 className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
                 whileHover={{ y: -1 }}
                 initial={{ opacity: 0, y: -10 }}
@@ -50,7 +57,7 @@ export default function Navbar() {
                 transition={{ delay: index * 0.1 }}
               >
                 {item}
-              </motion.a>
+              </motion.button>
             ))}
           </nav>
 
@@ -111,17 +118,19 @@ export default function Navbar() {
             >
               <div className="px-4 py-6 space-y-4">
                 {['Features', 'How it works', 'FAQs', 'Contact'].map((item, index) => (
-                  <motion.a
+                  <motion.button
                     key={item}
-                    href={`#${item.toLowerCase().replace(' ', '')}`}
-                    className="block px-4 py-3 text-base font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={() => {
+                      scrollToSection(item.toLowerCase().replace(' ', ''));
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-3 text-base font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
                     {item}
-                  </motion.a>
+                  </motion.button>
                 ))}
                 <motion.button
                   className="w-full mt-4 rounded-full bg-gradient-to-r from-[#1E5FD8] to-[#1a4fb8] px-6 py-3 text-base font-semibold text-white shadow-lg"
