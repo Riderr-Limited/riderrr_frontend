@@ -194,9 +194,7 @@ export default function DashboardPage() {
             <h2 className="text-2xl font-bold">
               Welcome back, {user?.name || "User"}!
             </h2>
-            <p className="text-blue-100 mt-1">
-              API Base URL: {API_CONFIG.BASE_URL} {/* Optional: Remove in production */}
-            </p>
+            
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <div className="bg-white/20 px-4 py-2 rounded-lg">
