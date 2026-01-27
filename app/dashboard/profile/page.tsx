@@ -1,5 +1,4 @@
-// app/company/profile/page.tsx
-'use client'
+ 'use client'
 
 import React, { useState, useEffect } from 'react'
 import {
@@ -31,7 +30,9 @@ import {
 } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/status-badge'
 import { cn } from '@/libs/utils'
-import { useAuth, useCompany } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/AuthContext'
+import { API_CONFIG } from '../../lib/config'
+import { ApiClient } from '../../lib/api-client'
 
 interface BankDetails {
   accountName: string
@@ -87,8 +88,6 @@ interface CompanyProfile {
   onboardingDocs: OnboardingDoc[]
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'
-
 export default function CompanyProfilePage() {
   const { user } = useAuth()
   
@@ -134,25 +133,11 @@ export default function CompanyProfilePage() {
     try {
       setLoading(true)
       setError(null)
-      const token = localStorage.getItem('access_token')
       
-      if (!token) {
-        setError('No authentication token found')
-        return
-      }
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.PROFILE);
       
-      const response = await fetch(`${API_URL}/company/profile`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to fetch profile')
-      }
+      const data = await ApiClient.get(url);
       
       if (data.success && data.data) {
         const profileData = data.data
@@ -214,21 +199,10 @@ export default function CompanyProfilePage() {
       setError(null)
       setSuccessMessage(null)
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/company/profile`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.PROFILE);
       
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update profile')
-      }
+      const data = await ApiClient.put(url, formData);
       
       if (data.success) {
         await fetchProfile()
@@ -250,21 +224,10 @@ export default function CompanyProfilePage() {
       setError(null)
       setSuccessMessage(null)
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/company/settings`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(settings)
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.SETTINGS);
       
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update settings')
-      }
+      const data = await ApiClient.put(url, settings);
       
       if (data.success) {
         await fetchProfile()
@@ -285,21 +248,10 @@ export default function CompanyProfilePage() {
       setError(null)
       setSuccessMessage(null)
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/company/profile`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ bankDetails })
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.PROFILE);
       
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update bank details')
-      }
+      const data = await ApiClient.put(url, { bankDetails });
       
       if (data.success) {
         await fetchProfile()
@@ -323,20 +275,10 @@ export default function CompanyProfilePage() {
       formData.append('file', file)
       formData.append('type', type)
       
-      const token = localStorage.getItem('access_token')
-      const response = await fetch(`${API_URL}/company/documents`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData
-      })
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DOCUMENTS);
       
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to upload document')
-      }
+      const data = await ApiClient.post(url, formData, 'multipart/form-data');
       
       if (data.success) {
         await fetchProfile()
@@ -1075,24 +1017,7 @@ export default function CompanyProfilePage() {
               </div>
             </div>
             
-            {/* Quick Actions */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <button className="w-full flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                  <Download className="h-5 w-5 text-blue-600 mr-3" />
-                  <span className="text-sm font-medium text-gray-900">Export Documents</span>
-                </button>
-                <button className="w-full flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                  <Bell className="h-5 w-5 text-purple-600 mr-3" />
-                  <span className="text-sm font-medium text-gray-900">Notification Settings</span>
-                </button>
-                <button className="w-full flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                  <Lock className="h-5 w-5 text-emerald-600 mr-3" />
-                  <span className="text-sm font-medium text-gray-900">Security Settings</span>
-                </button>
-              </div>
-            </div>
+             
           </div>
         </div>
       </div>

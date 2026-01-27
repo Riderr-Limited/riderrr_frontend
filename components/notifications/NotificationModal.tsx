@@ -14,7 +14,7 @@ import {
   IconChecklist,
   IconExternalLink
 } from '@tabler/icons-react'
-import { formatDistanceToNow } from 'date-fns'
+//import { formatDistanceToNow } from 'date-fns'
 
 interface Notification {
   _id: string
@@ -235,9 +235,9 @@ export default function NotificationModal({ isOpen, onClose }: NotificationModal
                         </div>
                         
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-400">
+                         { /**<span className="text-xs text-gray-400">
                             {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                          </span>
+                          </span> */}
                           <div className="flex items-center space-x-1">
                             {!notification.read && (
                               <button

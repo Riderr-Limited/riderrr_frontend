@@ -1,3 +1,4 @@
+// app/auth/login/page.tsx
 "use client";
 
 import { useState, Suspense } from "react";
@@ -21,11 +22,10 @@ function LoginFormContent() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isPhone, setIsPhone] = useState(false);
   const [error, setError] = useState("");
 
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth(); // Get login function and isLoading from auth context
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/dashboard";
@@ -91,8 +91,6 @@ function LoginFormContent() {
       return;
     }
 
-    setIsLoading(true);
-
     try {
       let loginIdentifier = identifier.trim();
 
@@ -100,11 +98,13 @@ function LoginFormContent() {
         loginIdentifier = formatPhone(identifier);
       }
 
+      // Use the login function from auth context
       await login({
         emailOrPhone: loginIdentifier,
         password,
       });
 
+      // If login is successful, redirect
       router.push(redirectTo);
     } catch (error: unknown) {
       console.error("Login error:", error);
@@ -118,8 +118,6 @@ function LoginFormContent() {
       } else {
         setError("Login failed. Please check your credentials.");
       }
-    } finally {
-      setIsLoading(false);
     }
   }
 
