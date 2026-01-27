@@ -53,9 +53,19 @@ interface AuthResponse {
   };
 }
 
+interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    user: User | null;
+  };
+}
+
 interface ApiError {
   message: string;
-  errors?: any[];
+  errors?: string[];
 }
 interface AuthContextType {
   user: User | null;
@@ -66,8 +76,8 @@ interface AuthContextType {
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
   refreshToken: () => Promise<boolean>;
-  forgotPassword: (emailOrPhone: string) => Promise<AuthResponse>; // Changed from Promise<void>
-  resetPassword: (token: string, password: string) => Promise<AuthResponse>;
+  forgotPassword: (emailOrPhone: string) => Promise<ForgotPasswordResponse>;
+  resetPassword: (data: { email: string; otp: string; newPassword: string }) => Promise<AuthResponse>;
   verifyEmail: (token: string) => Promise<void>;
   updateProfile: (profileData: Partial<User>) => Promise<AuthResponse>;
   changePassword: (
@@ -187,8 +197,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       return data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (
+        error instanceof Error &&
         error.name === "TypeError" &&
         error.message.includes("Failed to fetch")
       ) {
@@ -263,7 +274,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Register as rider (driver)
-  const registerAsRider = async (riderData: any) => {
+  const registerAsRider = async (riderData: RegisterData & { companyId: string }) => {
     setIsLoading(true);
     try {
       const data = await apiRequest<AuthResponse>(
@@ -290,7 +301,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Register with company
-  const registerWithCompany = async (companyId: string, userData: any) => {
+  const registerWithCompany = async (companyId: string, userData: RegisterData) => {
     setIsLoading(true);
     try {
       const data = await apiRequest<AuthResponse>(
@@ -393,10 +404,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Forgot password
-  const forgotPassword = async (emailOrPhone: string) => {
+  const forgotPassword = async (emailOrPhone: string): Promise<ForgotPasswordResponse> => {
     try {
-      const data = await apiRequest<any>("/auth/forgot-password", {
-        // Use any or specific type
+      const data = await apiRequest<{ success: boolean; message: string }>("/auth/forgot-password", {
         method: "POST",
         body: JSON.stringify({ email: emailOrPhone }), // Note: backend expects 'email' field
       });
@@ -406,7 +416,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(data.message || "Failed to send reset instructions");
       }
 
-      // Return the expected AuthResponse structure
+      // Return the expected ForgotPasswordResponse structure
       return {
         success: data.success,
         message: data.message,
@@ -666,4 +676,4 @@ export function usePermissions() {
 }
 
 // Add these type exports for better TypeScript support
-export type { LoginCredentials, RegisterData, AuthResponse, ApiError };
+export type { LoginCredentials, RegisterData, AuthResponse, ForgotPasswordResponse, ApiError };
