@@ -395,35 +395,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Forgot password
   const forgotPassword = async (emailOrPhone: string) => {
     try {
-      const data = await apiRequest<AuthResponse>("/auth/forgot-password", {
+      const data = await apiRequest<any>("/auth/forgot-password", {
+        // Use any or specific type
         method: "POST",
-        body: JSON.stringify({ emailOrPhone }),
+        body: JSON.stringify({ email: emailOrPhone }), // Note: backend expects 'email' field
       });
 
+      // Handle backend response structure
       if (!data.success) {
         throw new Error(data.message || "Failed to send reset instructions");
       }
 
-      return data;
+      // Return the expected AuthResponse structure
+      return {
+        success: data.success,
+        message: data.message,
+        data: {
+          accessToken: "", // Not applicable for forgot password
+          refreshToken: "", // Not applicable
+          user: null,
+        },
+      };
     } catch (error) {
       console.error("Forgot password error:", error);
+
+      // For security, still return success even if email doesn't exist
+      // This matches backend behavior
+      if (error instanceof Error && error.message.includes("Failed to send")) {
+        return {
+          success: true,
+          message:
+            "If an account exists with this email, a reset code will be sent",
+          data: {
+            accessToken: "",
+            refreshToken: "",
+            user: null,
+          },
+        };
+      }
+
       throw error;
     }
   };
 
   // Reset password
-  const resetPassword = async (token: string, password: string) => {
+  const resetPassword = async (data: {
+    email: string;
+    otp: string;
+    newPassword: string;
+  }) => {
     try {
-      const data = await apiRequest<AuthResponse>("/auth/reset-password", {
+      const response = await apiRequest<AuthResponse>("/auth/reset-password", {
         method: "POST",
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify(data),
       });
 
-      if (!data.success) {
-        throw new Error(data.message || "Failed to reset password");
+      if (!response.success) {
+        throw new Error(response.message || "Failed to reset password");
       }
 
-      return data;
+      return response;
     } catch (error) {
       console.error("Reset password error:", error);
       throw error;

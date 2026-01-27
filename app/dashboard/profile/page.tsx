@@ -1017,24 +1017,7 @@ export default function CompanyProfilePage() {
               </div>
             </div>
             
-            {/* Quick Actions */}
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <button className="w-full flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                  <Download className="h-5 w-5 text-blue-600 mr-3" />
-                  <span className="text-sm font-medium text-gray-900">Export Documents</span>
-                </button>
-                <button className="w-full flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                  <Bell className="h-5 w-5 text-purple-600 mr-3" />
-                  <span className="text-sm font-medium text-gray-900">Notification Settings</span>
-                </button>
-                <button className="w-full flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
-                  <Lock className="h-5 w-5 text-emerald-600 mr-3" />
-                  <span className="text-sm font-medium text-gray-900">Security Settings</span>
-                </button>
-              </div>
-            </div>
+             
           </div>
         </div>
       </div>

@@ -16,18 +16,16 @@ import {
 import Image from "next/image";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { API_CONFIG } from "../../lib/config";
 
 function LoginFormContent() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isPhone, setIsPhone] = useState(false);
   const [error, setError] = useState("");
 
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth(); // Get login function and isLoading from auth context
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/dashboard";
@@ -93,8 +91,6 @@ function LoginFormContent() {
       return;
     }
 
-    setIsLoading(true);
-
     try {
       let loginIdentifier = identifier.trim();
 
@@ -102,42 +98,14 @@ function LoginFormContent() {
         loginIdentifier = formatPhone(identifier);
       }
 
-      // Using centralized config
-      const url = API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN);
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailOrPhone: loginIdentifier,
-          password,
-        }),
+      // Use the login function from auth context
+      await login({
+        emailOrPhone: loginIdentifier,
+        password,
       });
 
-      console.log("respone frjm", response);
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      if (data.success && data.data?.access_token) {
-        // Store token
-        localStorage.setItem("access_token", data.data.access_token);
-        if (data.data.refresh_token) {
-          localStorage.setItem("refresh_token", data.data.refresh_token);
-        }
-
-        // Update auth context
-        // ... your auth context logic here
-
-        router.push(redirectTo);
-      } else {
-        throw new Error("Invalid response from server");
-      }
+      // If login is successful, redirect
+      router.push(redirectTo);
     } catch (error: unknown) {
       console.error("Login error:", error);
       if (
@@ -150,8 +118,6 @@ function LoginFormContent() {
       } else {
         setError("Login failed. Please check your credentials.");
       }
-    } finally {
-      setIsLoading(false);
     }
   }
 
