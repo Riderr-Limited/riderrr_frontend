@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 const scrollToSection = (sectionId: string) => {
@@ -68,7 +69,7 @@ export default function Navbar() {
               whileHover={{ scale: 1.05, y: -1 }}
               whileTap={{ scale: 0.98 }}
             >
-              Login
+              <Link href={"/login"}>Login</Link>
             </motion.button>
             
             {/* MOBILE MENU BUTTON */}
@@ -139,7 +140,7 @@ export default function Navbar() {
                   transition={{ delay: 0.4 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  Login
+                  <Link href={"/login"}>Login</Link>
                 </motion.button>
               </div>
             </motion.div>
