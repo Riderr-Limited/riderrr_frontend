@@ -238,7 +238,7 @@ export default function OrgRegistration() {
       );
 
       const response = await axios.post(
-        "https://api.riderr.ng/api/auth/signup",
+        "https://riderr-backend.onrender.com/api/auth/signup",
         payload,
         {
           headers: {
