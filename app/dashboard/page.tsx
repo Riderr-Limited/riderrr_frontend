@@ -187,28 +187,29 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Role-based greeting */}
-      <div className="bg-linear-to-r from-blue-600 to-blue-800 text-white p-6 rounded-xl">
+      {/* Professional Header */}
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-5 rounded-lg border border-slate-700">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">
-              Welcome back, {user?.name || "User"}!
-            </h2>
-            
+            <h1 className="text-xl font-semibold text-slate-100">
+              Welcome back, {user?.name || "User"}
+            </h1>
+            <p className="text-sm text-slate-300 mt-1">Dashboard Overview</p>
           </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="bg-white/20 px-4 py-2 rounded-lg">
-              <p className="text-sm font-medium">Current Role</p>
-              <p className="text-lg font-bold capitalize">{getUserRole()}</p>
+          <div className="hidden md:flex items-center space-x-3">
+            <div className="bg-white/10 px-3 py-2 rounded-md border border-white/20">
+              <p className="text-xs font-medium text-slate-300">Role</p>
+              <p className="text-sm font-semibold capitalize text-white">{getUserRole()}</p>
             </div>
             <button
               onClick={refreshData}
               disabled={loading.stats || loading.deliveries || loading.drivers}
-              className="p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors disabled:opacity-50"
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors disabled:opacity-50 border border-white/20"
+              title="Refresh Data"
             >
               <IconRefresh
                 className={cn(
-                  "h-5 w-5",
+                  "h-4 w-4",
                   (loading.stats || loading.deliveries || loading.drivers) &&
                     "animate-spin",
                 )}
@@ -220,7 +221,7 @@ export default function DashboardPage() {
 
       {/* Rest of your component remains the same... */}
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Total Deliveries"
           value={stats.totalDeliveries}
@@ -268,43 +269,43 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Deliveries Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <div className="px-5 py-3 border-b border-gray-200 bg-gray-50">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-base font-semibold text-gray-900">
                 Recent Deliveries
               </h3>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs text-gray-600 mt-0.5">
                 Latest delivery requests
               </p>
             </div>
-            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-              View all →
+            <button className="text-blue-600 hover:text-blue-700 text-xs font-medium px-3 py-1 rounded-md border border-blue-200 hover:bg-blue-50 transition-colors">
+              View All
             </button>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
                   ID
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Pickup Address
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Pickup
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Dropoff Address
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  Dropoff
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
                   Amount
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
                   Date
                 </th>
               </tr>
@@ -314,8 +315,8 @@ export default function DashboardPage() {
                 Array.from({ length: 3 }).map((_, index) => (
                   <tr key={index}>
                     {Array.from({ length: 6 }).map((_, colIndex) => (
-                      <td key={colIndex} className="px-6 py-4">
-                        <div className="h-4 bg-gray-200 animate-pulse rounded"></div>
+                      <td key={colIndex} className="px-4 py-3">
+                        <div className="h-3 bg-gray-200 animate-pulse rounded"></div>
                       </td>
                     ))}
                   </tr>
@@ -324,59 +325,58 @@ export default function DashboardPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-6 py-8 text-center text-gray-500"
+                    className="px-4 py-6 text-center text-gray-500"
                   >
-                    <IconPackage className="h-12 w-12 mx-auto text-gray-400 mb-2" />
-                    <p>No deliveries yet</p>
+                    <IconPackage className="h-10 w-10 mx-auto text-gray-400 mb-2" />
+                    <p className="text-sm">No deliveries yet</p>
                   </td>
                 </tr>
               ) : (
                 deliveries.map((delivery) => (
-                  <tr key={delivery._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">
+                  <tr key={delivery._id} className="hover:bg-gray-50 border-b border-gray-100">
+                    <td className="px-4 py-3">
+                      <div className="text-xs font-medium text-gray-900">
                         {delivery.referenceId}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-start">
-                        <IconMapPin className="h-4 w-4 text-blue-500 mr-2 mt-0.5" />
-                        <div>
-                          <div className="text-sm text-gray-900">
+                        <IconMapPin className="h-3 w-3 text-blue-500 mr-1.5 mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <div className="text-xs text-gray-900 font-medium truncate">
                             {delivery.pickup.name}
                           </div>
-                          <div className="text-xs text-gray-500 truncate max-w-[200px]">
+                          <div className="text-xs text-gray-500 truncate max-w-[150px]">
                             {delivery.pickup.address}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-start">
-                        <IconMapPin className="h-4 w-4 text-green-500 mr-2 mt-0.5" />
-                        <div>
-                          <div className="text-sm text-gray-900">
+                        <IconMapPin className="h-3 w-3 text-green-500 mr-1.5 mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0">
+                          <div className="text-xs text-gray-900 font-medium truncate">
                             {delivery.recipientName}
                           </div>
-                          <div className="text-xs text-gray-500 truncate max-w-[200px]">
+                          <div className="text-xs text-gray-500 truncate max-w-[150px]">
                             {delivery.dropoff.address}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-semibold text-gray-900">
-                        {delivery.fare.currency}{" "}
-                        {delivery.fare.amount?.toLocaleString() || "0"}
+                    <td className="px-4 py-3">
+                      <div className="text-xs font-semibold text-gray-900">
+                        {delivery.fare.currency} {delivery.fare.amount?.toLocaleString() || "0"}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center space-x-1">
                         {getStatusIcon(delivery.status)}
                         <StatusBadge status={delivery.status} />
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-xs text-gray-500">
                       {formatDate(delivery.createdAt)}
                     </td>
                   </tr>
@@ -388,27 +388,27 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Active Drivers */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <h3 className="text-base font-semibold text-gray-900 mb-3">
             Active Drivers
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {loading.drivers
               ? Array.from({ length: 3 }).map((_, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3"
+                    className="flex items-center justify-between p-2"
                   >
                     <div className="flex items-center">
-                      <div className="h-10 w-10 bg-gray-200 animate-pulse rounded-full mr-3"></div>
+                      <div className="h-8 w-8 bg-gray-200 animate-pulse rounded-full mr-2"></div>
                       <div>
-                        <div className="h-4 w-24 bg-gray-200 animate-pulse rounded mb-1"></div>
-                        <div className="h-3 w-16 bg-gray-200 animate-pulse rounded"></div>
+                        <div className="h-3 w-20 bg-gray-200 animate-pulse rounded mb-1"></div>
+                        <div className="h-2 w-14 bg-gray-200 animate-pulse rounded"></div>
                       </div>
                     </div>
-                    <div className="h-2 w-2 bg-gray-200 animate-pulse rounded-full mr-2"></div>
+                    <div className="h-1.5 w-1.5 bg-gray-200 animate-pulse rounded-full"></div>
                   </div>
                 ))
               : drivers
@@ -417,16 +417,16 @@ export default function DashboardPage() {
                   .map((driver) => (
                     <div
                       key={driver._id}
-                      className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
                     >
                       <div className="flex items-center">
-                        <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                          <span className="text-blue-600 font-semibold">
+                        <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                          <span className="text-blue-600 font-semibold text-xs">
                             {driver.userId.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">
+                          <p className="text-xs font-medium text-gray-900">
                             {driver.userId.name}
                           </p>
                           <p className="text-xs text-gray-500">
@@ -435,7 +435,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
                       <div className="flex items-center">
-                        <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                        <div className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1"></div>
                         <span className="text-xs text-green-600">Online</span>
                       </div>
                     </div>
@@ -444,25 +444,25 @@ export default function DashboardPage() {
         </div>
 
         {/* Delivery Status */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <h3 className="text-base font-semibold text-gray-900 mb-3">
             Delivery Status
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {["assigned", "in_transit", "delivered"].map((status) => {
               const count = deliveries.filter(
                 (d) => d.status === status,
               ).length;
               return (
                 <div key={status} className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700 capitalize">
+                  <span className="text-xs text-gray-700 capitalize font-medium">
                     {status.replace("_", " ")}
                   </span>
                   <div className="flex items-center">
-                    <span className="text-lg font-bold text-gray-900 mr-2">
+                    <span className="text-sm font-bold text-gray-900 mr-2">
                       {count}
                     </span>
-                    <div className="h-2 w-20 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-16 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${
                           status === "delivered"
@@ -484,22 +484,22 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <h3 className="text-base font-semibold text-gray-900 mb-3">
             Quick Actions
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {canManageDeliveries && (
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors">
-                + Create New Delivery
+              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-3 rounded-md transition-colors text-sm">
+                + Create Delivery
               </button>
             )}
             {user?.role === "company_admin" && (
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors">
-                + Add New Rider
+              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-3 rounded-md transition-colors text-sm">
+                + Add Rider
               </button>
             )}
-            <button className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 rounded-lg transition-colors">
+            <button className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2.5 px-3 rounded-md transition-colors text-sm">
               📊 View Reports
             </button>
           </div>

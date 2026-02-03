@@ -17,6 +17,7 @@ import {
 } from '@tabler/icons-react'
 import { API_CONFIG } from "../../lib/config"
 import { ApiClient } from "../../lib/api-client"
+import MapModal from "@/components/MapModal"
 
 
 interface Delivery {
@@ -119,6 +120,13 @@ export default function DeliveriesPage() {
     limit: 10,
     pages: 0
   })
+  const [mapModal, setMapModal] = useState<{
+    isOpen: boolean;
+    lat: number;
+    lng: number;
+    title: string;
+    address?: string;
+  }>({ isOpen: false, lat: 0, lng: 0, title: '' })
 
   const fetchStats = async () => {
     try {
@@ -217,8 +225,12 @@ export default function DeliveriesPage() {
     return matchesSearch && matchesStatus
   })
 
-  const openInMaps = (lat: number, lng: number, label: string) => {
-    window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank')
+  const openMapModal = (lat: number, lng: number, title: string, address?: string) => {
+    setMapModal({ isOpen: true, lat, lng, title, address })
+  }
+
+  const closeMapModal = () => {
+    setMapModal({ isOpen: false, lat: 0, lng: 0, title: '' })
   }
 
   const refreshAll = () => {
@@ -384,7 +396,7 @@ export default function DeliveriesPage() {
                         <div className="min-w-0 flex-1">
                           <div className="text-sm text-gray-900 truncate">{delivery.pickup.name}</div>
                           <button
-                            onClick={() => openInMaps(delivery.pickup.lat, delivery.pickup.lng, 'Pickup')}
+                            onClick={() => openMapModal(delivery.pickup.lat, delivery.pickup.lng, 'Pickup Location', delivery.pickup.address)}
                             className="text-xs text-blue-600 hover:text-blue-800 underline whitespace-nowrap"
                           >
                             View on map
@@ -398,7 +410,7 @@ export default function DeliveriesPage() {
                         <div className="min-w-0 flex-1">
                           <div className="text-sm text-gray-900 truncate">{delivery.recipientName}</div>
                           <button
-                            onClick={() => openInMaps(delivery.dropoff.lat, delivery.dropoff.lng, 'Dropoff')}
+                            onClick={() => openMapModal(delivery.dropoff.lat, delivery.dropoff.lng, 'Dropoff Location', delivery.dropoff.address)}
                             className="text-xs text-green-600 hover:text-green-800 underline whitespace-nowrap"
                           >
                             View on map
@@ -534,11 +546,11 @@ export default function DeliveriesPage() {
                     <p className="text-sm"><span className="font-medium">Phone:</span> {selectedDelivery.pickup.phone}</p>
                     <p className="text-sm"><span className="font-medium">Address:</span> {selectedDelivery.pickup.address}</p>
                     <button
-                      onClick={() => openInMaps(selectedDelivery.pickup.lat, selectedDelivery.pickup.lng, 'Pickup')}
+                      onClick={() => openMapModal(selectedDelivery.pickup.lat, selectedDelivery.pickup.lng, 'Pickup Location', selectedDelivery.pickup.address)}
                       className="mt-2 text-sm text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
                     >
                       <IconMapPin className="h-4 w-4" />
-                      View on Google Maps
+                      View on Map
                     </button>
                   </div>
                 </div>
@@ -553,11 +565,11 @@ export default function DeliveriesPage() {
                     <p className="text-sm"><span className="font-medium">Phone:</span> {selectedDelivery.dropoff.phone}</p>
                     <p className="text-sm"><span className="font-medium">Address:</span> {selectedDelivery.dropoff.address}</p>
                     <button
-                      onClick={() => openInMaps(selectedDelivery.dropoff.lat, selectedDelivery.dropoff.lng, 'Dropoff')}
+                      onClick={() => openMapModal(selectedDelivery.dropoff.lat, selectedDelivery.dropoff.lng, 'Dropoff Location', selectedDelivery.dropoff.address)}
                       className="mt-2 text-sm text-green-600 hover:text-green-800 underline flex items-center gap-1"
                     >
                       <IconMapPin className="h-4 w-4" />
-                      View on Google Maps
+                      View on Map
                     </button>
                   </div>
                 </div>
@@ -676,6 +688,16 @@ export default function DeliveriesPage() {
           </div>
         </div>
       )}
+
+      {/* Map Modal */}
+      <MapModal
+        isOpen={mapModal.isOpen}
+        onClose={closeMapModal}
+        lat={mapModal.lat}
+        lng={mapModal.lng}
+        title={mapModal.title}
+        address={mapModal.address}
+      />
     </div>
   )
 }

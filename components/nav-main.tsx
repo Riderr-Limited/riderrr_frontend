@@ -4,6 +4,9 @@ import {
   // IconCirclePlusFilled, IconMail,
   type Icon,
 } from "@tabler/icons-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 
 // import { Button } from "./ui/Button";
@@ -17,16 +20,34 @@ export function NavMain({
     icon?: Icon;
   }[];
 }) {
+  const pathname = usePathname();
+  
+  const isActive = (url: string) => {
+    if (url === "/dashboard") {
+      return pathname === "/dashboard";
+    }
+    return pathname.startsWith(url);
+  };
+
   return (
     <div className="p-2">
       <div className="space-y-1">
         {items.map((item) => (
-          <div key={item.title} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100">
+          <Link 
+            key={item.title} 
+            href={item.url}
+            className={cn(
+              "flex items-center gap-2 p-2 rounded transition-colors",
+              isActive(item.url)
+                ? "bg-white/20 text-white"
+                : "hover:bg-white/10 text-white/90 hover:text-white"
+            )}
+          >
             {item.icon && <item.icon className="size-4" />}
-            <a href={item.url} className="text-sm">
+            <span className="text-sm">
               {item.title}
-            </a>
-          </div>
+            </span>
+          </Link>
         ))}
       </div>
     </div>

@@ -3,7 +3,6 @@
 import { useAuth } from "@/contexts/AuthContext";
 import {
   IconBell,
-  IconSearch,
   IconUser,
   IconLogout,
   IconSettings,
@@ -15,7 +14,6 @@ import { useRouter } from "next/navigation";
 export default function TopBar() {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [search, setSearch] = useState("");
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -51,16 +49,6 @@ export default function TopBar() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle search
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (search.trim()) {
-      console.log("Searching for:", search);
-      // Implement search functionality here
-      // router.push(`/search?q=${encodeURIComponent(search)}`)
-    }
-  };
-
   // Handle user logout
   const handleLogout = async () => {
     await logout();
@@ -95,29 +83,9 @@ export default function TopBar() {
     <>
       <header className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
         <div className="px-4 py-3 md:px-6">
-          <div className="flex items-center justify-between">
-            {/* Left: Search Bar */}
-            <div className="flex-1 max-w-xl">
-              <form onSubmit={handleSearch} className="relative">
-                <IconSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search deliveries, riders, reports..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-colors"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm text-blue-600 font-medium"
-                >
-                  Search
-                </button>
-              </form>
-            </div>
-
+          <div className="flex items-center justify-end">
             {/* Right: Action Icons */}
-            <div className="flex items-center space-x-4 ml-4">
+            <div className="flex items-center space-x-4">
               {/* Notifications */}
               <div className="relative">
                 <button

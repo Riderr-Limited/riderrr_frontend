@@ -15,6 +15,8 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/libs/utils";
 import { useAuth, useCompany, usePermissions } from "@/contexts/AuthContext";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 
 const navItems = [
@@ -35,7 +37,7 @@ const utilityItems = [
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [activeItem, setActiveItem] = useState("Overview");
+  const pathname = usePathname();
 
   // Use auth context
   const { user, logout, isLoading } = useAuth();
@@ -108,16 +110,13 @@ export default function Sidebar() {
 
   const filteredNavItems = getFilteredNavItems();
 
-  // Get active item from current path
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const path = window.location.pathname;
-      const item = navItems.find((item) => path.includes(item.href));
-      if (item) {
-        setActiveItem(item.name);
-      }
+  // Check if a nav item is active
+  const isActiveItem = (href: string) => {
+    if (href === "/dashboard") {
+      return pathname === "/dashboard";
     }
-  }, []);
+    return pathname.startsWith(href);
+  };
 
   return (
     <aside
@@ -177,13 +176,12 @@ export default function Sidebar() {
         {/* Navigation Section */}
         <nav className="flex-1 px-4 py-6 space-y-1">
           {filteredNavItems.map((item) => (
-            <a
+            <Link
               key={item.name}
               href={item.href}
-              onClick={() => setActiveItem(item.name)}
               className={cn(
                 "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
-                activeItem === item.name
+                isActiveItem(item.href)
                   ? "bg-white/20 text-white shadow-sm"
                   : "text-white/90 hover:bg-white/10 hover:text-white",
               )}
@@ -197,7 +195,7 @@ export default function Sidebar() {
                   {item.name}
                 </div>
               )}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -209,10 +207,15 @@ export default function Sidebar() {
         {/* Utility Items */}
         <div className="px-4 py-4 space-y-1">
           {utilityItems.map((item) => (
-            <a
+            <Link
               key={item.name}
               href={item.href}
-              className="flex items-center text-white/80 hover:text-white rounded-lg px-4 py-3 hover:bg-white/10 transition-all duration-200 group"
+              className={cn(
+                "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
+                isActiveItem(item.href)
+                  ? "bg-white/20 text-white shadow-sm"
+                  : "text-white/80 hover:text-white hover:bg-white/10",
+              )}
             >
               <item.icon
                 className={cn("h-5 w-5", isCollapsed ? "mx-auto" : "mr-3")}
@@ -223,19 +226,18 @@ export default function Sidebar() {
                   {item.name}
                 </div>
               )}
-            </a>
+            </Link>
           ))}
           {/* Profile & Settings Section */}
           <div className="mt-auto border-t border-white/20">
             <div className="px-4 py-4 space-y-1">
               {bottomItems.map((item) => (
-                <a
+                <Link
                   key={item.name}
                   href={item.href}
-                  onClick={() => setActiveItem(item.name)}
                   className={cn(
                     "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
-                    activeItem === item.name
+                    isActiveItem(item.href)
                       ? "bg-white/20 text-white shadow-sm"
                       : "text-white/90 hover:bg-white/10 hover:text-white",
                   )}
@@ -251,7 +253,7 @@ export default function Sidebar() {
                       {item.name}
                     </div>
                   )}
-                </a>
+                </Link>
               ))}
             </div>
 

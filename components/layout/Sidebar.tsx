@@ -76,7 +76,7 @@ export default function Sidebar() {
             className={`group flex items-center gap-4 px-6 py-3.5 rounded-xl transition-all duration-300 relative
                 ${
                   isActive
-                    ? "bg-[#=] backdrop-blur-sm text-[#0072BB] shadow-lg scale-[1.02]"
+                    ? "bg-white/20 backdrop-blur-sm text-white shadow-lg scale-[1.02] border border-white/30"
                     : "hover:bg-white/10 text-[#1E91D6] hover:text-[#0072BB] hover:scale-[1.01]"
                 }`}
           >
