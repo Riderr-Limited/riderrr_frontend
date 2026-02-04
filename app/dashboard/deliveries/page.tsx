@@ -179,6 +179,14 @@ export default function DeliveriesPage() {
   useEffect(() => {
     fetchStats()
     fetchDeliveries()
+    
+    // Load Google Maps API
+    if (!window.google) {
+      const script = document.createElement('script')
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places'
+      script.async = true
+      document.head.appendChild(script)
+    }
   }, [])
 
   const handleViewDelivery = (delivery: Delivery) => {

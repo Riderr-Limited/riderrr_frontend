@@ -3,6 +3,12 @@
 import { IconX, IconMapPin } from "@tabler/icons-react";
 import { useEffect, useRef } from "react";
 
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 interface MapModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -16,7 +22,7 @@ export default function MapModal({ isOpen, onClose, lat, lng, title, address }: 
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isOpen && mapRef.current && window.google) {
+    if (isOpen && mapRef.current && typeof window !== 'undefined' && window.google) {
       const map = new window.google.maps.Map(mapRef.current, {
         center: { lat, lng },
         zoom: 15,
