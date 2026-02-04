@@ -13,7 +13,7 @@ import {
   IconHelp,
   IconLogout,
 } from "@tabler/icons-react";
-import { cn } from "@/libs/utils";
+import { cn } from "@/lib/utils";
 import { useAuth, useCompany, usePermissions } from "@/contexts/AuthContext";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -121,186 +121,203 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen transition-all duration-300 sticky top-0 ",
+        "flex flex-col h-screen transition-all duration-300 sticky top-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white shadow-lg",
         isCollapsed ? "w-20" : "w-64",
       )}
     >
-      {/* Sidebar Container with background */}
-      <div className="flex-1 flex flex-col bg-linear-to-br bg-[#1E5FD8] text-white">
-        {/* Collapse Button */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-6 bg-[#03329F ] border-2 border-white text-white p-1.5 rounded-full z-50 hover:bg-[#2a63a5] transition-colors shadow-lg"
-        >
-          {isCollapsed ? (
-            <IconChevronRight size={18} />
-          ) : (
-            <IconChevronLeft size={18} />
-          )}
-        </button>
+      {/* Collapse Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-3 top-6 bg-blue-800 border-2 border-white text-white p-1.5 rounded-full z-50 hover:bg-blue-900 transition-colors shadow-lg"
+      >
+        {isCollapsed ? (
+          <IconChevronRight size={18} />
+        ) : (
+          <IconChevronLeft size={18} />
+        )}
+      </button>
 
-        {/* Logo/Title Section */}
-        <div
-          className={cn(
-            "flex items-center px-6 py-5 border-b border-white/20",
-            isCollapsed && "justify-center px-0",
-          )}
-        >
-          <div className="flex items-center space-x-3">
-            <div className=" rounded-lg">
-              <Image
-                src="/logo.png"
-                alt="logo"
-                width={80}
-                height={80}
-                className=" border-none rounded-full  object-cover"
-              />
+      {/* Logo/Title Section */}
+      <div
+        className={cn(
+          "flex items-center px-6 py-5 border-b border-white/20",
+          isCollapsed && "justify-center px-0",
+        )}
+      >
+        <div className="flex items-center space-x-3">
+          <div className="rounded-lg">
+            <Image
+              src="/logo.png"
+              alt="logo"
+              width={isCollapsed ? 32 : 40}
+              height={isCollapsed ? 32 : 40}
+              className="border-none rounded-full object-cover"
+            />
+          </div>
+          {!isCollapsed && (
+            <div className="flex flex-col">
+              <h1 className="text-lg font-semibold text-white tracking-wide leading-tight">
+                {isCompanyUser
+                  ? `${getCompanyName() || "Company"}`
+                  : "RIDERR"}
+              </h1>
+              <p className="text-xs text-white/80 mt-0.5">
+                {user?.role === "company_admin"
+                  ? "Admin Panel"
+                  : "Management Portal"}
+              </p>
             </div>
-            {!isCollapsed && (
-              <div className="flex flex-col">
-                <h1 className="text-xl font-bold tracking-wide leading-tight">
-                  {isCompanyUser
-                    ? `${getCompanyName() || "Company"}`
-                    : "Rider Dashboard"}
-                </h1>
-                <p className="text-xs text-white/80 mt-0.5">
-                  {user?.role === "company_admin"
-                    ? "Admin Panel"
-                    : "Management Portal"}
-                </p>
+          )}
+        </div>
+      </div>
+
+      {/* Navigation Section */}
+      <nav className="flex-1 px-4 py-6 space-y-1">
+        {filteredNavItems.map((item) => (
+          <Link
+            key={item.name}
+            href={item.href}
+            className={cn(
+              "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group relative",
+              isActiveItem(item.href)
+                ? "bg-blue-500/30 text-white shadow-sm border border-blue-400/50 backdrop-blur-sm"
+                : "text-white/90 hover:bg-white/10 hover:text-white",
+            )}
+          >
+            <item.icon
+              className={cn(
+                "h-5 w-5 transition-colors",
+                isCollapsed ? "mx-auto" : "mr-3"
+              )}
+            />
+            {!isCollapsed && <span className="font-medium">{item.name}</span>}
+            {isActiveItem(item.href) && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
+            )}
+            {isCollapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+                {item.name}
               </div>
             )}
-          </div>
-        </div>
+          </Link>
+        ))}
+      </nav>
 
-        {/* Navigation Section */}
-        <nav className="flex-1 px-4 py-6 space-y-1">
-          {filteredNavItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
+      {/* Divider */}
+      <div className="px-4">
+        <div className="border-t border-white/20"></div>
+      </div>
+
+      {/* Utility Items */}
+      <div className="px-4 py-4 space-y-1">
+        {utilityItems.map((item) => (
+          <Link
+            key={item.name}
+            href={item.href}
+            className={cn(
+              "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group relative",
+              isActiveItem(item.href)
+                ? "bg-blue-500/30 text-white shadow-sm border border-blue-400/50 backdrop-blur-sm"
+                : "text-white/80 hover:bg-white/10 hover:text-white",
+            )}
+          >
+            <item.icon
               className={cn(
-                "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
-                isActiveItem(item.href)
-                  ? "bg-white/20 text-white shadow-sm"
-                  : "text-white/90 hover:bg-white/10 hover:text-white",
+                "h-5 w-5 transition-colors",
+                isCollapsed ? "mx-auto" : "mr-3"
               )}
-            >
-              <item.icon
-                className={cn("h-5 w-5", isCollapsed ? "mx-auto" : "mr-3")}
-              />
-              {!isCollapsed && <span className="font-medium">{item.name}</span>}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
-                  {item.name}
-                </div>
-              )}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Divider */}
-        <div className="px-4">
-          <div className="border-t border-white/20"></div>
-        </div>
-
-        {/* Utility Items */}
-        <div className="px-4 py-4 space-y-1">
-          {utilityItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
-                isActiveItem(item.href)
-                  ? "bg-white/20 text-white shadow-sm"
-                  : "text-white/80 hover:text-white hover:bg-white/10",
-              )}
-            >
-              <item.icon
-                className={cn("h-5 w-5", isCollapsed ? "mx-auto" : "mr-3")}
-              />
-              {!isCollapsed && <span className="font-medium">{item.name}</span>}
-              {isCollapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
-                  {item.name}
-                </div>
-              )}
-            </Link>
-          ))}
-          {/* Profile & Settings Section */}
-          <div className="mt-auto border-t border-white/20">
-            <div className="px-4 py-4 space-y-1">
-              {bottomItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
+            />
+            {!isCollapsed && <span className="font-medium">{item.name}</span>}
+            {isActiveItem(item.href) && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
+            )}
+            {isCollapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+                {item.name}
+              </div>
+            )}
+          </Link>
+        ))}
+        {/* Profile & Settings Section */}
+        <div className="border-t border-white/20">
+          <div className="px-4 py-4 space-y-1">
+            {bottomItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={cn(
+                  "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group relative",
+                  isActiveItem(item.href)
+                    ? "bg-blue-500/30 text-white shadow-sm border border-blue-400/50 backdrop-blur-sm"
+                    : "text-white/90 hover:bg-white/10 hover:text-white",
+                )}
+              >
+                <item.icon
                   className={cn(
-                    "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group",
-                    isActiveItem(item.href)
-                      ? "bg-white/20 text-white shadow-sm"
-                      : "text-white/90 hover:bg-white/10 hover:text-white",
+                    "h-5 w-5 transition-colors",
+                    isCollapsed ? "mx-auto" : "mr-3"
                   )}
-                >
-                  <item.icon
-                    className={cn("h-5 w-5", isCollapsed ? "mx-auto" : "mr-3")}
-                  />
-                  {!isCollapsed && (
-                    <span className="font-medium">{item.name}</span>
-                  )}
-                  {isCollapsed && (
-                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
-                      {item.name}
-                    </div>
-                  )}
-                </Link>
-              ))}
-            </div>
-
-            {/* User Profile */}
-            <div
-              className={cn(
-                "px-4 py-4 border-t border-white/20",
-                isCollapsed && "flex justify-center",
-              )}
-            >
-              <div className="flex items-center">
-                <div className="h-9 w-9 rounded-full bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center overflow-hidden shadow-sm">
-                  {user?.avatarUrl ? (
-                    <Image
-                      src={user.avatarUrl}
-                      alt={getUserDisplayName()}
-                      className="h-full w-full object-cover"
-                      fill
-                      sizes="36px"
-                    />
-                  ) : (
-                    <span className="text-white font-semibold text-sm">
-                      {getUserDisplayName().charAt(0).toUpperCase()}
-                    </span>
-                  )}
-                </div>
+                />
                 {!isCollapsed && (
-                  <div className="ml-3 flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {isLoading ? "Loading..." : getUserDisplayName()}
-                    </p>
-                    <p className="text-xs text-white/70 truncate">
-                      {isLoading ? "" : getUserRoleDisplay()}
-                      {getCompanyName() && ` • ${getCompanyName()}`}
-                    </p>
+                  <span className="font-medium">{item.name}</span>
+                )}
+                {isActiveItem(item.href) && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
+                )}
+                {isCollapsed && (
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+                    {item.name}
                   </div>
                 )}
+              </Link>
+            ))}
+          </div>
+
+          {/* User Profile */}
+          <div
+            className={cn(
+              "px-4 py-4 border-t border-white/20",
+              isCollapsed && "flex justify-center",
+            )}
+          >
+            <div className="flex items-center">
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center overflow-hidden shadow-sm">
+                {user?.avatarUrl ? (
+                  <Image
+                    src={user.avatarUrl}
+                    alt={getUserDisplayName()}
+                    className="h-full w-full object-cover"
+                    width={36}
+                    height={36}
+                  />
+                ) : (
+                  <span className="text-white font-semibold text-sm">
+                    {getUserDisplayName().charAt(0).toUpperCase()}
+                  </span>
+                )}
               </div>
+              {!isCollapsed && (
+                <div className="ml-3 flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white truncate">
+                    {isLoading ? "Loading..." : getUserDisplayName()}
+                  </p>
+                  <p className="text-xs text-white/70 truncate">
+                    {isLoading ? "" : getUserRoleDisplay()}
+                    {getCompanyName() && ` • ${getCompanyName()}`}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-          {/* Logout Button */}
+        </div>
+        {/* Logout Button */}
+        <div className="px-4 pb-4">
           <button
             onClick={handleLogout}
-            className="flex items-center text-white/80 hover:text-white rounded-lg px-4 py-3 hover:bg-white/10 transition-all duration-200 group w-full"
+            className="flex items-center text-white/80 hover:text-red-200 rounded-lg px-4 py-3 hover:bg-red-500/20 transition-all duration-200 group w-full border border-white/20 hover:border-red-300/50"
           >
             <IconLogout
-              className={cn("h-5 w-5", isCollapsed ? "mx-auto" : "mr-3")}
+              className={cn("h-5 w-5 transition-colors", isCollapsed ? "mx-auto" : "mr-3")}
             />
             {!isCollapsed && <span className="font-medium">Logout</span>}
             {isCollapsed && (

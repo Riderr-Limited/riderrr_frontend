@@ -16,8 +16,9 @@ import {
 } from "@tabler/icons-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatusBadge } from "@/components/ui/status-badge";
- import { API_CONFIG } from "./../lib/config";  
- import { formatDate } from './../lib/utils'
+import { API_CONFIG } from "./../lib/config";
+import { formatDate } from './../lib/utils';
+import { cn } from "@/lib/utils";
 
 interface Delivery {
   _id: string;
@@ -507,8 +508,4 @@ export default function DashboardPage() {
       </div>
     </div>
   );
-}
-
- function cn(...classes: (string | boolean | undefined | null)[]) {
-  return classes.filter(Boolean).join(" ");
 }
