@@ -44,7 +44,7 @@ export default function DashboardLayout({
       {/* Add overflow-hidden to prevent horizontal scroll on the entire page */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar />
-        <main className="flex-1 p-4 md:p-6 overflow-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-auto mt-16">
           {/* Dynamic Page Title */}
           <div className="mb-6">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
