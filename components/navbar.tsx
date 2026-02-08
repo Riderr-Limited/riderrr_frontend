@@ -12,6 +12,15 @@ const scrollToSection = (sectionId: string) => {
   }
 };
 
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Features', id: 'features' },
+  { label: 'How it works', id: 'how-it-works' },
+  { label: 'FAQs', id: 'faqs' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Contact', id: 'contact' },
+];
+
 export default function Navbar() {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
@@ -47,18 +56,32 @@ export default function Navbar() {
 
           {/* DESKTOP NAV LINKS */}
           <nav className="hidden md:flex items-center gap-1">
-            {['Features', 'How it works', 'FAQs', 'Contact'].map((item, index) => (
-              <motion.button
-                key={item}
-                onClick={() => scrollToSection(item.toLowerCase().replace(' ', ''))}
-                className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
-                whileHover={{ y: -1 }}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                {item}
-              </motion.button>
+            {navItems.map((item, index) => (
+              item.href ? (
+                <Link key={item.label} href={item.href}>
+                  <motion.div
+                    className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
+                    whileHover={{ y: -1 }}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    {item.label}
+                  </motion.div>
+                </Link>
+              ) : (
+                <motion.button
+                  key={item.label}
+                  onClick={() => scrollToSection(item.id!)}
+                  className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
+                  whileHover={{ y: -1 }}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  {item.label}
+                </motion.button>
+              )
             ))}
           </nav>
 
@@ -118,30 +141,46 @@ export default function Navbar() {
               className="md:hidden border-t border-neutral-200 bg-white/95 backdrop-blur-sm"
             >
               <div className="px-4 py-6 space-y-4">
-                {['Features', 'How it works', 'FAQs', 'Contact'].map((item, index) => (
-                  <motion.button
-                    key={item}
-                    onClick={() => {
-                      scrollToSection(item.toLowerCase().replace(' ', ''));
-                      setMobileMenuOpen(false);
-                    }}
-                    className="block w-full text-left px-4 py-3 text-base font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    {item}
-                  </motion.button>
+                {navItems.map((item, index) => (
+                  item.href ? (
+                    <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)}>
+                      <motion.div
+                        className="block w-full text-left px-4 py-3 text-base font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        {item.label}
+                      </motion.div>
+                    </Link>
+                  ) : (
+                    <motion.button
+                      key={item.label}
+                      onClick={() => {
+                        scrollToSection(item.id!);
+                        setMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-3 text-base font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      {item.label}
+                    </motion.button>
+                  )
                 ))}
-                <motion.button
-                  className="w-full mt-4 rounded-full bg-gradient-to-r from-[#1E5FD8] to-[#1a4fb8] px-6 py-3 text-base font-semibold text-white shadow-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Link href={"/login"}>Login</Link>
-                </motion.button>
+                <Link href="/login">
+                  <motion.button
+                    className="w-full mt-4 rounded-full bg-gradient-to-r from-[#1E5FD8] to-[#1a4fb8] px-6 py-3 text-base font-semibold text-white shadow-lg"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Login
+                  </motion.button>
+                </Link>
               </div>
             </motion.div>
           )}
