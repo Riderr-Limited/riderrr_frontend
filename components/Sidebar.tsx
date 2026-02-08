@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   IconDashboard,
   IconUsers,
@@ -13,6 +13,7 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { useAuth, useCompany, usePermissions } from "@/contexts/AuthContext";
+import { useSidebar } from "@/contexts/SidebarContext";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -33,7 +34,7 @@ const bottomItems = [
 // ];
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isCollapsed, setIsCollapsed } = useSidebar();
   const pathname = usePathname();
   const { user, logout, isLoading } = useAuth();
   const { company, isCompanyUser } = useCompany();

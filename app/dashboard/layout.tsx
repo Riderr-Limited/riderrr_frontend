@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import Sidebar from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -39,26 +40,28 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      {/* Add overflow-hidden to prevent horizontal scroll on the entire page */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar />
-        <main className="flex-1 p-4 md:p-6 overflow-auto mt-16">
-          {/* Dynamic Page Title */}
-          <div className="mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-              {getPageTitle(pathname)}
-            </h1>
-            <p className="text-gray-600 mt-1">
-              {getPageDescription(pathname, user?.name)}
-            </p>
-          </div>
-          {/* Add min-width: 0 to prevent children from overflowing */}
-          <div className="min-w-0">{children}</div>
-        </main>
+    <SidebarProvider>
+      <div className="flex min-h-screen bg-gray-50">
+        <Sidebar />
+        {/* Add overflow-hidden to prevent horizontal scroll on the entire page */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TopBar />
+          <main className="flex-1 p-4 md:p-6 overflow-auto mt-16">
+            {/* Dynamic Page Title */}
+            <div className="mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                {getPageTitle(pathname)}
+              </h1>
+              <p className="text-gray-600 mt-1">
+                {getPageDescription(pathname, user?.name)}
+              </p>
+            </div>
+            {/* Add min-width: 0 to prevent children from overflowing */}
+            <div className="min-w-0">{children}</div>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
 

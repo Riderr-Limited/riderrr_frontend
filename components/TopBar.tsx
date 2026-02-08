@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSidebar } from "@/contexts/SidebarContext";
 import {
   IconBell,
   IconUser,
@@ -11,9 +12,11 @@ import {
 import { useState, useEffect } from "react";
 import NotificationModal from "@/components/notifications/NotificationModal";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function TopBar() {
   const { user, logout } = useAuth();
+  const { isCollapsed } = useSidebar();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -82,7 +85,10 @@ export default function TopBar() {
 
   return (
     <>
-      <header className="fixed top-0 right-0 left-64 z-40 bg-white border-b border-gray-200 shadow-sm">
+      <header className={cn(
+        "fixed top-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm transition-all duration-300",
+        isCollapsed ? "left-20" : "left-64"
+      )}>
         <div className="px-4 py-3 md:px-6">
           <div className="flex items-center justify-end">
             {/* Right: Action Icons */}
