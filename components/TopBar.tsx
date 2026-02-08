@@ -29,7 +29,7 @@ export default function TopBar() {
       if (!token) return;
 
       const response = await fetch(
-        "https://api.riderr.ng/api/notifications/unread-count",
+        "https://riderr-backend.onrender.com/api/notifications/unread-count",
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -85,10 +85,12 @@ export default function TopBar() {
 
   return (
     <>
-      <header className={cn(
-        "fixed top-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm transition-all duration-300",
-        isCollapsed ? "left-20" : "left-64"
-      )}>
+      <header
+        className={cn(
+          "fixed top-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm transition-all duration-300",
+          isCollapsed ? "left-20" : "left-64",
+        )}
+      >
         <div className="px-4 py-3 md:px-6">
           <div className="flex items-center justify-end">
             {/* Right: Action Icons */}

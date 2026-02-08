@@ -77,7 +77,11 @@ interface AuthContextType {
   updateUser: (userData: Partial<User>) => void;
   refreshToken: () => Promise<boolean>;
   forgotPassword: (emailOrPhone: string) => Promise<ForgotPasswordResponse>;
-  resetPassword: (data: { email: string; otp: string; newPassword: string }) => Promise<AuthResponse>;
+  resetPassword: (data: {
+    email: string;
+    otp: string;
+    newPassword: string;
+  }) => Promise<AuthResponse>;
   verifyEmail: (token: string) => Promise<void>;
   updateProfile: (profileData: Partial<User>) => Promise<AuthResponse>;
   changePassword: (
@@ -89,7 +93,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // API base URL - adjust based on your environment
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.riderr.ng/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -274,7 +278,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Register as rider (driver)
-  const registerAsRider = async (riderData: RegisterData & { companyId: string }) => {
+  const registerAsRider = async (
+    riderData: RegisterData & { companyId: string },
+  ) => {
     setIsLoading(true);
     try {
       const data = await apiRequest<AuthResponse>(
@@ -301,7 +307,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Register with company
-  const registerWithCompany = async (companyId: string, userData: RegisterData) => {
+  const registerWithCompany = async (
+    companyId: string,
+    userData: RegisterData,
+  ) => {
     setIsLoading(true);
     try {
       const data = await apiRequest<AuthResponse>(
@@ -404,12 +413,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // Forgot password
-  const forgotPassword = async (emailOrPhone: string): Promise<ForgotPasswordResponse> => {
+  const forgotPassword = async (
+    emailOrPhone: string,
+  ): Promise<ForgotPasswordResponse> => {
     try {
-      const data = await apiRequest<{ success: boolean; message: string }>("/auth/forgot-password", {
-        method: "POST",
-        body: JSON.stringify({ email: emailOrPhone }), // Note: backend expects 'email' field
-      });
+      const data = await apiRequest<{ success: boolean; message: string }>(
+        "/auth/forgot-password",
+        {
+          method: "POST",
+          body: JSON.stringify({ email: emailOrPhone }), // Note: backend expects 'email' field
+        },
+      );
 
       // Handle backend response structure
       if (!data.success) {
@@ -676,4 +690,10 @@ export function usePermissions() {
 }
 
 // Add these type exports for better TypeScript support
-export type { LoginCredentials, RegisterData, AuthResponse, ForgotPasswordResponse, ApiError };
+export type {
+  LoginCredentials,
+  RegisterData,
+  AuthResponse,
+  ForgotPasswordResponse,
+  ApiError,
+};

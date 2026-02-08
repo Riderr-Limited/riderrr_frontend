@@ -13,7 +13,7 @@ export function useNotifications() {
 
       setIsLoading(true);
       const response = await fetch(
-        "https://api.riderr.ng/api/notifications/unread-count",
+        "https://riderr-backend.onrender.com/api/notifications/unread-count",
         {
           headers: { Authorization: `Bearer ${token}` },
         },

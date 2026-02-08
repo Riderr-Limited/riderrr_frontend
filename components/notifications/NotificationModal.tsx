@@ -72,8 +72,8 @@ export default function NotificationModal({
 
       const url =
         activeTab === "unread"
-          ? "https://api.riderr.ng/api/notifications?unreadOnly=true"
-          : "https://api.riderr.ng/api/notifications";
+          ? "https://riderr-backend.onrender.com/api/notifications?unreadOnly=true"
+          : "https://riderr-backend.onrender.com/api/notifications";
 
       const response = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -126,7 +126,7 @@ export default function NotificationModal({
     try {
       const token = localStorage.getItem("access_token");
       await fetch(
-        `https://api.riderr.ng/api/notifications/${notificationId}/read`,
+        `https://riderr-backend.onrender.com/api/notifications/${notificationId}/read`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },
@@ -141,10 +141,13 @@ export default function NotificationModal({
   const markAllAsRead = async () => {
     try {
       const token = localStorage.getItem("access_token");
-      await fetch("https://api.riderr.ng/api/notifications/mark-all-read", {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await fetch(
+        "https://riderr-backend.onrender.com/api/notifications/mark-all-read",
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       fetchNotifications();
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
