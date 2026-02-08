@@ -456,7 +456,7 @@ export default function DashboardPage() {
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Active Drivers */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <h3 className="text-base font-semibold text-gray-900 mb-3">
             Active Drivers
           </h3>
@@ -507,10 +507,10 @@ export default function DashboardPage() {
                     </div>
                   ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Delivery Status */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <h3 className="text-base font-semibold text-gray-900 mb-3">
             Delivery Status
           </h3>
@@ -547,10 +547,10 @@ export default function DashboardPage() {
               );
             })}
           </div>
-        </div>
+        </div> */}
 
         {/* Quick Actions */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <h3 className="text-base font-semibold text-gray-900 mb-3">
             Quick Actions
           </h3>
@@ -569,7 +569,7 @@ export default function DashboardPage() {
               📊 View Reports
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
