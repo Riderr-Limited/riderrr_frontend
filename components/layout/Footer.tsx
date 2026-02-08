@@ -20,12 +20,21 @@ export default function Footer() {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#1E5FD8] to-[#1a4fb8] flex items-center justify-center shadow-lg">
-                <Image className="rounded-lg" width={24} height={24} alt="logo" src="/favicon.ico" />
+                <Image
+                  className="rounded-lg"
+                  width={24}
+                  height={24}
+                  alt="logo"
+                  src="/favicon.ico"
+                />
               </div>
-              <span className="font-bold text-2xl text-white tracking-tight">RIDERR</span>
+              <span className="font-bold text-2xl text-white tracking-tight">
+                RIDERR
+              </span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Connecting customers, riders, and logistics companies on one platform for fast, reliable, and affordable deliveries.
+              Connecting customers, riders, and logistics companies on one
+              platform for fast, reliable, and affordable deliveries.
             </p>
 
             {/* Socials */}
@@ -111,8 +120,8 @@ export default function Footer() {
                 { label: "About Us", href: "/about" },
                 { label: "How It Works", href: "#how-it-works" },
                 { label: "Contact Us", href: "#contact" },
-                { label: "Privacy Policy", href: "#" },
-                { label: "Terms & Conditions", href: "#" },
+                { label: "Privacy Policy", href: "/privacy-policy" },
+                { label: "Terms & Conditions", href: "/terms-of-service" },
               ].map((item) => (
                 <li key={item.label}>
                   <Link
@@ -133,7 +142,9 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h4 className="text-lg font-bold mb-2">Download the App</h4>
-              <p className="text-gray-400 text-sm">Available on iOS and Android</p>
+              <p className="text-gray-400 text-sm">
+                Available on iOS and Android
+              </p>
             </div>
             <div className="flex items-center gap-4">
               <Image
@@ -158,11 +169,19 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="w-full bg-gray-950 border-t border-gray-800 text-center px-6 py-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-400">© 2025 Riderr. All rights reserved.</p>
+          <p className="text-sm text-gray-400">
+            © 2026 Riderr. All rights reserved.
+          </p>
           <div className="flex items-center gap-6 text-sm text-gray-400">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="#" className="hover:text-white transition-colors">Cookie Policy</Link>
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-of-service" className="hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/cookie-policy" className="hover:text-white transition-colors">
+              Cookie Policy
+            </Link>
           </div>
         </div>
       </div>
