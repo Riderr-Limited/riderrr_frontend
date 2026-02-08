@@ -9,8 +9,6 @@ import {
   IconSettings,
   IconChevronLeft,
   IconChevronRight,
-  IconBell,
-  IconHelp,
   IconLogout,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -30,10 +28,9 @@ const bottomItems = [
   { name: "Settings", icon: IconSettings, href: "/dashboard/settings" },
 ];
 
-const utilityItems = [
-  { name: "Notifications", icon: IconBell, href: "/dashboard/notifications" },
-  { name: "Help & Support", icon: IconHelp, href: "/dashboard/help" },
-];
+// const utilityItems = [
+//   { name: "Help & Support", icon: IconHelp, href: "/dashboard/help" },
+// ];
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -117,7 +114,7 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen transition-all duration-300 sticky top-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white shadow-lg",
+        "flex flex-col h-screen transition-all duration-300 sticky top-0 bg-linear-to-br from-[#1E5FD8] via-[#183a79] to-[#395d9f] text-white shadow-lg overflow-x-hidden",
         isCollapsed ? "w-20" : "w-64",
       )}
     >
@@ -153,9 +150,7 @@ export default function Sidebar() {
           {!isCollapsed && (
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold text-white tracking-wide leading-tight">
-                {isCompanyUser
-                  ? `${companyName || "Company"}`
-                  : "RIDERR"}
+                {isCompanyUser ? `${companyName || "Company"}` : "RIDERR"}
               </h1>
               <p className="text-xs text-white/80 mt-0.5">
                 {user?.role === "company_admin"
@@ -168,30 +163,33 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation Section */}
-      <nav className="flex-1 px-4 py-6 space-y-1">
+      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden">
         {filteredNavItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             className={cn(
-              "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group relative",
+              "flex items-center rounded-xl transition-all duration-200 group relative",
+              isCollapsed ? "px-0 py-3 justify-center" : "px-4 py-3",
               isActiveItem(item.href)
-                ? "bg-blue-500/30 text-white shadow-sm border border-blue-400/50 backdrop-blur-sm"
-                : "text-white/90 hover:bg-white/10 hover:text-white",
+                ? "bg-white/20 text-white shadow-md border border-white/30"
+                : "text-white/80 hover:bg-white/10 hover:text-white hover:shadow-sm",
             )}
           >
+            {isActiveItem(item.href) && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm"></div>
+            )}
             <item.icon
               className={cn(
-                "h-5 w-5 transition-colors",
-                isCollapsed ? "mx-auto" : "mr-3"
+                "transition-transform group-hover:scale-110",
+                isCollapsed ? "h-6 w-6" : "h-5 w-5 mr-3",
               )}
             />
-            {!isCollapsed && <span className="font-medium">{item.name}</span>}
-            {isActiveItem(item.href) && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
+            {!isCollapsed && (
+              <span className="font-medium text-sm">{item.name}</span>
             )}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-xl pointer-events-none">
                 {item.name}
               </div>
             )}
@@ -199,125 +197,108 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Divider */}
-      <div className="px-4">
-        <div className="border-t border-white/20"></div>
-      </div>
+      {/* Bottom Section */}
+      <div className="mt-auto">
+        {/* Divider */}
+        <div className="px-4 mb-3">
+          <div className="border-t border-white/20"></div>
+        </div>
 
-      {/* Utility Items */}
-      <div className="px-4 py-4 space-y-1">
-        {utilityItems.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            className={cn(
-              "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group relative",
-              isActiveItem(item.href)
-                ? "bg-blue-500/30 text-white shadow-sm border border-blue-400/50 backdrop-blur-sm"
-                : "text-white/80 hover:bg-white/10 hover:text-white",
-            )}
-          >
-            <item.icon
+        {/* Bottom Items */}
+        <div className="px-4 space-y-2 mb-3">
+          {bottomItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
               className={cn(
-                "h-5 w-5 transition-colors",
-                isCollapsed ? "mx-auto" : "mr-3"
+                "flex items-center rounded-xl transition-all duration-200 group relative",
+                isCollapsed ? "px-0 py-3 justify-center" : "px-4 py-3",
+                isActiveItem(item.href)
+                  ? "bg-white/20 text-white shadow-md border border-white/30"
+                  : "text-white/80 hover:bg-white/10 hover:text-white hover:shadow-sm",
               )}
-            />
-            {!isCollapsed && <span className="font-medium">{item.name}</span>}
-            {isActiveItem(item.href) && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
-            )}
-            {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
-                {item.name}
-              </div>
-            )}
-          </Link>
-        ))}
-        {/* Profile & Settings Section */}
-        <div className="border-t border-white/20">
-          <div className="px-4 py-4 space-y-1">
-            {bottomItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
+            >
+              {isActiveItem(item.href) && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm"></div>
+              )}
+              <item.icon
                 className={cn(
-                  "flex items-center rounded-lg px-4 py-3 transition-all duration-200 group relative",
-                  isActiveItem(item.href)
-                    ? "bg-blue-500/30 text-white shadow-sm border border-blue-400/50 backdrop-blur-sm"
-                    : "text-white/90 hover:bg-white/10 hover:text-white",
+                  "transition-transform group-hover:scale-110",
+                  isCollapsed ? "h-6 w-6" : "h-5 w-5 mr-3",
                 )}
-              >
-                <item.icon
-                  className={cn(
-                    "h-5 w-5 transition-colors",
-                    isCollapsed ? "mx-auto" : "mr-3"
-                  )}
-                />
-                {!isCollapsed && (
-                  <span className="font-medium">{item.name}</span>
-                )}
-                {isActiveItem(item.href) && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full"></div>
-                )}
-                {isCollapsed && (
-                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
-                    {item.name}
-                  </div>
-                )}
-              </Link>
-            ))}
-          </div>
-
-          {/* User Profile */}
-          <div
-            className={cn(
-              "px-4 py-4 border-t border-white/20",
-              isCollapsed && "flex justify-center",
-            )}
-          >
-            <div className="flex items-center">
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center overflow-hidden shadow-sm">
-                {user?.avatarUrl ? (
-                  <Image
-                    src={user.avatarUrl}
-                    alt={userDisplayName}
-                    className="h-full w-full object-cover"
-                    width={36}
-                    height={36}
-                  />
-                ) : (
-                  <span className="text-white font-semibold text-sm">
-                    {userDisplayName.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
+              />
               {!isCollapsed && (
-                <div className="ml-3 flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
-                    {isLoading ? "Loading..." : userDisplayName}
-                  </p>
-                  <p className="text-xs text-white/70 truncate">
-                    {isLoading ? "" : userRoleDisplay}
-                    {companyName && ` • ${companyName}`}
-                  </p>
+                <span className="font-medium text-sm">{item.name}</span>
+              )}
+              {isCollapsed && (
+                <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-xl pointer-events-none">
+                  {item.name}
                 </div>
               )}
-            </div>
-          </div>
+            </Link>
+          ))}
         </div>
+
+        {/* User Profile Section */}
+        <div className="px-4 mb-3">
+          <div className="border-t border-white/20"></div>
+        </div>
+        {/* <div
+          className={cn(
+            "px-4 py-3 mx-4 mb-3 rounded-xl bg-white/10 backdrop-blur-sm",
+            isCollapsed && "flex justify-center px-2",
+          )}
+        >
+          <div className="flex items-center">
+            <div className="h-10 w-10 rounded-full bg-linear-to-br from-blue-300 to-blue-500 flex items-center justify-center overflow-hidden shadow-md ring-2 ring-white/30">
+              {user?.avatarUrl ? (
+                <Image
+                  src={user.avatarUrl}
+                  alt={userDisplayName}
+                  className="h-full w-full object-cover"
+                  width={40}
+                  height={40}
+                />
+              ) : (
+                <span className="text-white font-bold text-base">
+                  {userDisplayName.charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+            {!isCollapsed && (
+              <div className="ml-3 flex-1 min-w-0">
+                <p className="text-sm font-semibold text-white truncate">
+                  {isLoading ? "Loading..." : userDisplayName}
+                </p>
+                <p className="text-xs text-white/70 truncate">
+                  {isLoading ? "" : userRoleDisplay}
+                </p>
+              </div>
+            )}
+          </div>
+        </div> */}
+
         {/* Logout Button */}
         <div className="px-4 pb-4">
           <button
             onClick={handleLogout}
-            className="flex items-center text-white/80 hover:text-red-200 rounded-lg px-4 py-3 hover:bg-red-500/20 transition-all duration-200 group w-full border border-white/20 hover:border-red-300/50"
+            className={cn(
+              "flex items-center rounded-xl transition-all duration-200 group w-full relative",
+              isCollapsed ? "px-0 py-3 justify-center" : "px-4 py-3",
+              "text-white/90 hover:text-white bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 hover:border-red-400/50 shadow-sm hover:shadow-md",
+            )}
           >
             <IconLogout
-              className={cn("h-5 w-5 transition-colors", isCollapsed ? "mx-auto" : "mr-3")}
+              className={cn(
+                "transition-transform group-hover:scale-110",
+                isCollapsed ? "h-6 w-6" : "h-5 w-5 mr-3",
+              )}
             />
-            {!isCollapsed && <span className="font-medium">Logout</span>}
+            {!isCollapsed && (
+              <span className="font-medium text-sm">Logout</span>
+            )}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-lg">
+              <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-xl pointer-events-none">
                 Logout
               </div>
             )}
