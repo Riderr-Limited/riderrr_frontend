@@ -10,9 +10,7 @@ import {
   IconUser,
   IconCash,
   IconX,
-  IconTrash,
   IconChecklist,
-  IconExternalLink,
 } from "@tabler/icons-react";
 //import { formatDistanceToNow } from 'date-fns'
 
