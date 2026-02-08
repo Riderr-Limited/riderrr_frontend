@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth, useRole, usePermissions } from "@/contexts/AuthContext";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
   IconPackage,
   IconTrendingUp,
@@ -17,7 +17,7 @@ import {
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { API_CONFIG } from "./../lib/config";
-import { formatDate } from './../lib/utils';
+import { formatDate } from "./../lib/utils";
 import { cn } from "@/lib/utils";
 
 interface Delivery {
@@ -45,38 +45,37 @@ interface Driver {
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { getUserRole, canAccess } = useRole();
-  const { canViewRevenue, canManageDeliveries } = usePermissions();
+  const { getUserRole } = useRole();
+  const { canManageDeliveries } = usePermissions();
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const fetchUnreadCount = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("access_token");
-      const response = await fetch(
-        API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT),
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          setUnreadCount(data.data.count);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching unread count:", error);
-    }
-  }, []);
-
   useEffect(() => {
-    // Start with immediate call, then set interval
-    fetchUnreadCount(); // Call immediately
+    const fetchUnreadCount = async () => {
+      try {
+        const token = localStorage.getItem("access_token");
+        const response = await fetch(
+          API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT),
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setUnreadCount(data.data.count);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching unread count:", error);
+      }
+    };
+
+    fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000);
-    
+
     return () => clearInterval(interval);
-  }, [fetchUnreadCount]);
+  }, []);
 
   const [stats, setStats] = useState({
     totalDeliveries: 0,
@@ -93,77 +92,77 @@ export default function DashboardPage() {
     drivers: true,
   });
 
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      setLoading({ stats: true, deliveries: true, drivers: true });
-      const token = localStorage.getItem("access_token");
-
-      // Use Promise.all to fetch data in parallel
-      const [deliveriesRes, driversRes, statsRes] = await Promise.all([
-        fetch(
-          API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.DELIVERIES.COMPANY_DELIVERIES),
-          { headers: { Authorization: `Bearer ${token}` } }
-        ),
-        fetch(
-          API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DRIVERS),
-          { headers: { Authorization: `Bearer ${token}` } }
-        ),
-        fetch(
-          API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.STATISTICS),
-          { headers: { Authorization: `Bearer ${token}` } }
-        ),
-      ]);
-
-      // Process deliveries response
-      if (deliveriesRes.ok) {
-        const deliveriesData = await deliveriesRes.json();
-        if (deliveriesData.success) {
-          setDeliveries(deliveriesData.data);
-          setStats((prev) => ({
-            ...prev,
-            totalDeliveries: deliveriesData.pagination?.total || 0,
-          }));
-          setLoading((prev) => ({ ...prev, deliveries: false }));
-        }
-      }
-
-      // Process drivers response
-      if (driversRes.ok) {
-        const driversData = await driversRes.json();
-        if (driversData.success) {
-          setDrivers(driversData.data);
-          const online = driversData.data.filter(
-            (d: Driver) => d.isOnline && d.isActive,
-          ).length;
-          setStats((prev) => ({
-            ...prev,
-            totalDrivers: driversData.data.length,
-            onlineDrivers: online,
-          }));
-          setLoading((prev) => ({ ...prev, drivers: false }));
-        }
-      }
-
-      // Process statistics response
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        if (statsData.success) {
-          setStats((prev) => ({
-            ...prev,
-            totalRevenue: statsData.data.summary?.totalRevenue || 0,
-          }));
-          setLoading((prev) => ({ ...prev, stats: false }));
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-      setLoading({ stats: false, deliveries: false, drivers: false });
-    }
-  }, []);
-
   useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading({ stats: true, deliveries: true, drivers: true });
+        const token = localStorage.getItem("access_token");
+
+        // Use Promise.all to fetch data in parallel
+        const [deliveriesRes, driversRes, statsRes] = await Promise.all([
+          fetch(
+            API_CONFIG.buildUrl(
+              API_CONFIG.ENDPOINTS.DELIVERIES.COMPANY_DELIVERIES,
+            ),
+            { headers: { Authorization: `Bearer ${token}` } },
+          ),
+          fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DRIVERS), {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.STATISTICS), {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        // Process deliveries response
+        if (deliveriesRes.ok) {
+          const deliveriesData = await deliveriesRes.json();
+          if (deliveriesData.success) {
+            setDeliveries(deliveriesData.data);
+            setStats((prev) => ({
+              ...prev,
+              totalDeliveries: deliveriesData.pagination?.total || 0,
+            }));
+            setLoading((prev) => ({ ...prev, deliveries: false }));
+          }
+        }
+
+        // Process drivers response
+        if (driversRes.ok) {
+          const driversData = await driversRes.json();
+          if (driversData.success) {
+            setDrivers(driversData.data);
+            const online = driversData.data.filter(
+              (d: Driver) => d.isOnline && d.isActive,
+            ).length;
+            setStats((prev) => ({
+              ...prev,
+              totalDrivers: driversData.data.length,
+              onlineDrivers: online,
+            }));
+            setLoading((prev) => ({ ...prev, drivers: false }));
+          }
+        }
+
+        // Process statistics response
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          if (statsData.success) {
+            setStats((prev) => ({
+              ...prev,
+              totalRevenue: statsData.data.summary?.totalRevenue || 0,
+            }));
+            setLoading((prev) => ({ ...prev, stats: false }));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+        setLoading({ stats: false, deliveries: false, drivers: false });
+      }
+    };
+
     fetchDashboardData();
-  }, [fetchDashboardData]);
+  }, []);
 
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
@@ -182,14 +181,74 @@ export default function DashboardPage() {
     }
   };
 
-  const refreshData = useCallback(async () => {
-    await fetchDashboardData();
-  }, [fetchDashboardData]);
+  const refreshData = async () => {
+    try {
+      setLoading({ stats: true, deliveries: true, drivers: true });
+      const token = localStorage.getItem("access_token");
+
+      const [deliveriesRes, driversRes, statsRes] = await Promise.all([
+        fetch(
+          API_CONFIG.buildUrl(
+            API_CONFIG.ENDPOINTS.DELIVERIES.COMPANY_DELIVERIES,
+          ),
+          { headers: { Authorization: `Bearer ${token}` } },
+        ),
+        fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DRIVERS), {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.STATISTICS), {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      if (deliveriesRes.ok) {
+        const deliveriesData = await deliveriesRes.json();
+        if (deliveriesData.success) {
+          setDeliveries(deliveriesData.data);
+          setStats((prev) => ({
+            ...prev,
+            totalDeliveries: deliveriesData.pagination?.total || 0,
+          }));
+          setLoading((prev) => ({ ...prev, deliveries: false }));
+        }
+      }
+
+      if (driversRes.ok) {
+        const driversData = await driversRes.json();
+        if (driversData.success) {
+          setDrivers(driversData.data);
+          const online = driversData.data.filter(
+            (d: Driver) => d.isOnline && d.isActive,
+          ).length;
+          setStats((prev) => ({
+            ...prev,
+            totalDrivers: driversData.data.length,
+            onlineDrivers: online,
+          }));
+          setLoading((prev) => ({ ...prev, drivers: false }));
+        }
+      }
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        if (statsData.success) {
+          setStats((prev) => ({
+            ...prev,
+            totalRevenue: statsData.data.summary?.totalRevenue || 0,
+          }));
+          setLoading((prev) => ({ ...prev, stats: false }));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      setLoading({ stats: false, deliveries: false, drivers: false });
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Professional Header */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white p-5 rounded-lg border border-slate-700">
+      {/* <div className="bg-linear-to-r from-slate-800 to-slate-900 text-white p-5 rounded-lg border border-slate-700">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold text-slate-100">
@@ -200,7 +259,9 @@ export default function DashboardPage() {
           <div className="hidden md:flex items-center space-x-3">
             <div className="bg-white/10 px-3 py-2 rounded-md border border-white/20">
               <p className="text-xs font-medium text-slate-300">Role</p>
-              <p className="text-sm font-semibold capitalize text-white">{getUserRole()}</p>
+              <p className="text-sm font-semibold capitalize text-white">
+                {getUserRole()}
+              </p>
             </div>
             <button
               onClick={refreshData}
@@ -218,7 +279,7 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Rest of your component remains the same... */}
       {/* Stats Cards */}
@@ -334,7 +395,10 @@ export default function DashboardPage() {
                 </tr>
               ) : (
                 deliveries.map((delivery) => (
-                  <tr key={delivery._id} className="hover:bg-gray-50 border-b border-gray-100">
+                  <tr
+                    key={delivery._id}
+                    className="hover:bg-gray-50 border-b border-gray-100"
+                  >
                     <td className="px-4 py-3">
                       <div className="text-xs font-medium text-gray-900">
                         {delivery.referenceId}
@@ -342,7 +406,7 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-start">
-                        <IconMapPin className="h-3 w-3 text-blue-500 mr-1.5 mt-0.5 flex-shrink-0" />
+                        <IconMapPin className="h-3 w-3 text-blue-500 mr-1.5 mt-0.5 shrink-0" />
                         <div className="min-w-0">
                           <div className="text-xs text-gray-900 font-medium truncate">
                             {delivery.pickup.name}
@@ -355,7 +419,7 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-start">
-                        <IconMapPin className="h-3 w-3 text-green-500 mr-1.5 mt-0.5 flex-shrink-0" />
+                        <IconMapPin className="h-3 w-3 text-green-500 mr-1.5 mt-0.5 shrink-0" />
                         <div className="min-w-0">
                           <div className="text-xs text-gray-900 font-medium truncate">
                             {delivery.recipientName}
@@ -368,7 +432,8 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="text-xs font-semibold text-gray-900">
-                        {delivery.fare.currency} {delivery.fare.amount?.toLocaleString() || "0"}
+                        {delivery.fare.currency}{" "}
+                        {delivery.fare.amount?.toLocaleString() || "0"}
                       </div>
                     </td>
                     <td className="px-4 py-3">
