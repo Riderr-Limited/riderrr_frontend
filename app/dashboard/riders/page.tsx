@@ -1,141 +1,168 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import { IconPlus, IconUser, IconPhone, IconCar, IconCheck, IconX, IconEye, IconRefresh, IconPackage, IconCash, IconMapPin, IconId, IconCalendar, IconCarCrash, IconMail } from '@tabler/icons-react'
-import { formatDate } from '../../lib/utils'
-import { API_CONFIG } from '../../lib/config'
-import { ApiClient } from '../../lib/api-client'
-
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  IconPlus,
+  IconUser,
+  IconPhone,
+  IconCar,
+  IconCheck,
+  IconX,
+  IconEye,
+  IconRefresh,
+  IconPackage,
+  IconCash,
+  IconMapPin,
+  IconId,
+  IconCalendar,
+  IconCarCrash,
+  IconMail,
+} from "@tabler/icons-react";
+import { formatDate } from "../../lib/utils";
+import { API_CONFIG } from "../../lib/config";
+import { ApiClient } from "../../lib/api-client";
 
 interface Driver {
-  _id: string
+  _id: string;
   userId: {
-    _id: string
-    name: string
-    email: string
-    phone: string
-    fullName: string
-    avatarUrl?: string
-  }
-  licenseNumber: string
-  licenseExpiry: string
-  vehicleType: 'car' | 'bike' | 'truck'
-  vehicleMake: string
-  vehicleModel: string
-  vehicleYear: number
-  vehicleColor: string
-  plateNumber: string
-  isAvailable: boolean
-  isOnline: boolean
-  isActive: boolean
-  isVerified: boolean
-  currentStatus: 'online' | 'offline' | 'busy'
-  approvalStatus: 'pending' | 'approved' | 'rejected'
+    _id: string;
+    name: string;
+    email: string;
+    phone: string;
+    fullName: string;
+    avatarUrl?: string;
+  };
+  licenseNumber: string;
+  licenseExpiry: string;
+  vehicleType: "car" | "bike" | "truck";
+  vehicleMake: string;
+  vehicleModel: string;
+  vehicleYear: number;
+  vehicleColor: string;
+  plateNumber: string;
+  isAvailable: boolean;
+  isOnline: boolean;
+  isActive: boolean;
+  isVerified: boolean;
+  currentStatus: "online" | "offline" | "busy";
+  approvalStatus: "pending" | "approved" | "rejected";
   stats: {
-    totalDeliveries: number
-    totalEarnings: number
-    acceptanceRate: number
-  }
+    totalDeliveries: number;
+    totalEarnings: number;
+    acceptanceRate: number;
+  };
   rating: {
-    average: number
-    totalRatings: number
-  }
-  lastOnlineAt: string
-  createdAt: string
+    average: number;
+    totalRatings: number;
+  };
+  lastOnlineAt: string;
+  createdAt: string;
   location?: {
-    coordinates: [number, number]
-    lastUpdated: string
-  }
+    coordinates: [number, number];
+    lastUpdated: string;
+  };
   bankDetails?: {
-    verified: boolean
-  }
+    verified: boolean;
+  };
 }
 
 interface AddDriverFormData {
-  name: string
-  email: string
-  phone: string
-  password: string
-  confirmPassword: string
-  licenseNumber: string
-  licenseExpiry: string
-  vehicleType: 'car' | 'bike' | 'truck'
-  vehicleMake: string
-  vehicleModel: string
-  vehicleYear: number
-  vehicleColor: string
-  plateNumber: string
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  licenseNumber: string;
+  licenseExpiry: string;
+  vehicleType: "car" | "bike" | "truck";
+  vehicleMake: string;
+  vehicleModel: string;
+  vehicleYear: number;
+  vehicleColor: string;
+  plateNumber: string;
 }
 
 interface Toast {
-  id: string
-  message: string
-  type: 'success' | 'error' | 'info' | 'warning'
+  id: string;
+  message: string;
+  type: "success" | "error" | "info" | "warning";
 }
 
 // Toast Component
-const Toast = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) => {
+const Toast = ({
+  toast,
+  onRemove,
+}: {
+  toast: Toast;
+  onRemove: (id: string) => void;
+}) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      onRemove(toast.id)
-    }, 5000)
+      onRemove(toast.id);
+    }, 5000);
 
-    return () => clearTimeout(timer)
-  }, [toast.id, onRemove])
+    return () => clearTimeout(timer);
+  }, [toast.id, onRemove]);
 
   const bgColor = {
-    success: 'bg-green-100 border-green-300 text-green-800',
-    error: 'bg-red-100 border-red-300 text-red-800',
-    info: 'bg-blue-100 border-blue-300 text-blue-800',
-    warning: 'bg-yellow-100 border-yellow-300 text-yellow-800',
-  }[toast.type]
+    success: "bg-green-100 border-green-300 text-green-800",
+    error: "bg-red-100 border-red-300 text-red-800",
+    info: "bg-blue-100 border-blue-300 text-blue-800",
+    warning: "bg-yellow-100 border-yellow-300 text-yellow-800",
+  }[toast.type];
 
   const icon = {
     success: <IconCheck className="w-5 h-5 text-green-600" />,
     error: <IconX className="w-5 h-5 text-red-600" />,
     info: <IconMail className="w-5 h-5 text-blue-600" />,
     warning: <IconX className="w-5 h-5 text-yellow-600" />,
-  }[toast.type]
+  }[toast.type];
 
   return (
-    <div className={`flex items-center p-4 mb-2 rounded-lg border ${bgColor} shadow-lg animate-slideIn`}>
-      <div className="mr-3">
-        {icon}
-      </div>
+    <div
+      className={`flex items-center p-4 mb-2 rounded-lg border ${bgColor} shadow-lg animate-slideIn`}
+    >
+      <div className="mr-3">{icon}</div>
       <div className="flex-1">
-        <p className="text-sm font-medium">{toast.message}</p>
+        <p className="text-sm font-semibold">{toast.message}</p>
       </div>
       <button
         onClick={() => onRemove(toast.id)}
-        className="ml-4 text-gray-500 hover:text-gray-700"
+        className="ml-4 text-gray-500 hover:text-gray-700 transition-colors"
       >
         <IconX className="w-4 h-4" />
       </button>
     </div>
-  )
-}
+  );
+};
 
 // Toast Container Component
-const ToastContainer = ({ toasts, removeToast }: { toasts: Toast[]; removeToast: (id: string) => void }) => {
-  if (toasts.length === 0) return null
+const ToastContainer = ({
+  toasts,
+  removeToast,
+}: {
+  toasts: Toast[];
+  removeToast: (id: string) => void;
+}) => {
+  if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-[100] max-w-md w-full">
+    <div className="fixed top-4 right-4 z-100 max-w-md w-full">
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onRemove={removeToast} />
       ))}
     </div>
-  )
-}
+  );
+};
 
 // Add CSS animation
 const addToastStyles = () => {
-  if (typeof document === 'undefined') return
-  if (document.getElementById('toast-styles')) return
+  if (typeof document === "undefined") return;
+  if (document.getElementById("toast-styles")) return;
 
-  const style = document.createElement('style')
-  style.id = 'toast-styles'
+  const style = document.createElement("style");
+  style.id = "toast-styles";
   style.textContent = `
     @keyframes slideIn {
       from {
@@ -150,117 +177,120 @@ const addToastStyles = () => {
     .animate-slideIn {
       animation: slideIn 0.3s ease-out;
     }
-  `
-  document.head.appendChild(style)
-}
+  `;
+  document.head.appendChild(style);
+};
 
 export default function RidersPage() {
-  const { user } = useAuth()
-  const [drivers, setDrivers] = useState<Driver[]>([])
-  const [loading, setLoading] = useState(true)
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [showVerificationModal, setShowVerificationModal] = useState(false)
-  const [showProfileModal, setShowProfileModal] = useState(false)
-  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'online' | 'offline'>('all')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [passwordError, setPasswordError] = useState('')
+  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "online" | "offline"
+  >("all");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const [verificationData, setVerificationData] = useState<{
-    email: string
-    name: string
-    driverId?: string
-  } | null>(null)
-  const [verificationCode, setVerificationCode] = useState('')
-  const [verificationError, setVerificationError] = useState('')
-  const [verificationLoading, setVerificationLoading] = useState(false)
-  const [resendLoading, setResendLoading] = useState(false)
-  const [verificationSuccess, setVerificationSuccess] = useState(false)
-  const [toasts, setToasts] = useState<Toast[]>([])
+    email: string;
+    name: string;
+    driverId?: string;
+  } | null>(null);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationError, setVerificationError] = useState("");
+  const [verificationLoading, setVerificationLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [verificationSuccess, setVerificationSuccess] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   const [formData, setFormData] = useState<AddDriverFormData>({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    licenseNumber: '',
-    licenseExpiry: '',
-    vehicleType: 'car',
-    vehicleMake: '',
-    vehicleModel: '',
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    licenseNumber: "",
+    licenseExpiry: "",
+    vehicleType: "car",
+    vehicleMake: "",
+    vehicleModel: "",
     vehicleYear: new Date().getFullYear(),
-    vehicleColor: '',
-    plateNumber: ''
-  })
+    vehicleColor: "",
+    plateNumber: "",
+  });
 
   // Add toast styles on mount
   useEffect(() => {
-    addToastStyles()
-  }, [])
+    addToastStyles();
+  }, []);
 
-  const showToast = (message: string, type: Toast['type'] = 'info') => {
-    const id = Date.now().toString()
-    setToasts(prev => [...prev, { id, message, type }])
-  }
+  const showToast = (message: string, type: Toast["type"] = "info") => {
+    const id = Date.now().toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+  };
 
   const removeToast = (id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id))
-  }
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
 
   const fetchDrivers = async () => {
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       // Using centralized config
       const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DRIVERS);
-      
+
       const data = await ApiClient.get(url);
 
       if (data.success) {
-        setDrivers(data.data || [])
+        setDrivers(data.data || []);
       }
     } catch (error) {
-      showToast('Failed to load riders', 'error')
+      showToast(`Failed to load riders: ${(error as Error).message}`, "error");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchDrivers()
-  }, [])
+    fetchDrivers();
+  }, []);
 
   const handleAddDriver = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      setPasswordError('Passwords do not match')
-      showToast('Passwords do not match', 'error')
-      return
-    }
-    
-    // Validate password strength
-    if (formData.password.length < 6) {
-      setPasswordError('Password must be at least 6 characters')
-      showToast('Password must be at least 6 characters', 'error')
-      return
+      setPasswordError("Passwords do not match");
+      showToast("Passwords do not match", "error");
+      return;
     }
 
-    setPasswordError('')
-    setIsSubmitting(true)
+    // Validate password strength
+    if (formData.password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      showToast("Password must be at least 6 characters", "error");
+      return;
+    }
+
+    setPasswordError("");
+    setIsSubmitting(true);
 
     try {
       // Using centralized config
-      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.SIGNUP_COMPANY_DRIVER);
-      
+      const url = ApiClient.buildUrl(
+        API_CONFIG.ENDPOINTS.AUTH.SIGNUP_COMPANY_DRIVER,
+      );
+
       const result = await ApiClient.post(url, {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
-        role: 'driver',
+        role: "driver",
         licenseNumber: formData.licenseNumber,
         licenseExpiry: formData.licenseExpiry,
         vehicleType: formData.vehicleType,
@@ -268,237 +298,276 @@ export default function RidersPage() {
         vehicleModel: formData.vehicleModel,
         vehicleYear: formData.vehicleYear,
         vehicleColor: formData.vehicleColor,
-        plateNumber: formData.plateNumber
+        plateNumber: formData.plateNumber,
       });
 
       if (!result.success) {
-        throw new Error(result.message || 'Failed to create driver account')
+        throw new Error(result.message || "Failed to create driver account");
       }
 
       // Set verification data and show verification modal
       setVerificationData({
         email: formData.email,
         name: formData.name,
-        driverId: result.data?.user?._id
-      })
+        driverId: result.data?.user?._id,
+      });
 
       // Reset form and close add modal
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirmPassword: '',
-        licenseNumber: '',
-        licenseExpiry: '',
-        vehicleType: 'car',
-        vehicleMake: '',
-        vehicleModel: '',
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        licenseNumber: "",
+        licenseExpiry: "",
+        vehicleType: "car",
+        vehicleMake: "",
+        vehicleModel: "",
         vehicleYear: new Date().getFullYear(),
-        vehicleColor: '',
-        plateNumber: ''
-      })
-      
-      setShowAddModal(false)
-      setShowVerificationModal(true)
-      
-      showToast('Driver account created! Please verify their email.', 'success')
-      
+        vehicleColor: "",
+        plateNumber: "",
+      });
+
+      setShowAddModal(false);
+      setShowVerificationModal(true);
+
+      showToast(
+        "Driver account created! Please verify their email.",
+        "success",
+      );
     } catch (error: unknown) {
-      showToast((error as Error).message || 'Failed to add driver. Please try again.', 'error')
+      showToast(
+        (error as Error).message || "Failed to add driver. Please try again.",
+        "error",
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleVerifyEmail = async () => {
     if (!verificationData || !verificationCode) {
-      setVerificationError('Please enter the verification code')
-      showToast('Please enter the verification code', 'error')
-      return
+      setVerificationError("Please enter the verification code");
+      showToast("Please enter the verification code", "error");
+      return;
     }
 
     if (verificationCode.length !== 6) {
-      setVerificationError('Verification code must be 6 digits')
-      showToast('Verification code must be 6 digits', 'error')
-      return
+      setVerificationError("Verification code must be 6 digits");
+      showToast("Verification code must be 6 digits", "error");
+      return;
     }
 
-    setVerificationError('')
-    setVerificationLoading(true)
+    setVerificationError("");
+    setVerificationLoading(true);
 
     try {
       // Using centralized config
       const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.VERIFY_EMAIL);
-      
+
       const result = await ApiClient.post(url, {
         email: verificationData.email,
-        token: verificationCode
+        token: verificationCode,
       });
 
       if (!result.success) {
-        throw new Error(result.message || 'Verification failed')
+        throw new Error(result.message || "Verification failed");
       }
 
-      setVerificationSuccess(true)
-      showToast('Email verified successfully! Driver can now log in.', 'success')
-      
+      setVerificationSuccess(true);
+      showToast(
+        "Email verified successfully! Driver can now log in.",
+        "success",
+      );
+
       // Show success message
       setTimeout(() => {
-        setShowVerificationModal(false)
-        setVerificationCode('')
-        setVerificationData(null)
-        setVerificationSuccess(false)
-        
-        // Refresh drivers list
-        fetchDrivers()
-      }, 2000)
+        setShowVerificationModal(false);
+        setVerificationCode("");
+        setVerificationData(null);
+        setVerificationSuccess(false);
 
+        // Refresh drivers list
+        fetchDrivers();
+      }, 2000);
     } catch (error: unknown) {
-      showToast((error as Error).message || 'Failed to verify email', 'error')
-      setVerificationError((error as Error).message || 'Failed to verify email')
+      showToast((error as Error).message || "Failed to verify email", "error");
+      setVerificationError(
+        (error as Error).message || "Failed to verify email",
+      );
     } finally {
-      setVerificationLoading(false)
+      setVerificationLoading(false);
     }
-  }
+  };
 
   const handleResendVerification = async () => {
-    if (!verificationData) return
+    if (!verificationData) return;
 
-    setResendLoading(true)
-    setVerificationError('')
+    setResendLoading(true);
+    setVerificationError("");
 
     try {
       // Using centralized config
-      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.AUTH.RESEND_VERIFICATION);
-      
+      const url = ApiClient.buildUrl(
+        API_CONFIG.ENDPOINTS.AUTH.RESEND_VERIFICATION,
+      );
+
       const result = await ApiClient.post(url, {
-        email: verificationData.email
+        email: verificationData.email,
       });
 
       if (!result.success) {
-        throw new Error(result.message || 'Failed to resend verification code')
+        throw new Error(result.message || "Failed to resend verification code");
       }
 
-      showToast('Verification code has been resent to the driver\'s email!', 'success')
+      showToast(
+        "Verification code has been resent to the driver's email!",
+        "success",
+      );
     } catch (error: unknown) {
-      showToast((error as Error).message || 'Failed to resend verification code', 'error')
-      setVerificationError((error as Error).message || 'Failed to resend code')
+      showToast(
+        (error as Error).message || "Failed to resend verification code",
+        "error",
+      );
+      setVerificationError((error as Error).message || "Failed to resend code");
     } finally {
-      setResendLoading(false)
+      setResendLoading(false);
     }
-  }
+  };
 
   const handleVerifyLater = () => {
-    setShowVerificationModal(false)
-    setVerificationCode('')
-    setVerificationData(null)
-    setVerificationError('')
-    
+    setShowVerificationModal(false);
+    setVerificationCode("");
+    setVerificationData(null);
+    setVerificationError("");
+
     // Refresh drivers list
-    fetchDrivers()
-    
-    showToast('Driver added successfully! They can verify their email later.', 'info')
-  }
+    fetchDrivers();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    showToast(
+      "Driver added successfully! They can verify their email later.",
+      "info",
+    );
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: name === 'vehicleYear' ? parseInt(value) : value
-    }))
-    
-    // Clear password error when user types
-    if (name.includes('password')) {
-      setPasswordError('')
-    }
-  }
+      [name]: name === "vehicleYear" ? parseInt(value) : value,
+    }));
 
-  const handleVerificationCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '').slice(0, 6)
-    setVerificationCode(value)
-    if (verificationError) setVerificationError('')
-  }
+    // Clear password error when user types
+    if (name.includes("password")) {
+      setPasswordError("");
+    }
+  };
+
+  const handleVerificationCodeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setVerificationCode(value);
+    if (verificationError) setVerificationError("");
+  };
 
   const handleViewProfile = (driver: Driver) => {
-    setSelectedDriver(driver)
-    setShowProfileModal(true)
-  }
+    setSelectedDriver(driver);
+    setShowProfileModal(true);
+  };
 
   // Filter drivers based on search and status
-  const filteredDrivers = drivers.filter(driver => {
-    const matchesSearch = driver.userId.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         driver.userId.phone.includes(searchTerm) ||
-                         driver.plateNumber.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesStatus = statusFilter === 'all' || 
-                         (statusFilter === 'online' && driver.isOnline) ||
-                         (statusFilter === 'offline' && !driver.isOnline)
-    
-    return matchesSearch && matchesStatus
-  })
+  const filteredDrivers = drivers.filter((driver) => {
+    const matchesSearch =
+      driver.userId.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.userId.phone.includes(searchTerm) ||
+      driver.plateNumber.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "online" && driver.isOnline) ||
+      (statusFilter === "offline" && !driver.isOnline);
+
+    return matchesSearch && matchesStatus;
+  });
 
   const getStatusBadge = (driver: Driver) => {
     if (!driver.isActive) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
           <IconX className="w-3 h-3 mr-1" />
           Inactive
         </span>
-      )
+      );
     }
-    
+
     if (driver.isOnline) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
           <IconCheck className="w-3 h-3 mr-1" />
           Online
         </span>
-      )
+      );
     }
-    
+
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
         Offline
       </span>
-    )
-  }
+    );
+  };
 
   const getApprovalStatusBadge = (status: string) => {
     switch (status) {
-      case 'approved':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
-      case 'rejected':
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+      case "approved":
+        return (
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800">
+            Approved
+          </span>
+        );
+      case "rejected":
+        return (
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800">
+            Rejected
+          </span>
+        );
       default:
-        return <span className="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+        return (
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800">
+            Pending
+          </span>
+        );
     }
-  }
+  };
 
   const generateRandomPassword = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
-    let password = ''
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+    let password = "";
     for (let i = 0; i < 12; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length))
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       password: password,
-      confirmPassword: password
-    }))
-    setPasswordError('')
-    showToast('Strong password generated', 'info')
-  }
+      confirmPassword: password,
+    }));
+    setPasswordError("");
+    showToast("Strong password generated", "info");
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading riders...</p>
+          <p className="mt-4 text-gray-600 font-medium">Loading riders...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -509,26 +578,21 @@ export default function RidersPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Riders Management</h1>
-            <p className="text-gray-600 mt-1">Manage your drivers and their details</p>
-          </div>
-          
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3">
             <button
               onClick={() => {
-                fetchDrivers()
-                showToast('Refreshing drivers list...', 'info')
+                fetchDrivers();
+                showToast("Refreshing drivers list...", "info");
               }}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+              className="inline-flex items-center px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow"
             >
               <IconRefresh className="w-4 h-4 mr-2" />
               Refresh
             </button>
-            
+
             <button
               onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+              className="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <IconPlus className="w-4 h-4 mr-2" />
               Add Rider
@@ -537,7 +601,7 @@ export default function RidersPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -546,19 +610,23 @@ export default function RidersPage() {
                   placeholder="Search by name, phone, or plate number..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 />
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                  <IconUser className="w-4 h-4 text-gray-400" />
+                  <IconUser className="w-5 h-5 text-gray-400" />
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as 'all' | 'online' | 'offline')}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onChange={(e) =>
+                  setStatusFilter(
+                    e.target.value as "all" | "online" | "offline",
+                  )
+                }
+                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium transition-all duration-200"
               >
                 <option value="all">All Status</option>
                 <option value="online">Online</option>
@@ -569,56 +637,67 @@ export default function RidersPage() {
         </div>
 
         {/* Stats Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <IconUser className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-blue-50 rounded-xl">
+                <IconUser className="w-7 h-7 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Total Riders</p>
-                <p className="text-2xl font-bold text-gray-900">{drivers.length}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-50 rounded-lg">
-                <IconCheck className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-600">Online Now</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {drivers.filter(d => d.isOnline && d.isActive).length}
+                <p className="text-sm font-medium text-gray-600">
+                  Total Riders
+                </p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {drivers.length}
                 </p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <div className="p-2 bg-yellow-50 rounded-lg">
-                <IconCar className="w-6 h-6 text-yellow-600" />
+              <div className="p-3 bg-green-50 rounded-xl">
+                <IconCheck className="w-7 h-7 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Active Vehicles</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {drivers.filter(d => d.isActive).length}
+                <p className="text-sm font-medium text-gray-600">Online Now</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {drivers.filter((d) => d.isOnline && d.isActive).length}
                 </p>
               </div>
             </div>
           </div>
-          
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <div className="p-2 bg-purple-50 rounded-lg">
-                <IconPackage className="w-6 h-6 text-purple-600" />
+              <div className="p-3 bg-yellow-50 rounded-xl">
+                <IconCar className="w-7 h-7 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm text-gray-600">Total Deliveries</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {drivers.reduce((sum, driver) => sum + (driver.stats?.totalDeliveries || 0), 0)}
+                <p className="text-sm font-medium text-gray-600">
+                  Active Vehicles
+                </p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {drivers.filter((d) => d.isActive).length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center">
+              <div className="p-3 bg-purple-50 rounded-xl">
+                <IconPackage className="w-7 h-7 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">
+                  Total Deliveries
+                </p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {drivers.reduce(
+                    (sum, driver) => sum + (driver.stats?.totalDeliveries || 0),
+                    0,
+                  )}
                 </p>
               </div>
             </div>
@@ -626,30 +705,30 @@ export default function RidersPage() {
         </div>
 
         {/* Drivers Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     ID
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Name
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Phone Number
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Vehicle
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Approval
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -669,51 +748,56 @@ export default function RidersPage() {
                   </tr>
                 ) : (
                   filteredDrivers.map((driver) => (
-                    <tr key={driver._id} className="hover:bg-gray-50">
+                    <tr
+                      key={driver._id}
+                      className="hover:bg-gray-50 transition-colors duration-150"
+                    >
                       <td className="px-6 py-4">
-                        <div className="text-sm font-mono text-gray-900">
+                        <div className="text-sm font-mono text-gray-700 font-medium">
                           {driver._id.substring(driver._id.length - 8)}
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center">
-                          <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                            <span className="text-blue-600 font-semibold">
+                          <div className="h-10 w-10 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3 shadow-sm">
+                            <span className="text-white font-bold text-base">
                               {driver.userId.name.charAt(0).toUpperCase()}
                             </span>
                           </div>
                           <div>
-                            <div className="text-sm font-medium text-gray-900">
+                            <div className="text-sm font-semibold text-gray-900">
                               {driver.userId.name}
                             </div>
-                            <div className="text-xs text-gray-500">
+                            <div className="text-xs text-gray-600">
                               {driver.userId.email}
                             </div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <IconPhone className="w-4 h-4 mr-2 text-gray-400" />
+                        <div className="flex items-center text-sm font-medium text-gray-900">
+                          <IconPhone className="w-4 h-4 mr-2 text-gray-500" />
                           {driver.userId.phone}
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">
-                          <div className="font-medium">{driver.vehicleMake} {driver.vehicleModel}</div>
-                          <div className="text-xs text-gray-500">{driver.plateNumber}</div>
+                          <div className="font-semibold">
+                            {driver.vehicleMake} {driver.vehicleModel}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {driver.plateNumber}
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        {getStatusBadge(driver)}
-                      </td>
+                      <td className="px-6 py-4">{getStatusBadge(driver)}</td>
                       <td className="px-6 py-4">
                         {getApprovalStatusBadge(driver.approvalStatus)}
                       </td>
                       <td className="px-6 py-4">
                         <button
                           onClick={() => handleViewProfile(driver)}
-                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow"
                         >
                           <IconEye className="w-4 h-4 mr-1" />
                           View Profile
@@ -736,10 +820,12 @@ export default function RidersPage() {
                 <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold text-gray-900">Add New Rider</h2>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Add New Rider
+                      </h2>
                       <button
                         onClick={() => setShowAddModal(false)}
-                        className="text-gray-400 hover:text-gray-500 p-1 hover:bg-gray-100 rounded-lg"
+                        className="text-gray-400 hover:text-gray-500 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                       >
                         <IconX className="w-6 h-6" />
                       </button>
@@ -749,10 +835,13 @@ export default function RidersPage() {
                       <div className="space-y-6">
                         {/* Personal Information */}
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <IconUser className="w-5 h-5 mr-2 text-blue-600" />
+                            Personal Information
+                          </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                              <label className="block text-sm font-semibold text-gray-700 mb-2">
                                 Full Name *
                               </label>
                               <input
@@ -761,13 +850,13 @@ export default function RidersPage() {
                                 value={formData.name}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 placeholder="John Doe"
                               />
                             </div>
-                            
+
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                              <label className="block text-sm font-semibold text-gray-700 mb-2">
                                 Email Address *
                               </label>
                               <input
@@ -776,13 +865,13 @@ export default function RidersPage() {
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 placeholder="john@example.com"
                               />
                             </div>
-                            
+
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                              <label className="block text-sm font-semibold text-gray-700 mb-2">
                                 Phone Number *
                               </label>
                               <input
@@ -791,20 +880,20 @@ export default function RidersPage() {
                                 value={formData.phone}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 placeholder="+2348012345678"
                               />
                             </div>
 
                             <div className="md:col-span-2">
                               <div className="flex items-center justify-between mb-2">
-                                <label className="block text-sm font-medium text-gray-700">
+                                <label className="block text-sm font-semibold text-gray-700">
                                   Password *
                                 </label>
                                 <button
                                   type="button"
                                   onClick={generateRandomPassword}
-                                  className="text-sm text-blue-600 hover:text-blue-800"
+                                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                                 >
                                   Generate Strong Password
                                 </button>
@@ -815,13 +904,13 @@ export default function RidersPage() {
                                 value={formData.password}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 placeholder="Enter password"
                               />
                             </div>
 
                             <div className="md:col-span-2">
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
+                              <label className="block text-sm font-semibold text-gray-700 mb-2">
                                 Confirm Password *
                               </label>
                               <input
@@ -830,11 +919,13 @@ export default function RidersPage() {
                                 value={formData.confirmPassword}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                 placeholder="Confirm password"
                               />
                               {passwordError && (
-                                <p className="text-red-600 text-sm mt-1">{passwordError}</p>
+                                <p className="text-red-600 text-sm mt-2 font-medium">
+                                  {passwordError}
+                                </p>
                               )}
                             </div>
                           </div>
@@ -842,7 +933,10 @@ export default function RidersPage() {
 
                         {/* License Information */}
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-4">License Information</h3>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <IconId className="w-5 h-5 mr-2 text-blue-600" />
+                            License Information
+                          </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -858,7 +952,7 @@ export default function RidersPage() {
                                 placeholder="DL-123456"
                               />
                             </div>
-                            
+
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
                                 License Expiry *
@@ -877,7 +971,10 @@ export default function RidersPage() {
 
                         {/* Vehicle Information */}
                         <div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-4">Vehicle Information</h3>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <IconCar className="w-5 h-5 mr-2 text-blue-600" />
+                            Vehicle Information
+                          </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -895,7 +992,7 @@ export default function RidersPage() {
                                 <option value="truck">Truck</option>
                               </select>
                             </div>
-                            
+
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Vehicle Make *
@@ -910,7 +1007,7 @@ export default function RidersPage() {
                                 placeholder="Toyota"
                               />
                             </div>
-                            
+
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Vehicle Model *
@@ -925,7 +1022,7 @@ export default function RidersPage() {
                                 placeholder="Corolla"
                               />
                             </div>
-                            
+
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Vehicle Year *
@@ -942,7 +1039,7 @@ export default function RidersPage() {
                                 placeholder="2024"
                               />
                             </div>
-                            
+
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Vehicle Color *
@@ -957,7 +1054,7 @@ export default function RidersPage() {
                                 placeholder="White"
                               />
                             </div>
-                            
+
                             <div>
                               <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Plate Number *
@@ -977,9 +1074,11 @@ export default function RidersPage() {
 
                         {/* Notes */}
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                          <p className="text-sm text-blue-800">
-                            <strong>Note:</strong> After creating the account, you'll need to verify the driver's email address.
-                            A verification code will be sent to their email.
+                          <p className="text-sm text-blue-800 font-medium">
+                            <strong className="font-bold">Note:</strong> After
+                            creating the account, you&apos;ll need to verify the
+                            driver&apos;s email address. A verification code
+                            will be sent to their email.
                           </p>
                         </div>
                       </div>
@@ -988,16 +1087,16 @@ export default function RidersPage() {
                         <button
                           type="button"
                           onClick={() => setShowAddModal(false)}
-                          className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                          className="px-5 py-2.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all"
                         >
                           Cancel
                         </button>
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
                         >
-                          {isSubmitting ? 'Adding...' : 'Add Rider'}
+                          {isSubmitting ? "Adding..." : "Add Rider"}
                         </button>
                       </div>
                     </form>
@@ -1016,10 +1115,12 @@ export default function RidersPage() {
                 <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-2xl max-w-md w-full">
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold text-gray-900">Verify Driver Email</h2>
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        Verify Driver Email
+                      </h2>
                       <button
                         onClick={() => setShowVerificationModal(false)}
-                        className="text-gray-400 hover:text-gray-500 p-1 hover:bg-gray-100 rounded-lg"
+                        className="text-gray-400 hover:text-gray-500 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                       >
                         <IconX className="w-6 h-6" />
                       </button>
@@ -1027,11 +1128,15 @@ export default function RidersPage() {
 
                     {verificationSuccess ? (
                       <div className="text-center py-8">
-                        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                          <IconCheck className="h-6 w-6 text-green-600" />
+                        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+                          <IconCheck className="h-8 w-8 text-green-600" />
                         </div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">Email Verified!</h3>
-                        <p className="text-gray-600">Driver's email has been verified successfully.</p>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                          Email Verified!
+                        </h3>
+                        <p className="text-gray-600 font-medium">
+                          Driver&apos;s email has been verified successfully.
+                        </p>
                       </div>
                     ) : (
                       <>
@@ -1039,18 +1144,20 @@ export default function RidersPage() {
                           <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
                             <IconMail className="h-8 w-8 text-blue-600" />
                           </div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">Check Driver's Email</h3>
-                          <p className="text-gray-600">
+                          <h3 className="text-xl font-bold text-gray-900 mb-2">
+                            Check Driver&apos;s Email
+                          </h3>
+                          <p className="text-gray-600 font-medium">
                             A 6-digit verification code has been sent to:
                           </p>
-                          <p className="text-sm font-medium text-gray-900 mt-1">
+                          <p className="text-sm font-semibold text-gray-900 mt-1">
                             {verificationData.email}
                           </p>
                         </div>
 
                         <div className="space-y-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
                               Enter Verification Code
                             </label>
                             <input
@@ -1059,14 +1166,16 @@ export default function RidersPage() {
                               onChange={handleVerificationCodeChange}
                               placeholder="000000"
                               maxLength={6}
-                              className="w-full px-4 py-3 text-center text-2xl font-bold tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full px-4 py-3 text-center text-2xl font-bold tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                             />
                             {verificationError && (
-                              <p className="text-red-600 text-sm mt-2">{verificationError}</p>
+                              <p className="text-red-600 text-sm mt-2 font-medium">
+                                {verificationError}
+                              </p>
                             )}
                           </div>
 
-                          <div className="text-sm text-gray-500 space-y-2">
+                          <div className="text-sm text-gray-600 space-y-2 font-medium">
                             <p>• Code expires in 10 minutes</p>
                             <p>• Check spam folder if not received</p>
                             <p>• Driver needs this verification to log in</p>
@@ -1075,23 +1184,28 @@ export default function RidersPage() {
                           <div className="flex flex-col gap-3 pt-4">
                             <button
                               onClick={handleVerifyEmail}
-                              disabled={verificationLoading || verificationCode.length !== 6}
-                              className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                              disabled={
+                                verificationLoading ||
+                                verificationCode.length !== 6
+                              }
+                              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
                             >
-                              {verificationLoading ? 'Verifying...' : 'Verify Email'}
+                              {verificationLoading
+                                ? "Verifying..."
+                                : "Verify Email"}
                             </button>
-                            
+
                             <button
                               onClick={handleResendVerification}
                               disabled={resendLoading}
-                              className="w-full py-2.5 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                              className="w-full py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-all"
                             >
-                              {resendLoading ? 'Sending...' : 'Resend Code'}
+                              {resendLoading ? "Sending..." : "Resend Code"}
                             </button>
-                            
+
                             <button
                               onClick={handleVerifyLater}
-                              className="w-full py-2.5 text-gray-600 hover:text-gray-800"
+                              className="w-full py-2.5 text-gray-600 hover:text-gray-800 font-medium transition-colors"
                             >
                               Verify Later
                             </button>
@@ -1112,10 +1226,12 @@ export default function RidersPage() {
             <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Driver Profile</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Driver Profile
+                  </h2>
                   <button
                     onClick={() => setShowProfileModal(false)}
-                    className="text-gray-400 hover:text-gray-500 p-1 hover:bg-gray-100 rounded-lg"
+                    className="text-gray-400 hover:text-gray-500 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     <IconX className="w-6 h-6" />
                   </button>
@@ -1124,19 +1240,23 @@ export default function RidersPage() {
                 <div className="space-y-6">
                   {/* Profile Header */}
                   <div className="flex items-start space-x-4">
-                    <div className="h-20 w-20 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-blue-600 text-2xl font-bold">
+                    <div className="h-20 w-20 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-md">
+                      <span className="text-white text-2xl font-bold">
                         {selectedDriver.userId.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900">{selectedDriver.userId.name}</h3>
-                      <p className="text-gray-600">{selectedDriver.userId.email}</p>
+                      <h3 className="text-2xl font-bold text-gray-900">
+                        {selectedDriver.userId.name}
+                      </h3>
+                      <p className="text-gray-600 font-medium mt-1">
+                        {selectedDriver.userId.email}
+                      </p>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {getStatusBadge(selectedDriver)}
                         {getApprovalStatusBadge(selectedDriver.approvalStatus)}
                         {selectedDriver.isVerified && (
-                          <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                          <span className="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800">
                             Verified
                           </span>
                         )}
@@ -1146,47 +1266,58 @@ export default function RidersPage() {
 
                   {/* Stats Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="flex items-center">
                         <IconPackage className="w-5 h-5 text-gray-600 mr-2" />
                         <div>
-                          <p className="text-sm text-gray-600">Deliveries</p>
+                          <p className="text-sm text-gray-600 font-medium">
+                            Deliveries
+                          </p>
                           <p className="text-lg font-bold text-gray-900">
                             {selectedDriver.stats?.totalDeliveries || 0}
                           </p>
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="bg-gray-50 p-4 rounded-lg">
+
+                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="flex items-center">
                         <IconCash className="w-5 h-5 text-gray-600 mr-2" />
                         <div>
-                          <p className="text-sm text-gray-600">Earnings</p>
+                          <p className="text-sm text-gray-600 font-medium">
+                            Earnings
+                          </p>
                           <p className="text-lg font-bold text-gray-900">
-                            ₦{(selectedDriver.stats?.totalEarnings || 0).toLocaleString()}
+                            ₦
+                            {(
+                              selectedDriver.stats?.totalEarnings || 0
+                            ).toLocaleString()}
                           </p>
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="bg-gray-50 p-4 rounded-lg">
+
+                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="flex items-center">
                         <IconUser className="w-5 h-5 text-gray-600 mr-2" />
                         <div>
-                          <p className="text-sm text-gray-600">Rating</p>
+                          <p className="text-sm text-gray-600 font-medium">
+                            Rating
+                          </p>
                           <p className="text-lg font-bold text-gray-900">
                             {selectedDriver.rating?.average || 0}/5
                           </p>
                         </div>
                       </div>
                     </div>
-                    
-                    <div className="bg-gray-50 p-4 rounded-lg">
+
+                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="flex items-center">
                         <IconCalendar className="w-5 h-5 text-gray-600 mr-2" />
                         <div>
-                          <p className="text-sm text-gray-600">Acceptance</p>
+                          <p className="text-sm text-gray-600 font-medium">
+                            Acceptance
+                          </p>
                           <p className="text-lg font-bold text-gray-900">
                             {selectedDriver.stats?.acceptanceRate || 0}%
                           </p>
@@ -1199,29 +1330,43 @@ export default function RidersPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Contact Information */}
                     <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-gray-900">Contact Information</h4>
+                      <h4 className="text-lg font-bold text-gray-900">
+                        Contact Information
+                      </h4>
                       <div className="space-y-3">
                         <div className="flex items-center">
                           <IconPhone className="w-5 h-5 text-gray-400 mr-3" />
                           <div>
-                            <p className="text-sm text-gray-600">Phone</p>
-                            <p className="text-gray-900">{selectedDriver.userId.phone}</p>
+                            <p className="text-sm text-gray-600 font-medium">
+                              Phone
+                            </p>
+                            <p className="text-gray-900 font-medium">
+                              {selectedDriver.userId.phone}
+                            </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center">
                           <IconId className="w-5 h-5 text-gray-400 mr-3" />
                           <div>
-                            <p className="text-sm text-gray-600">License Number</p>
-                            <p className="text-gray-900">{selectedDriver.licenseNumber}</p>
+                            <p className="text-sm text-gray-600 font-medium">
+                              License Number
+                            </p>
+                            <p className="text-gray-900 font-medium">
+                              {selectedDriver.licenseNumber}
+                            </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center">
                           <IconCalendar className="w-5 h-5 text-gray-400 mr-3" />
                           <div>
-                            <p className="text-sm text-gray-600">License Expiry</p>
-                            <p className="text-gray-900">{formatDate(selectedDriver.licenseExpiry)}</p>
+                            <p className="text-sm text-gray-600 font-medium">
+                              License Expiry
+                            </p>
+                            <p className="text-gray-900 font-medium">
+                              {formatDate(selectedDriver.licenseExpiry)}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1229,44 +1374,65 @@ export default function RidersPage() {
 
                     {/* Vehicle Information */}
                     <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-gray-900">Vehicle Information</h4>
+                      <h4 className="text-lg font-bold text-gray-900">
+                        Vehicle Information
+                      </h4>
                       <div className="space-y-3">
                         <div className="flex items-center">
                           <IconCar className="w-5 h-5 text-gray-400 mr-3" />
                           <div>
-                            <p className="text-sm text-gray-600">Vehicle</p>
-                            <p className="text-gray-900">
-                              {selectedDriver.vehicleMake} {selectedDriver.vehicleModel} ({selectedDriver.vehicleYear})
+                            <p className="text-sm text-gray-600 font-medium">
+                              Vehicle
+                            </p>
+                            <p className="text-gray-900 font-medium">
+                              {selectedDriver.vehicleMake}{" "}
+                              {selectedDriver.vehicleModel} (
+                              {selectedDriver.vehicleYear})
                             </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center">
                           <IconCarCrash className="w-5 h-5 text-gray-400 mr-3" />
                           <div>
-                            <p className="text-sm text-gray-600">Plate Number</p>
-                            <p className="text-gray-900">{selectedDriver.plateNumber}</p>
+                            <p className="text-sm text-gray-600 font-medium">
+                              Plate Number
+                            </p>
+                            <p className="text-gray-900 font-medium">
+                              {selectedDriver.plateNumber}
+                            </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center">
                           <div className="w-5 h-5 mr-3 flex items-center justify-center">
-                            <div 
+                            <div
                               className="w-4 h-4 rounded-full border"
-                              style={{ backgroundColor: selectedDriver.vehicleColor.toLowerCase() }}
+                              style={{
+                                backgroundColor:
+                                  selectedDriver.vehicleColor.toLowerCase(),
+                              }}
                             />
                           </div>
                           <div>
-                            <p className="text-sm text-gray-600">Color</p>
-                            <p className="text-gray-900 capitalize">{selectedDriver.vehicleColor}</p>
+                            <p className="text-sm text-gray-600 font-medium">
+                              Color
+                            </p>
+                            <p className="text-gray-900 capitalize font-medium">
+                              {selectedDriver.vehicleColor}
+                            </p>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center">
                           <IconMapPin className="w-5 h-5 text-gray-400 mr-3" />
                           <div>
-                            <p className="text-sm text-gray-600">Last Online</p>
-                            <p className="text-gray-900">{formatDate(selectedDriver.lastOnlineAt)}</p>
+                            <p className="text-sm text-gray-600 font-medium">
+                              Last Online
+                            </p>
+                            <p className="text-gray-900 font-medium">
+                              {formatDate(selectedDriver.lastOnlineAt)}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1276,13 +1442,19 @@ export default function RidersPage() {
                   {/* Bank Details */}
                   {selectedDriver.bankDetails && (
                     <div className="border-t pt-6">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4">Bank Details</h4>
-                      <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
-                        selectedDriver.bankDetails.verified 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {selectedDriver.bankDetails.verified ? 'Verified' : 'Not Verified'}
+                      <h4 className="text-lg font-bold text-gray-900 mb-4">
+                        Bank Details
+                      </h4>
+                      <div
+                        className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold ${
+                          selectedDriver.bankDetails.verified
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {selectedDriver.bankDetails.verified
+                          ? "Verified"
+                          : "Not Verified"}
                       </div>
                     </div>
                   )}
@@ -1291,15 +1463,15 @@ export default function RidersPage() {
                   <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
                     <button
                       onClick={() => setShowProfileModal(false)}
-                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50"
+                      className="px-5 py-2.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all"
                     >
                       Close
                     </button>
                     <button
                       onClick={() => {
-                        showToast('Edit functionality coming soon!', 'info')
+                        showToast("Edit functionality coming soon!", "info");
                       }}
-                      className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
+                      className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-sm hover:shadow"
                     >
                       Edit Profile
                     </button>
@@ -1311,5 +1483,5 @@ export default function RidersPage() {
         )}
       </div>
     </>
-  )
+  );
 }
