@@ -104,7 +104,23 @@ function LoginFormContent() {
         password,
       });
 
-      // If login is successful, redirect
+      // Get user data from localStorage after login
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        const user = JSON.parse(userData);
+        
+        // Check if user role is company_admin
+        if (user.role !== "company_admin") {
+          // Logout the user
+          setError("This is an organization dashboard. Please login on the mobile app.");
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          localStorage.removeItem("user");
+          return;
+        }
+      }
+
+      // If login is successful and role is company_admin, redirect
       router.push(redirectTo);
     } catch (error: unknown) {
       console.error("Login error:", error);
