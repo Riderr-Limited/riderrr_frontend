@@ -1,13 +1,7 @@
-<svg width="160" height="48" viewBox="0 0 160 48" xmlns="http://www.w3.org/2000/svg">
-  <rect width="160" height="48" rx="8" fill="#000"/>
-  <path
-    d="M32 28c-2-3-4-6-4-9 0-4 3-7 7-7 2 0 3 1 4 1s2-1 4-1c3 0 6 2 7 5-1 1-3 3-3 6 0 4 4 6 4 6s-3 7-7 7c-2 0-4-2-5-2s-3 2-5 2c-3 0-6-4-7-8z"
-    fill="#fff"
-  />
-  <text x="60" y="18" fill="#fff" font-size="10" font-family="Arial, Helvetica, sans-serif">
-    Download on the
-  </text>
-  <text x="60" y="34" fill="#fff" font-size="16" font-weight="bold" font-family="Arial, Helvetica, sans-serif">
-    App Store
-  </text>
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="40" rx="5" fill="black"/>
+  <path d="M24.769 20.44c-.133-3.025 2.686-4.486 2.807-4.547-.024-.076-.439-1.51-.453-1.586-1.353-2.176-2.749-4.288-4.953-4.33-2.145-.042-2.837 1.273-5.29 1.273-2.453 0-3.218-1.231-5.246-1.315-2.099-.084-3.733 2.31-5.098 4.48-2.785 4.434-4.915 12.527-2.056 17.977 1.417 2.705 3.95 4.418 6.697 4.46 2.091.042 4.063-1.406 5.34-1.406 1.277 0 3.67 1.74 6.186 1.484.053 0 3.918-.158 5.773-3.99-.15-.093-3.447-2.013-3.421-6z" fill="white"/>
+  <path d="M22.06 8.44c1.15 1.393 1.926 3.327 1.714 5.254-1.657-.067-3.664-1.104-4.853-2.497-1.067-1.234-2.001-3.206-1.75-5.098 1.851-.143 3.74.941 4.889 2.341z" fill="white"/>
+  <text x="40" y="15" fill="white" font-size="7" font-family="system-ui, -apple-system, sans-serif">Download on the</text>
+  <text x="40" y="28" fill="white" font-size="14" font-family="system-ui, -apple-system, sans-serif" font-weight="600">App Store</text>
 </svg>

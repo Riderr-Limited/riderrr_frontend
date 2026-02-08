@@ -8,58 +8,33 @@ import {
   FaWhatsapp,
 } from "react-icons/fa";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   return (
     <footer className="w-full bg-gray-900 text-white">
-      <div className="max-w-6xl mx-auto px-6 py-16">
-        {/* Partners Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Our Trusted Partners
-          </h2>
-          <p className="text-gray-300 mb-8 text-lg max-w-3xl mx-auto">
-            We work with verified logistics companies to deliver fast,
-            affordable, and reliable services—connecting users with nearby
-            riders while enabling partners to manage operations in real time.
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center items-center gap-4 md:gap-10">
-            {[1, 2, 3, 4, 5].map((num) => (
-              <div
-                key={num}
-                className="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover:bg-gray-700 transition-all duration-300"
-              >
-                <Image
-                  src="/partner-logo-placeholder.svg"
-                  alt={`Partner ${num}`}
-                  width={100}
-                  height={40}
-                  className="opacity-80 w-full h-auto"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Main Footer Grid - Mobile: 2 columns, Desktop: 4 columns */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        {/* Main Footer Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Column 1: Brand */}
-          <div className="col-span-2 lg:col-span-1 space-y-6">
-            <h3 className="text-xl font-bold">About the Platform</h3>
-            <p className="text-gray-300 text-sm leading-relaxed">
-              An on-demand delivery platform that matches users with nearby
-              riders at efficient costs, while empowering logistics partners
-              with smart rider and delivery management tools.
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#1E5FD8] to-[#1a4fb8] flex items-center justify-center shadow-lg">
+                <Image className="rounded-lg" width={24} height={24} alt="logo" src="/favicon.ico" />
+              </div>
+              <span className="font-bold text-2xl text-white tracking-tight">RIDERR</span>
+            </div>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Connecting customers, riders, and logistics companies on one platform for fast, reliable, and affordable deliveries.
             </p>
 
             {/* Socials */}
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <a
                 href="https://www.linkedin.com/company/riderr-logistics/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-base hover:bg-[#1E5FD8] transition-all border border-gray-700 hover:border-[#1E5FD8]"
               >
                 <FaLinkedinIn />
               </a>
@@ -67,7 +42,7 @@ export default function Footer() {
                 href="https://www.instagram.com/riderr.ng?utm_source=qr&igsh=MTJ0Mjd4aHBlODM0ZQ=="
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-base hover:bg-[#1E5FD8] transition-all border border-gray-700 hover:border-[#1E5FD8]"
               >
                 <FaInstagram />
               </a>
@@ -75,7 +50,7 @@ export default function Footer() {
                 href="https://wa.link/39ouwk"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-lg hover:bg-blue-500 transition-all border border-gray-700"
+                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-base hover:bg-[#1E5FD8] transition-all border border-gray-700 hover:border-[#1E5FD8]"
               >
                 <FaWhatsapp />
               </a>
@@ -84,76 +59,112 @@ export default function Footer() {
 
           {/* Column 2: For Users */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">For Users</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-bold mb-6 text-white">For Users</h3>
+            <ul className="space-y-3">
               {[
-                "Request a Delivery",
-                "Track Deliveries",
-                "Pricing",
-                "Help Center",
+                { label: "Request a Delivery", href: "#" },
+                { label: "Track Deliveries", href: "#" },
+                { label: "Pricing", href: "#" },
+                { label: "Help Center", href: "#" },
               ].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-2 group"
                   >
-                    {item}
-                  </a>
+                    <span className="w-1 h-1 bg-gray-600 rounded-full group-hover:bg-[#1E5FD8] transition-colors" />
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Column 3: For Partners */}
-          <div className="col-span-1">
-            <h3 className="text-lg font-semibold mb-4">For Partners</h3>
-            <ul className="space-y-2">
+          <div>
+            <h3 className="text-lg font-bold mb-6 text-white">For Partners</h3>
+            <ul className="space-y-3">
               {[
-                "Become a Partner",
-                "Partner Login",
-                "Register Riders",
-                "Dashboard",
+                { label: "Become a Partner", href: "#" },
+                { label: "Partner Login", href: "/login" },
+                { label: "Register Riders", href: "#" },
+                { label: "Dashboard", href: "/dashboard" },
               ].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-2 group"
                   >
-                    {item}
-                  </a>
+                    <span className="w-1 h-1 bg-gray-600 rounded-full group-hover:bg-[#1E5FD8] transition-colors" />
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
           {/* Column 4: Company */}
-          <div className="col-span-1">
-            <h3 className="text-lg font-semibold mb-4">Company</h3>
-            <ul className="space-y-2">
+          <div>
+            <h3 className="text-lg font-bold mb-6 text-white">Company</h3>
+            <ul className="space-y-3">
               {[
-                "About Us",
-                "How It Works",
-                "Contact Us",
-                "Privacy Policy",
-                "Terms & Conditions",
+                { label: "About Us", href: "/about" },
+                { label: "How It Works", href: "#how-it-works" },
+                { label: "Contact Us", href: "#contact" },
+                { label: "Privacy Policy", href: "#" },
+                { label: "Terms & Conditions", href: "#" },
               ].map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="text-gray-300 hover:text-white transition-colors text-sm"
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-2 group"
                   >
-                    {item}
-                  </a>
+                    <span className="w-1 h-1 bg-gray-600 rounded-full group-hover:bg-[#1E5FD8] transition-colors" />
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
         </div>
+
+        {/* Download Section */}
+        <div className="border-t border-gray-800 pt-8 pb-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h4 className="text-lg font-bold mb-2">Download the App</h4>
+              <p className="text-gray-400 text-sm">Available on iOS and Android</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <Image
+                src="/app-store.svg"
+                alt="Download on App Store"
+                width={140}
+                height={45}
+                className="hover:scale-105 transition-transform cursor-pointer"
+              />
+              <Image
+                src="/google-play.svg"
+                alt="Get it on Google Play"
+                width={140}
+                height={45}
+                className="hover:scale-105 transition-transform cursor-pointer"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="w-full bg-gray-800 border-t border-gray-700 text-center px-6 py-4">
-        <p className="text-sm text-gray-400">© 2026 Riderr. All rights reserved.</p>
+      <div className="w-full bg-gray-950 border-t border-gray-800 text-center px-6 py-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-400">© 2025 Riderr. All rights reserved.</p>
+          <div className="flex items-center gap-6 text-sm text-gray-400">
+            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="#" className="hover:text-white transition-colors">Cookie Policy</Link>
+          </div>
+        </div>
       </div>
     </footer>
   );

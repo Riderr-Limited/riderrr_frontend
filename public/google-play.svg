@@ -1,13 +1,27 @@
-<svg width="160" height="48" viewBox="0 0 160 48" xmlns="http://www.w3.org/2000/svg">
-  <rect width="160" height="48" rx="8" fill="#000"/>
-  <polygon points="22,8 22,40 42,24" fill="#34A853"/>
-  <polygon points="22,8 36,22 42,24 36,26" fill="#FBBC04"/>
-  <polygon points="22,40 36,26 42,24 36,22" fill="#4285F4"/>
-  <polygon points="36,22 42,24 36,26" fill="#EA4335"/>
-  <text x="60" y="18" fill="#fff" font-size="10" font-family="Arial, Helvetica, sans-serif">
-    GET IT ON
-  </text>
-  <text x="60" y="34" fill="#fff" font-size="16" font-weight="bold" font-family="Arial, Helvetica, sans-serif">
-    Google Play
-  </text>
+<svg width="135" height="40" viewBox="0 0 135 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="135" height="40" rx="5" fill="black"/>
+  <path d="M8 6.5L22 20L8 33.5V6.5Z" fill="url(#a)"/>
+  <path d="M22 20L8 6.5L26 16L22 20Z" fill="url(#b)"/>
+  <path d="M22 20L26 24L8 33.5L22 20Z" fill="url(#c)"/>
+  <path d="M22 20L26 16L26 24L22 20Z" fill="url(#d)"/>
+  <defs>
+    <linearGradient id="a" x1="8" y1="6.5" x2="22" y2="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00A0FF"/>
+      <stop offset="1" stop-color="#00A1FF"/>
+    </linearGradient>
+    <linearGradient id="b" x1="8" y1="6.5" x2="26" y2="16" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE000"/>
+      <stop offset="1" stop-color="#FFBD00"/>
+    </linearGradient>
+    <linearGradient id="c" x1="8" y1="33.5" x2="26" y2="24" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF3A44"/>
+      <stop offset="1" stop-color="#C31162"/>
+    </linearGradient>
+    <linearGradient id="d" x1="22" y1="20" x2="26" y2="20" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00D95F"/>
+      <stop offset="1" stop-color="#00A950"/>
+    </linearGradient>
+  </defs>
+  <text x="38" y="15" fill="white" font-size="7" font-family="system-ui, sans-serif">GET IT ON</text>
+  <text x="38" y="28" fill="white" font-size="14" font-family="system-ui, sans-serif" font-weight="600">Google Play</text>
 </svg>

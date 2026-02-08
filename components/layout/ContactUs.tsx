@@ -61,9 +61,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <p className="font-semibold">Email</p>
-                  <p className="text-sm text-gray-600">
-                    riderrlogistics@gmail.com
-                  </p>
+                  <p className="text-sm text-gray-600">support@riderr.ng</p>
                 </div>
               </div>
             </div>
@@ -71,11 +69,15 @@ export default function ContactUs() {
 
           {/* Right Form */}
           <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 lg:p-10">
-            <h3 className="text-2xl font-bold mb-8 text-gray-900">Send Us a Message</h3>
+            <h3 className="text-2xl font-bold mb-8 text-gray-900">
+              Send Us a Message
+            </h3>
 
             <form className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   placeholder="John Doe"
@@ -84,7 +86,9 @@ export default function ContactUs() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Address
+                </label>
                 <input
                   type="email"
                   placeholder="youremail@example.com"
@@ -93,7 +97,9 @@ export default function ContactUs() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Message
+                </label>
                 <textarea
                   rows={5}
                   placeholder="Tell us how we can help..."
