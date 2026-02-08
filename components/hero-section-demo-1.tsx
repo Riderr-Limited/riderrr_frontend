@@ -8,16 +8,11 @@ export default function Hero() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-yellow-100/20"></div>
       <div className="absolute top-20 right-20 w-72 h-72 bg-blue-200/10 rounded-full blur-3xl"></div>
       <div className="absolute bottom-20 left-20 w-96 h-96 bg-yellow-200/10 rounded-full blur-3xl"></div>
-      
+
       <div className="relative mx-auto max-w-7xl px-6 pt-32 pb-20">
         <div className="flex flex-col items-center text-center min-h-[80vh] justify-center space-y-12">
-
           {/* MAIN CONTENT */}
           <div className="space-y-8">
-            <div className="inline-flex items-center px-6 py-3 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
-              🚀 Revolutionizing Logistics
-            </div>
-            
             <h1 className="text-6xl md:text-8xl font-black leading-[0.9] tracking-tight">
               <span className="bg-gradient-to-r from-[#1E5FD8] to-blue-600 bg-clip-text text-transparent">
                 FAST.
@@ -37,8 +32,8 @@ export default function Hero() {
 
             <p className="text-xl text-gray-600 max-w-2xl leading-relaxed mx-auto">
               Riderr connects customers, riders, and logistics companies on one
-              platform — enabling instant delivery requests, smart rider
-              matching, and real-time operations.
+              platform enabling instant delivery requests, smart rider matching,
+              and real-time operations.
             </p>
           </div>
 
@@ -81,7 +76,6 @@ export default function Hero() {
               />
             </div>
           </div>
-
         </div>
       </div>
     </section>
