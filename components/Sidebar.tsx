@@ -38,14 +38,12 @@ const utilityItems = [
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
-
-  // Use auth context
   const { user, logout, isLoading } = useAuth();
   const { company, isCompanyUser } = useCompany();
   const permissions = usePermissions();
 
   // Filter nav items based on user role/permissions
-  const getFilteredNavItems = () => {
+  const filteredNavItems = React.useMemo(() => {
     return navItems.filter((item) => {
       if (!user) return false;
 
@@ -65,7 +63,7 @@ export default function Sidebar() {
           return true;
       }
     });
-  };
+  }, [user, permissions]);
 
   // Handle logout
   const handleLogout = async (e: React.MouseEvent) => {
@@ -78,13 +76,13 @@ export default function Sidebar() {
   };
 
   // Get user display name
-  const getUserDisplayName = () => {
+  const userDisplayName = React.useMemo(() => {
     if (!user) return "Loading...";
     return user.name || user.email?.split("@")[0] || "User";
-  };
+  }, [user]);
 
   // Get user role display name
-  const getUserRoleDisplay = () => {
+  const userRoleDisplay = React.useMemo(() => {
     if (!user) return "";
 
     switch (user.role) {
@@ -99,16 +97,14 @@ export default function Sidebar() {
       default:
         return "User";
     }
-  };
+  }, [user, isCompanyUser]);
 
   // Get company name if available
-  const getCompanyName = () => {
+  const companyName = React.useMemo(() => {
     if (company?.name) return company.name;
     if (user?.company?.name) return user.company.name;
     return "";
-  };
-
-  const filteredNavItems = getFilteredNavItems();
+  }, [company, user]);
 
   // Check if a nav item is active
   const isActiveItem = (href: string) => {
@@ -158,7 +154,7 @@ export default function Sidebar() {
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold text-white tracking-wide leading-tight">
                 {isCompanyUser
-                  ? `${getCompanyName() || "Company"}`
+                  ? `${companyName || "Company"}`
                   : "RIDERR"}
               </h1>
               <p className="text-xs text-white/80 mt-0.5">
@@ -285,25 +281,25 @@ export default function Sidebar() {
                 {user?.avatarUrl ? (
                   <Image
                     src={user.avatarUrl}
-                    alt={getUserDisplayName()}
+                    alt={userDisplayName}
                     className="h-full w-full object-cover"
                     width={36}
                     height={36}
                   />
                 ) : (
                   <span className="text-white font-semibold text-sm">
-                    {getUserDisplayName().charAt(0).toUpperCase()}
+                    {userDisplayName.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
               {!isCollapsed && (
                 <div className="ml-3 flex-1 min-w-0">
                   <p className="text-sm font-medium text-white truncate">
-                    {isLoading ? "Loading..." : getUserDisplayName()}
+                    {isLoading ? "Loading..." : userDisplayName}
                   </p>
                   <p className="text-xs text-white/70 truncate">
-                    {isLoading ? "" : getUserRoleDisplay()}
-                    {getCompanyName() && ` • ${getCompanyName()}`}
+                    {isLoading ? "" : userRoleDisplay}
+                    {companyName && ` • ${companyName}`}
                   </p>
                 </div>
               )}

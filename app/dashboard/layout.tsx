@@ -16,22 +16,19 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated or unauthorized
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push("/login");
-    }
-  }, [isLoading, isAuthenticated, router]);
-
-  // Redirect if user role doesn't have access to dashboard
-  useEffect(() => {
-    if (user && !isLoading) {
-      const allowedRoles = ["admin", "company_admin", "driver"];
-      if (!allowedRoles.includes(user.role)) {
-        router.push("/unauthorized");
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        router.push("/login");
+      } else if (user) {
+        const allowedRoles = ["admin", "company_admin"];
+        if (!allowedRoles.includes(user.role)) {
+          router.push("/unauthorized");
+        }
       }
     }
-  }, [user, isLoading, router]);
+  }, [isLoading, isAuthenticated, user, router]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -70,7 +67,7 @@ function getPageTitle(pathname: string): string {
   const routes: Record<string, string> = {
     "/dashboard": "Dashboard Overview",
     "/dashboard/overview": "Dashboard Overview",
-    "/dashboard/riders": " ",
+    "/dashboard/riders": "Riders Management",
     "/dashboard/deliveries": "Deliveries Tracking",
     "/dashboard/profile": "My Profile",
     "/dashboard/settings": "Settings",
@@ -83,9 +80,8 @@ function getPageTitle(pathname: string): string {
 function getPageDescription(pathname: string, userName?: string): string {
   const descriptions: Record<string, string> = {
     "/dashboard": `Welcome back, ${userName || "User"}! Here's what's happening today.`,
-    "/dashboard/": `Welcome back, ${userName || "User"}! Here's what's happening today.`,
     "/dashboard/overview": `Welcome back, ${userName || "User"}! Here's what's happening today.`,
-    "/dashboard/riders": " ",
+    "/dashboard/riders": "Manage and monitor all riders in your fleet.",
     "/dashboard/deliveries":
       "Track all deliveries in real-time, assign riders, and monitor progress.",
     "/dashboard/profile":

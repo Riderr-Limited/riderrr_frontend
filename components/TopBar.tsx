@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   IconBell,
@@ -19,7 +20,7 @@ export default function TopBar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   // Fetch unread notification count
-  const fetchUnreadCount = async () => {
+  const fetchUnreadCount = React.useCallback(async () => {
     try {
       const token = localStorage.getItem("access_token");
       if (!token) return;
@@ -40,32 +41,32 @@ export default function TopBar() {
     } catch (error) {
       console.error("Error fetching unread count:", error);
     }
-  };
+  }, []);
 
   // Set up interval for real-time updates
   useEffect(() => {
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000); // Refresh every 30 seconds
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchUnreadCount]);
 
   // Handle user logout
-  const handleLogout = async () => {
+  const handleLogout = React.useCallback(async () => {
     await logout();
     router.push("/login");
-  };
+  }, [logout, router]);
 
   // Handle profile click
-  const handleProfileClick = () => {
+  const handleProfileClick = React.useCallback(() => {
     router.push("/dashboard/profile");
     setShowUserMenu(false);
-  };
+  }, [router]);
 
   // Handle settings click
-  const handleSettingsClick = () => {
+  const handleSettingsClick = React.useCallback(() => {
     router.push("/dashboard/settings");
     setShowUserMenu(false);
-  };
+  }, [router]);
 
   // Close user menu when clicking outside
   useEffect(() => {
