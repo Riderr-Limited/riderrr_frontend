@@ -13,12 +13,14 @@ import {
   IconAlertCircle,
   IconTruck,
   IconRefresh,
+  IconArrowUpRight,
 } from "@tabler/icons-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { API_CONFIG } from "./../lib/config";
 import { formatDate } from "./../lib/utils";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface Delivery {
   _id: string;
@@ -46,7 +48,6 @@ interface Driver {
 export default function DashboardPage() {
   const { user } = useAuth();
   const { getUserRole } = useRole();
-  const { canManageDeliveries } = usePermissions();
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -246,32 +247,36 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 p-6 bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 min-h-screen">
       {/* Professional Header */}
-      {/* <div className="bg-linear-to-r from-slate-800 to-slate-900 text-white p-5 rounded-lg border border-slate-700">
+      {/* <div className="bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 text-white p-8 rounded-2xl shadow-xl border border-blue-500/20">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-slate-100">
+            <h1 className="text-3xl font-bold tracking-tight">
               Welcome back, {user?.name || "User"}
             </h1>
-            <p className="text-sm text-slate-300 mt-1">Dashboard Overview</p>
+            <p className="text-blue-100 mt-2 text-base font-medium">
+              Here&apos;s what&apos;s happening with your deliveries today
+            </p>
           </div>
-          <div className="hidden md:flex items-center space-x-3">
-            <div className="bg-white/10 px-3 py-2 rounded-md border border-white/20">
-              <p className="text-xs font-medium text-slate-300">Role</p>
-              <p className="text-sm font-semibold capitalize text-white">
-                {getUserRole()}
+          <div className="hidden md:flex items-center space-x-4">
+            <div className="bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/20">
+              <p className="text-xs font-semibold text-blue-200 uppercase tracking-wider">
+                Role
+              </p>
+              <p className="text-lg font-bold capitalize text-white mt-1">
+                Company Admin
               </p>
             </div>
             <button
               onClick={refreshData}
               disabled={loading.stats || loading.deliveries || loading.drivers}
-              className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors disabled:opacity-50 border border-white/20"
+              className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all duration-200 disabled:opacity-50 border border-white/20 hover:scale-105"
               title="Refresh Data"
             >
               <IconRefresh
                 className={cn(
-                  "h-4 w-4",
+                  "h-5 w-5",
                   (loading.stats || loading.deliveries || loading.drivers) &&
                     "animate-spin",
                 )}
@@ -281,9 +286,8 @@ export default function DashboardPage() {
         </div>
       </div> */}
 
-      {/* Rest of your component remains the same... */}
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Deliveries"
           value={stats.totalDeliveries}
@@ -331,54 +335,59 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Deliveries Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-200 bg-gray-50">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
+        <div className="px-6 py-5 border-b border-gray-200 bg-linear-to-r from-gray-50 to-slate-50">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-base font-semibold text-gray-900">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <IconPackage className="h-6 w-6 text-blue-600" />
                 Recent Deliveries
               </h3>
-              <p className="text-xs text-gray-600 mt-0.5">
-                Latest delivery requests
+              <p className="text-sm text-gray-600 mt-1 font-medium">
+                Latest delivery requests and updates
               </p>
             </div>
-            <button className="text-blue-600 hover:text-blue-700 text-xs font-medium px-3 py-1 rounded-md border border-blue-200 hover:bg-blue-50 transition-colors">
+            <Link
+              href="/dashboard/deliveries"
+              className="text-blue-600 hover:text-blue-700 text-sm font-semibold px-4 py-2 rounded-lg border-2 border-blue-200 hover:bg-blue-50 transition-all duration-200 hover:scale-105 flex items-center gap-1"
+            >
               View All
-            </button>
+              <IconArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-100">
+            <thead className="bg-linear-to-r from-slate-100 to-gray-100">
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   ID
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Pickup
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Dropoff
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                   Date
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-100">
               {loading.deliveries ? (
                 Array.from({ length: 3 }).map((_, index) => (
                   <tr key={index}>
                     {Array.from({ length: 6 }).map((_, colIndex) => (
-                      <td key={colIndex} className="px-4 py-3">
-                        <div className="h-3 bg-gray-200 animate-pulse rounded"></div>
+                      <td key={colIndex} className="px-6 py-4">
+                        <div className="h-4 bg-gray-200 animate-pulse rounded-lg"></div>
                       </td>
                     ))}
                   </tr>
@@ -387,62 +396,75 @@ export default function DashboardPage() {
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-4 py-6 text-center text-gray-500"
+                    className="px-6 py-12 text-center text-gray-500"
                   >
-                    <IconPackage className="h-10 w-10 mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm">No deliveries yet</p>
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="bg-gray-100 p-4 rounded-full mb-4">
+                        <IconPackage className="h-12 w-12 text-gray-400" />
+                      </div>
+                      <p className="text-base font-semibold text-gray-700">
+                        No deliveries yet
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Start creating deliveries to see them here
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 deliveries.map((delivery) => (
                   <tr
                     key={delivery._id}
-                    className="hover:bg-gray-50 border-b border-gray-100"
+                    className="hover:bg-blue-50/50 transition-colors duration-150 cursor-pointer"
                   >
-                    <td className="px-4 py-3">
-                      <div className="text-xs font-medium text-gray-900">
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-bold text-blue-600">
                         {delivery.referenceId}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-start">
-                        <IconMapPin className="h-3 w-3 text-blue-500 mr-1.5 mt-0.5 shrink-0" />
+                    <td className="px-6 py-4">
+                      <div className="flex items-start gap-2">
+                        <div className="bg-blue-100 p-1.5 rounded-lg mt-0.5">
+                          <IconMapPin className="h-4 w-4 text-blue-600" />
+                        </div>
                         <div className="min-w-0">
-                          <div className="text-xs text-gray-900 font-medium truncate">
+                          <div className="text-sm text-gray-900 font-semibold truncate">
                             {delivery.pickup.name}
                           </div>
-                          <div className="text-xs text-gray-500 truncate max-w-[150px]">
+                          <div className="text-xs text-gray-500 truncate max-w-[180px] mt-0.5">
                             {delivery.pickup.address}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-start">
-                        <IconMapPin className="h-3 w-3 text-green-500 mr-1.5 mt-0.5 shrink-0" />
+                    <td className="px-6 py-4">
+                      <div className="flex items-start gap-2">
+                        <div className="bg-green-100 p-1.5 rounded-lg mt-0.5">
+                          <IconMapPin className="h-4 w-4 text-green-600" />
+                        </div>
                         <div className="min-w-0">
-                          <div className="text-xs text-gray-900 font-medium truncate">
+                          <div className="text-sm text-gray-900 font-semibold truncate">
                             {delivery.recipientName}
                           </div>
-                          <div className="text-xs text-gray-500 truncate max-w-[150px]">
+                          <div className="text-xs text-gray-500 truncate max-w-[180px] mt-0.5">
                             {delivery.dropoff.address}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="text-xs font-semibold text-gray-900">
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-bold text-gray-900">
                         {delivery.fare.currency}{" "}
                         {delivery.fare.amount?.toLocaleString() || "0"}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center space-x-1">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
                         {getStatusIcon(delivery.status)}
                         <StatusBadge status={delivery.status} />
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-500">
+                    <td className="px-6 py-4 text-sm text-gray-600 font-medium">
                       {formatDate(delivery.createdAt)}
                     </td>
                   </tr>
