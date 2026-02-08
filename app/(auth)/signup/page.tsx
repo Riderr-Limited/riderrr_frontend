@@ -206,11 +206,12 @@ export default function OrgRegistration() {
           localStorage.setItem("user", JSON.stringify(data.data.user));
       }
 
-      setShowVerification(true);
       toast({
         title: "Success",
         description: "Check your email for verification code",
       });
+      
+      setShowVerification(true);
     } catch (err) {
       toast({
         title: "Registration Failed",
@@ -220,7 +221,7 @@ export default function OrgRegistration() {
     } finally {
       setLoading(false);
     }
-  }, [form, setLoading, setAuth, toast, handleApiError]);
+  }, [form, setLoading, setAuth, toast, handleApiError, setShowVerification]);
 
   const handleVerifyEmail = useCallback(async () => {
     if (verificationCode.length !== 6) {
