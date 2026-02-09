@@ -9,21 +9,20 @@ import {
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-  IconFolder,
+  // IconFolder,
   IconHelp,
   IconInnerShadowTop,
-  IconListDetails,
+  // IconListDetails,
   IconReport,
-  IconSearch,
+  // IconSearch,
   IconSettings,
   IconUsers,
 } from "@tabler/icons-react";
 
-import { NavDocuments } from "@/components/nav-documents";
+// import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
-
 
 const data = {
   user: {
@@ -140,7 +139,7 @@ const data = {
 
 export function AppSidebar({ ...props }) {
   return (
-    <div className="w-64 h-full bg-gradient-to-bl to-[#0072BB] from-[#1E91D6] text-white flex flex-col">
+    <div className="w-64 h-full bg-linear-to-bl to-[#1E91D6] from-[#1E91D6] text-white flex flex-col">
       <div className="p-4">
         <div className="flex items-center gap-2">
           <IconInnerShadowTop className="size-5" />
