@@ -79,24 +79,6 @@ export default function Sidebar() {
     return user.name || user.email?.split("@")[0] || "User";
   }, [user]);
 
-  // Get user role display name
-  const userRoleDisplay = React.useMemo(() => {
-    if (!user) return "";
-
-    switch (user.role) {
-      case "admin":
-        return "Admin";
-      case "company_admin":
-        return "Company Admin";
-      case "driver":
-        return isCompanyUser ? "Company Rider" : "Rider";
-      case "customer":
-        return "Customer";
-      default:
-        return "User";
-    }
-  }, [user, isCompanyUser]);
-
   // Get company name if available
   const companyName = React.useMemo(() => {
     if (company?.name) return company.name;
@@ -115,7 +97,7 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen transition-all duration-300 sticky top-0 bg-linear-to-br from-[#1E5FD8] via-[#183a79] to-[#395d9f] text-white shadow-lg overflow-x-hidden",
+        "flex flex-col h-screen transition-all duration-300 sticky top-0 bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 text-white shadow-lg overflow-x-hidden",
         isCollapsed ? "w-20" : "w-64",
       )}
     >
