@@ -1,8 +1,44 @@
 "use client";
 
 import { FaPhoneAlt, FaWhatsapp, FaEnvelope } from "react-icons/fa";
+import { useState } from "react";
 
 export default function ContactUs() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus("");
+
+    try {
+      const res = await fetch(
+        "https://riderr-backend.onrender.com/api/contact",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...formData, subject: "contact" }),
+        },
+      );
+
+      if (res.ok) {
+        setStatus("success");
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <section
       id="contact"
@@ -61,7 +97,7 @@ export default function ContactUs() {
                 </div>
                 <div>
                   <p className="font-semibold">Email</p>
-                  <p className="text-sm text-gray-600">support@riderr.ng</p>
+                  <p className="text-sm text-gray-600">contact@riderr.ng</p>
                 </div>
               </div>
             </div>
@@ -73,7 +109,7 @@ export default function ContactUs() {
               Send Us a Message
             </h3>
 
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Full Name
@@ -81,6 +117,11 @@ export default function ContactUs() {
                 <input
                   type="text"
                   placeholder="John Doe"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  required
                   className="w-full px-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
               </div>
@@ -92,6 +133,11 @@ export default function ContactUs() {
                 <input
                   type="email"
                   placeholder="youremail@example.com"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  required
                   className="w-full px-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
               </div>
@@ -103,15 +149,32 @@ export default function ContactUs() {
                 <textarea
                   rows={5}
                   placeholder="Tell us how we can help..."
+                  value={formData.message}
+                  onChange={(e) =>
+                    setFormData({ ...formData, message: e.target.value })
+                  }
+                  required
                   className="w-full px-4 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                 />
               </div>
 
+              {status === "success" && (
+                <div className="p-4 bg-green-50 border border-green-200 rounded-2xl text-green-700 text-center">
+                  ✓ Message sent successfully! We&apos;ll get back to you soon.
+                </div>
+              )}
+              {status === "error" && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-center">
+                  Failed to send message. Please try again.
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-blue-800 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl"
+                disabled={loading}
+                className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-2xl hover:from-blue-700 hover:to-blue-800 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>

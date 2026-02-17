@@ -73,7 +73,9 @@ function ForgotPasswordContent() {
     }
 
     if (!validateEmail(identifier) && isPhone) {
-      setError("Please use email address for password reset (phone reset coming soon)");
+      setError(
+        "Please use email address for password reset (phone reset coming soon)",
+      );
       return;
     }
 
@@ -91,7 +93,7 @@ function ForgotPasswordContent() {
       }
 
       const result = await forgotPassword(resetIdentifier);
-      
+
       if (result.success) {
         setSuccess(result.message || "Reset instructions sent!");
         setStep("verify");
@@ -188,14 +190,16 @@ function ForgotPasswordContent() {
             </div>
           </div>
           <h2 className="mt-6 text-center text-2xl font-extrabold text-gray-900">
-            {step === "success" ? "Password Reset Successful!" : "Reset Your Password"}
+            {step === "success"
+              ? "Password Reset Successful!"
+              : "Reset Your Password"}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             {step === "request"
               ? "Enter your email to receive a reset code"
               : step === "verify"
-              ? "Enter the OTP and new password"
-              : "You can now login with your new password"}
+                ? "Enter the OTP and new password"
+                : "You can now login with your new password"}
           </p>
         </div>
 
@@ -209,7 +213,7 @@ function ForgotPasswordContent() {
             </div>
             <div className="flex flex-col space-y-4">
               <Button
-                onClick={() => router.push("/auth/login")}
+                onClick={() => router.push("/login")}
                 className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 Go to Login
@@ -281,10 +285,12 @@ function ForgotPasswordContent() {
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Enter your registered email address. A reset code will be sent to you.
+                  Enter your registered email address. A reset code will be sent
+                  to you.
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  <strong>Note:</strong> Phone number reset is currently unavailable.
+                  <strong>Note:</strong> Phone number reset is currently
+                  unavailable.
                 </p>
               </div>
             ) : (

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ToastProvider";
+import { TermsModal } from "@/components/ui/TermsModal";
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 import { useOrgStore } from "@/store/orgRegistration.store";
@@ -24,6 +25,7 @@ export default function OrgRegistration() {
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationLoading, setVerificationLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   const validateField = useCallback((field: string, value: string) => {
     setErrors((prevErrors) => {
@@ -164,7 +166,20 @@ export default function OrgRegistration() {
     return "An unexpected error occurred";
   }, []);
 
+  const handleSubmitClick = useCallback(() => {
+    if (!validateStep(3)) {
+      toast({
+        title: "Validation Error",
+        description: "Please complete all required fields",
+        type: "error",
+      });
+      return;
+    }
+    setShowTermsModal(true);
+  }, [validateStep, toast]);
+
   const submitRegistration = useCallback(async () => {
+    setShowTermsModal(false);
     setLoading(true);
     try {
       const payload = {
@@ -210,7 +225,7 @@ export default function OrgRegistration() {
         title: "Success",
         description: "Check your email for verification code",
       });
-      
+
       setShowVerification(true);
     } catch (err) {
       toast({
@@ -733,7 +748,7 @@ export default function OrgRegistration() {
               </Button>
             ) : (
               <Button
-                onClick={submitRegistration}
+                onClick={handleSubmitClick}
                 disabled={loading}
                 className="bg-green-600 hover:bg-green-700 text-white"
               >
@@ -756,6 +771,12 @@ export default function OrgRegistration() {
           </div>
         </div>
       </div>
+
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+        onAccept={submitRegistration}
+      />
     </div>
   );
 }

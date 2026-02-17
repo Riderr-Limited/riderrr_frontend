@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: " https://api.riderr.ng/api",
+  baseURL: " https://riderr-backend.onrender.com/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -15,5 +15,5 @@ api.interceptors.response.use(
       error?.message ||
       "Something went wrong";
     return Promise.reject(new Error(message));
-  }
+  },
 );
