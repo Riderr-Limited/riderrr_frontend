@@ -233,7 +233,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginCredentials) => {
     setIsLoading(true);
     try {
-      const data = await apiRequest<AuthResponse>("/login", {
+      const data = await apiRequest<AuthResponse>("/auth/login", {
         method: "POST",
         body: JSON.stringify(credentials),
       });
