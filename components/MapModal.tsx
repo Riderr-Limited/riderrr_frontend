@@ -79,13 +79,7 @@ export default function MapModal({ isOpen, onClose, lat, lng, title, address }: 
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 flex justify-between">
-          <button
-            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank')}
-            className="px-4 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
-          >
-            Open in Google Maps
-          </button>
+        <div className="p-4 border-t border-gray-200 flex justify-end">
           <button
             onClick={onClose}
             className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
