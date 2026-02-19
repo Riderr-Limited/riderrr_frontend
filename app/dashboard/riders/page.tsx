@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
 import {
   IconPlus,
   IconUser,
@@ -285,7 +284,7 @@ export default function RidersPage() {
         plateNumber: formData.plateNumber.toUpperCase(),
       };
 
-      console.log('Sending payload:', payload);
+      console.log("Sending payload:", payload);
 
       const result = await ApiClient.post(url, payload);
 
@@ -687,112 +686,129 @@ export default function RidersPage() {
           </div>
         </div>
 
-        {/* Drivers Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    ID
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Phone Number
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Vehicle
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Approval
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {filteredDrivers.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center">
-                      <IconUser className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-500">No riders found</p>
-                      {searchTerm && (
-                        <p className="text-sm text-gray-400 mt-1">
-                          Try changing your search criteria
-                        </p>
-                      )}
-                    </td>
-                  </tr>
-                ) : (
-                  filteredDrivers.map((driver) => (
-                    <tr
-                      key={driver._id}
-                      className="hover:bg-gray-50 transition-colors duration-150"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-mono text-gray-700 font-medium">
-                          {driver._id.substring(driver._id.length - 8)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3 shadow-sm">
-                            <span className="text-white font-bold text-base">
-                              {driver.userId.name.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">
-                              {driver.userId.name}
-                            </div>
-                            <div className="text-xs text-gray-600">
-                              {driver.userId.email}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center text-sm font-medium text-gray-900">
-                          <IconPhone className="w-4 h-4 mr-2 text-gray-500" />
-                          {driver.userId.phone}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">
-                          <div className="font-semibold">
-                            {driver.vehicleMake} {driver.vehicleModel}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            {driver.plateNumber}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">{getStatusBadge(driver)}</td>
-                      <td className="px-6 py-4">
-                        {getApprovalStatusBadge(driver.approvalStatus)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <button
-                          onClick={() => handleViewProfile(driver)}
-                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow"
-                        >
-                          <IconEye className="w-4 h-4 mr-1" />
-                          View Profile
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+        {/* Drivers Grid */}
+        {filteredDrivers.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+            <IconUser className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-lg font-semibold text-gray-600">No riders found</p>
+            {searchTerm && (
+              <p className="text-sm text-gray-500 mt-2">
+                Try changing your search criteria
+              </p>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredDrivers.map((driver) => (
+              <div
+                key={driver._id}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden group"
+              >
+                {/* Card Header */}
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 relative">
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    {getStatusBadge(driver)}
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                      <span className="text-blue-600 font-bold text-2xl">
+                        {driver.userId.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-white font-bold text-lg truncate">
+                        {driver.userId.name}
+                      </h3>
+                      <p className="text-blue-100 text-sm font-medium truncate">
+                        {driver.userId.email}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card Body */}
+                <div className="p-6 space-y-4">
+                  {/* Contact Info */}
+                  <div className="flex items-center text-gray-700">
+                    <IconPhone className="w-5 h-5 mr-3 text-gray-400" />
+                    <span className="text-sm font-medium">{driver.userId.phone}</span>
+                  </div>
+
+                  {/* Vehicle Info */}
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-gray-700">
+                        <IconCar className="w-5 h-5 mr-2 text-gray-500" />
+                        <span className="text-sm font-semibold">
+                          {driver.vehicleMake} {driver.vehicleModel}
+                        </span>
+                      </div>
+                      <div
+                        className="w-5 h-5 rounded-full border-2 border-gray-300"
+                        style={{ backgroundColor: driver.vehicleColor.toLowerCase() }}
+                        title={driver.vehicleColor}
+                      />
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <IconId className="w-4 h-4 mr-2 text-gray-400" />
+                      <span className="text-xs font-mono font-semibold">
+                        {driver.plateNumber}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-3 gap-3 pt-2">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <IconPackage className="w-4 h-4 text-purple-600" />
+                      </div>
+                      <p className="text-lg font-bold text-gray-900">
+                        {driver.stats?.totalDeliveries || 0}
+                      </p>
+                      <p className="text-xs text-gray-500 font-medium">Deliveries</p>
+                    </div>
+                    <div className="text-center border-x border-gray-200">
+                      <div className="flex items-center justify-center mb-1">
+                        <IconCash className="w-4 h-4 text-green-600" />
+                      </div>
+                      <p className="text-lg font-bold text-gray-900">
+                        ₦{((driver.stats?.totalEarnings || 0) / 1000).toFixed(0)}k
+                      </p>
+                      <p className="text-xs text-gray-500 font-medium">Earnings</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center mb-1">
+                        <IconUser className="w-4 h-4 text-yellow-600" />
+                      </div>
+                      <p className="text-lg font-bold text-gray-900">
+                        {driver.rating?.average || 0}
+                      </p>
+                      <p className="text-xs text-gray-500 font-medium">Rating</p>
+                    </div>
+                  </div>
+
+                  {/* Approval Status */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <span className="text-xs text-gray-500 font-medium">Status:</span>
+                    {getApprovalStatusBadge(driver.approvalStatus)}
+                  </div>
+                </div>
+
+                {/* Card Footer */}
+                <div className="px-6 pb-6">
+                  <button
+                    onClick={() => handleViewProfile(driver)}
+                    className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md group-hover:scale-[1.02]"
+                  >
+                    <IconEye className="w-4 h-4 mr-2" />
+                    View Full Profile
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Add Driver Modal */}
         {showAddModal && (
@@ -1126,261 +1142,209 @@ export default function RidersPage() {
 
         {/* View Profile Modal */}
         {showProfileModal && selectedDriver && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    Driver Profile
-                  </h2>
-                  <button
-                    onClick={() => setShowProfileModal(false)}
-                    className="text-gray-400 hover:text-gray-500 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <IconX className="w-6 h-6" />
-                  </button>
-                </div>
-
-                <div className="space-y-6">
-                  {/* Profile Header */}
-                  <div className="flex items-start space-x-4">
-                    <div className="h-20 w-20 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-md">
-                      <span className="text-white text-2xl font-bold">
-                        {selectedDriver.userId.name.charAt(0).toUpperCase()}
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+              {/* Header with Gradient */}
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 relative">
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="absolute top-4 right-4 text-white hover:bg-white/20 p-2 rounded-lg transition-all"
+                >
+                  <IconX className="w-6 h-6" />
+                </button>
+                <div className="flex items-center space-x-6">
+                  <div className="h-24 w-24 bg-white rounded-2xl flex items-center justify-center shadow-xl">
+                    <span className="text-blue-600 text-4xl font-bold">
+                      {selectedDriver.userId.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-3xl font-bold text-white mb-1">
+                      {selectedDriver.userId.name}
+                    </h2>
+                    <p className="text-blue-100 font-medium mb-3">
+                      {selectedDriver.userId.email}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedDriver.isOnline ? (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-400 text-white">
+                          <IconCheck className="w-3 h-3 mr-1" />
+                          Online
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-400 text-white">
+                          Offline
+                        </span>
+                      )}
+                      {selectedDriver.isVerified && (
+                        <span className="px-3 py-1 text-xs font-bold rounded-full bg-white/20 text-white backdrop-blur-sm">
+                          ✓ Verified
+                        </span>
+                      )}
+                      <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                        selectedDriver.approvalStatus === 'approved' ? 'bg-green-400 text-white' :
+                        selectedDriver.approvalStatus === 'rejected' ? 'bg-red-400 text-white' :
+                        'bg-yellow-400 text-white'
+                      }`}>
+                        {selectedDriver.approvalStatus.charAt(0).toUpperCase() + selectedDriver.approvalStatus.slice(1)}
                       </span>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900">
-                        {selectedDriver.userId.name}
-                      </h3>
-                      <p className="text-gray-600 font-medium mt-1">
-                        {selectedDriver.userId.email}
-                      </p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {getStatusBadge(selectedDriver)}
-                        {getApprovalStatusBadge(selectedDriver.approvalStatus)}
-                        {selectedDriver.isVerified && (
-                          <span className="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800">
-                            Verified
-                          </span>
-                        )}
-                      </div>
-                    </div>
                   </div>
+                </div>
+              </div>
 
-                  {/* Stats Grid */}
+              {/* Content */}
+              <div className="overflow-y-auto max-h-[calc(90vh-180px)] p-8">
+                <div className="space-y-8">
+                  {/* Stats Cards */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center">
-                        <IconPackage className="w-5 h-5 text-gray-600 mr-2" />
-                        <div>
-                          <p className="text-sm text-gray-600 font-medium">
-                            Deliveries
-                          </p>
-                          <p className="text-lg font-bold text-gray-900">
-                            {selectedDriver.stats?.totalDeliveries || 0}
-                          </p>
-                        </div>
-                      </div>
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl border border-purple-200">
+                      <IconPackage className="w-8 h-8 text-purple-600 mb-2" />
+                      <p className="text-2xl font-bold text-gray-900">
+                        {selectedDriver.stats?.totalDeliveries || 0}
+                      </p>
+                      <p className="text-sm text-gray-600 font-medium">Total Deliveries</p>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center">
-                        <IconCash className="w-5 h-5 text-gray-600 mr-2" />
-                        <div>
-                          <p className="text-sm text-gray-600 font-medium">
-                            Earnings
-                          </p>
-                          <p className="text-lg font-bold text-gray-900">
-                            ₦
-                            {(
-                              selectedDriver.stats?.totalEarnings || 0
-                            ).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-xl border border-green-200">
+                      <IconCash className="w-8 h-8 text-green-600 mb-2" />
+                      <p className="text-2xl font-bold text-gray-900">
+                        ₦{(selectedDriver.stats?.totalEarnings || 0).toLocaleString()}
+                      </p>
+                      <p className="text-sm text-gray-600 font-medium">Total Earnings</p>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center">
-                        <IconUser className="w-5 h-5 text-gray-600 mr-2" />
-                        <div>
-                          <p className="text-sm text-gray-600 font-medium">
-                            Rating
-                          </p>
-                          <p className="text-lg font-bold text-gray-900">
-                            {selectedDriver.rating?.average || 0}/5
-                          </p>
-                        </div>
-                      </div>
+                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 rounded-xl border border-yellow-200">
+                      <IconUser className="w-8 h-8 text-yellow-600 mb-2" />
+                      <p className="text-2xl font-bold text-gray-900">
+                        {selectedDriver.rating?.average || 0}/5
+                      </p>
+                      <p className="text-sm text-gray-600 font-medium">Average Rating</p>
                     </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center">
-                        <IconCalendar className="w-5 h-5 text-gray-600 mr-2" />
-                        <div>
-                          <p className="text-sm text-gray-600 font-medium">
-                            Acceptance
-                          </p>
-                          <p className="text-lg font-bold text-gray-900">
-                            {selectedDriver.stats?.acceptanceRate || 0}%
-                          </p>
-                        </div>
-                      </div>
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-xl border border-blue-200">
+                      <IconCheck className="w-8 h-8 text-blue-600 mb-2" />
+                      <p className="text-2xl font-bold text-gray-900">
+                        {selectedDriver.stats?.acceptanceRate || 0}%
+                      </p>
+                      <p className="text-sm text-gray-600 font-medium">Acceptance Rate</p>
                     </div>
                   </div>
 
-                  {/* Details Grid */}
+                  {/* Information Sections */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Contact Information */}
-                    <div className="space-y-4">
-                      <h4 className="text-lg font-bold text-gray-900">
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                        <IconPhone className="w-5 h-5 mr-2 text-blue-600" />
                         Contact Information
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex items-center">
-                          <IconPhone className="w-5 h-5 text-gray-400 mr-3" />
-                          <div>
-                            <p className="text-sm text-gray-600 font-medium">
-                              Phone
-                            </p>
-                            <p className="text-gray-900 font-medium">
-                              {selectedDriver.userId.phone}
-                            </p>
-                          </div>
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Phone Number</p>
+                          <p className="text-gray-900 font-semibold text-lg">{selectedDriver.userId.phone}</p>
                         </div>
-
-                        <div className="flex items-center">
-                          <IconId className="w-5 h-5 text-gray-400 mr-3" />
-                          <div>
-                            <p className="text-sm text-gray-600 font-medium">
-                              License Number
-                            </p>
-                            <p className="text-gray-900 font-medium">
-                              {selectedDriver.licenseNumber}
-                            </p>
-                          </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">License Number</p>
+                          <p className="text-gray-900 font-semibold">{selectedDriver.licenseNumber}</p>
                         </div>
-
-                        <div className="flex items-center">
-                          <IconCalendar className="w-5 h-5 text-gray-400 mr-3" />
-                          <div>
-                            <p className="text-sm text-gray-600 font-medium">
-                              License Expiry
-                            </p>
-                            <p className="text-gray-900 font-medium">
-                              {formatDate(selectedDriver.licenseExpiry)}
-                            </p>
-                          </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">License Expiry</p>
+                          <p className="text-gray-900 font-semibold">{formatDate(selectedDriver.licenseExpiry)}</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Vehicle Information */}
-                    <div className="space-y-4">
-                      <h4 className="text-lg font-bold text-gray-900">
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                        <IconCar className="w-5 h-5 mr-2 text-blue-600" />
                         Vehicle Information
-                      </h4>
-                      <div className="space-y-3">
-                        <div className="flex items-center">
-                          <IconCar className="w-5 h-5 text-gray-400 mr-3" />
-                          <div>
-                            <p className="text-sm text-gray-600 font-medium">
-                              Vehicle
-                            </p>
-                            <p className="text-gray-900 font-medium">
-                              {selectedDriver.vehicleMake}{" "}
-                              {selectedDriver.vehicleModel} (
-                              {selectedDriver.vehicleYear})
-                            </p>
-                          </div>
+                      </h3>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Vehicle</p>
+                          <p className="text-gray-900 font-semibold text-lg">
+                            {selectedDriver.vehicleMake} {selectedDriver.vehicleModel}
+                          </p>
+                          <p className="text-sm text-gray-600">Year: {selectedDriver.vehicleYear}</p>
                         </div>
-
-                        <div className="flex items-center">
-                          <IconCarCrash className="w-5 h-5 text-gray-400 mr-3" />
-                          <div>
-                            <p className="text-sm text-gray-600 font-medium">
-                              Plate Number
-                            </p>
-                            <p className="text-gray-900 font-medium">
-                              {selectedDriver.plateNumber}
-                            </p>
-                          </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Plate Number</p>
+                          <p className="text-gray-900 font-bold text-lg font-mono">{selectedDriver.plateNumber}</p>
                         </div>
-
-                        <div className="flex items-center">
-                          <div className="w-5 h-5 mr-3 flex items-center justify-center">
-                            <div
-                              className="w-4 h-4 rounded-full border"
-                              style={{
-                                backgroundColor:
-                                  selectedDriver.vehicleColor.toLowerCase(),
-                              }}
-                            />
-                          </div>
+                        <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm text-gray-600 font-medium">
-                              Color
-                            </p>
-                            <p className="text-gray-900 capitalize font-medium">
-                              {selectedDriver.vehicleColor}
-                            </p>
+                            <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Color</p>
+                            <p className="text-gray-900 font-semibold capitalize">{selectedDriver.vehicleColor}</p>
                           </div>
-                        </div>
-
-                        <div className="flex items-center">
-                          <IconMapPin className="w-5 h-5 text-gray-400 mr-3" />
-                          <div>
-                            <p className="text-sm text-gray-600 font-medium">
-                              Last Online
-                            </p>
-                            <p className="text-gray-900 font-medium">
-                              {formatDate(selectedDriver.lastOnlineAt)}
-                            </p>
-                          </div>
+                          <div
+                            className="w-12 h-12 rounded-lg border-2 border-gray-300 shadow-sm"
+                            style={{ backgroundColor: selectedDriver.vehicleColor.toLowerCase() }}
+                          />
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Bank Details */}
-                  {selectedDriver.bankDetails && (
-                    <div className="border-t pt-6">
-                      <h4 className="text-lg font-bold text-gray-900 mb-4">
-                        Bank Details
-                      </h4>
-                      <div
-                        className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold ${
-                          selectedDriver.bankDetails.verified
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {selectedDriver.bankDetails.verified
-                          ? "Verified"
-                          : "Not Verified"}
+                  {/* Activity & Bank Details */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                        <IconMapPin className="w-5 h-5 mr-2 text-blue-600" />
+                        Activity
+                      </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Last Online</p>
+                          <p className="text-gray-900 font-semibold">{formatDate(selectedDriver.lastOnlineAt)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Member Since</p>
+                          <p className="text-gray-900 font-semibold">{formatDate(selectedDriver.createdAt)}</p>
+                        </div>
                       </div>
                     </div>
-                  )}
 
-                  {/* Action Buttons */}
-                  <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
-                    <button
-                      onClick={() => setShowProfileModal(false)}
-                      className="px-5 py-2.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all"
-                    >
-                      Close
-                    </button>
-                    <button
-                      onClick={() => {
-                        showToast("Edit functionality coming soon!", "info");
-                      }}
-                      className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-sm hover:shadow"
-                    >
-                      Edit Profile
-                    </button>
+                    {selectedDriver.bankDetails && (
+                      <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                          <IconCash className="w-5 h-5 mr-2 text-blue-600" />
+                          Bank Details
+                        </h3>
+                        <div className="flex items-center">
+                          <span className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold ${
+                            selectedDriver.bankDetails.verified
+                              ? "bg-green-100 text-green-800 border border-green-300"
+                              : "bg-yellow-100 text-yellow-800 border border-yellow-300"
+                          }`}>
+                            {selectedDriver.bankDetails.verified ? (
+                              <><IconCheck className="w-4 h-4 mr-2" /> Verified</>
+                            ) : (
+                              "Not Verified"
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="px-6 py-2.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-100 transition-all"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => showToast("Edit functionality coming soon!", "info")}
+                  className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
+                >
+                  Edit Profile
+                </button>
               </div>
             </div>
           </div>

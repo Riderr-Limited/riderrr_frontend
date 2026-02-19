@@ -14,6 +14,10 @@ export function formatDate(
     locale?: string;
   }
 ): string {
+  if (!dateString) {
+    return 'Invalid Date';
+  }
+  
   const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
   
   if (isNaN(date.getTime())) {
