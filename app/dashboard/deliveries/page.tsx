@@ -7,13 +7,10 @@ import {
   IconEye,
   IconX,
   IconPackage,
-  IconUser,
-  IconPhone,
   IconCash,
   IconTruck,
   IconRefresh,
   IconSearch,
-  IconFilter,
 } from "@tabler/icons-react";
 import { API_CONFIG } from "../../lib/config";
 import { ApiClient } from "../../lib/api-client";
@@ -215,7 +212,9 @@ export default function DeliveriesPage() {
     if (!window.google) {
       const script = document.createElement("script");
       script.src =
-        "https://maps.googleapis.com/maps/api/js?key=" + (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "") + "&libraries=places";
+        "https://maps.googleapis.com/maps/api/js?key=" +
+        (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "") +
+        "&libraries=places";
       script.async = true;
       document.head.appendChild(script);
     }
@@ -278,7 +277,13 @@ export default function DeliveriesPage() {
   };
 
   const closeMapModal = () => {
-    setMapModal({ isOpen: false, lat: 0, lng: 0, title: "", updatedAt: undefined });
+    setMapModal({
+      isOpen: false,
+      lat: 0,
+      lng: 0,
+      title: "",
+      updatedAt: undefined,
+    });
   };
 
   const refreshAll = () => {
@@ -334,7 +339,7 @@ export default function DeliveriesPage() {
 
         {/* Stats Summary - Total Across All Pages */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 mt-4 pt-4 border-t border-gray-200">
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-3 md:p-4">
+          <div className="bg-linear-to-br from-gray-50 to-gray-100 rounded-lg p-3 md:p-4">
             <p className="text-xs md:text-sm text-gray-600 mb-1">Total</p>
             {statsLoading ? (
               <div className="h-6 md:h-8 w-12 md:w-16 bg-gray-200 animate-pulse rounded"></div>
@@ -344,7 +349,7 @@ export default function DeliveriesPage() {
               </p>
             )}
           </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 md:p-4">
+          <div className="bg-linear-to-br from-green-50 to-green-100 rounded-lg p-3 md:p-4">
             <p className="text-xs md:text-sm text-green-700 mb-1">Delivered</p>
             {statsLoading ? (
               <div className="h-6 md:h-8 w-12 md:w-16 bg-green-200 animate-pulse rounded"></div>
@@ -354,7 +359,7 @@ export default function DeliveriesPage() {
               </p>
             )}
           </div>
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 md:p-4">
+          <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-lg p-3 md:p-4">
             <p className="text-xs md:text-sm text-blue-700 mb-1">In Progress</p>
             {statsLoading ? (
               <div className="h-6 md:h-8 w-12 md:w-16 bg-blue-200 animate-pulse rounded"></div>
@@ -364,7 +369,7 @@ export default function DeliveriesPage() {
               </p>
             )}
           </div>
-          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-3 md:p-4">
+          <div className="bg-linear-to-br from-yellow-50 to-yellow-100 rounded-lg p-3 md:p-4">
             <p className="text-xs md:text-sm text-yellow-700 mb-1">Pending</p>
             {statsLoading ? (
               <div className="h-6 md:h-8 w-12 md:w-16 bg-yellow-200 animate-pulse rounded"></div>
@@ -374,7 +379,7 @@ export default function DeliveriesPage() {
               </p>
             )}
           </div>
-          <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-3 md:p-4 col-span-2 sm:col-span-1">
+          <div className="bg-linear-to-br from-red-50 to-red-100 rounded-lg p-3 md:p-4 col-span-2 sm:col-span-1">
             <p className="text-xs md:text-sm text-red-700 mb-1">Cancelled</p>
             {statsLoading ? (
               <div className="h-6 md:h-8 w-12 md:w-16 bg-red-200 animate-pulse rounded"></div>
@@ -414,7 +419,7 @@ export default function DeliveriesPage() {
               className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden"
             >
               {/* Header with Fare and Status */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 md:px-5 py-3 border-b border-gray-200 flex items-center justify-between">
+              <div className="bg-linear-to-r from-blue-50 to-purple-50 px-4 md:px-5 py-3 border-b border-gray-200 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-white rounded-lg shadow-sm">
                     <IconCash className="h-5 w-5 text-emerald-600" />
@@ -530,13 +535,15 @@ export default function DeliveriesPage() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 z-10">
+            <div className="sticky top-0 bg-linear-to-r from-blue-600 to-indigo-600 px-6 py-4 z-10">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-white mb-1">
                     Delivery Details
                   </h2>
-                  <p className="text-sm text-white/80">#{selectedDelivery.referenceId}</p>
+                  <p className="text-sm text-white/80">
+                    #{selectedDelivery.referenceId}
+                  </p>
                 </div>
                 <button
                   onClick={closeModal}
@@ -551,13 +558,16 @@ export default function DeliveriesPage() {
             <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
               <div className="p-6 space-y-6">
                 {/* Status Banner */}
-                <div className={`p-4 rounded-xl ${getStatusColor(selectedDelivery.status)} border-2 border-current/20`}>
+                <div
+                  className={`p-4 rounded-xl ${getStatusColor(selectedDelivery.status)} border-2 border-current/20`}
+                >
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-base font-bold mb-1">
                         {selectedDelivery.statusDisplay}
                       </p>
-                      {selectedDelivery.payment.method.toLowerCase() !== 'cash' && (
+                      {selectedDelivery.payment.method.toLowerCase() !==
+                        "cash" && (
                         <p className="text-sm opacity-90">
                           Payment: {selectedDelivery.payment.status}
                         </p>
@@ -569,30 +579,38 @@ export default function DeliveriesPage() {
 
                 {/* Pickup & Dropoff Locations */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                  <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="p-2 bg-blue-600 rounded-lg">
                         <IconMapPin className="h-5 w-5 text-white" />
                       </div>
-                      <h3 className="font-bold text-gray-900">Pickup Location</h3>
+                      <h3 className="font-bold text-gray-900">
+                        Pickup Location
+                      </h3>
                     </div>
-                    <p className="text-sm text-gray-700">{selectedDelivery.pickup.address}</p>
+                    <p className="text-sm text-gray-700">
+                      {selectedDelivery.pickup.address}
+                    </p>
                   </div>
 
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                  <div className="bg-linear-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="p-2 bg-green-600 rounded-lg">
                         <IconMapPin className="h-5 w-5 text-white" />
                       </div>
-                      <h3 className="font-bold text-gray-900">Dropoff Location</h3>
+                      <h3 className="font-bold text-gray-900">
+                        Dropoff Location
+                      </h3>
                     </div>
-                    <p className="text-sm text-gray-700">{selectedDelivery.dropoff.address}</p>
+                    <p className="text-sm text-gray-700">
+                      {selectedDelivery.dropoff.address}
+                    </p>
                   </div>
                 </div>
 
                 {/* Item & Fare Details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                  <div className="bg-linear-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="p-2 bg-purple-600 rounded-lg">
                         <IconPackage className="h-5 w-5 text-white" />
@@ -602,30 +620,40 @@ export default function DeliveriesPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Type:</span>
-                        <span className="font-medium text-gray-900">{selectedDelivery.itemDetails.type}</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedDelivery.itemDetails.type}
+                        </span>
                       </div>
                       {selectedDelivery.itemDetails.description && (
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Description:</span>
-                          <span className="font-medium text-gray-900">{selectedDelivery.itemDetails.description}</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedDelivery.itemDetails.description}
+                          </span>
                         </div>
                       )}
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Weight:</span>
-                        <span className="font-medium text-gray-900">{selectedDelivery.itemDetails.weight} kg</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedDelivery.itemDetails.weight} kg
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Distance:</span>
-                        <span className="font-medium text-gray-900">{selectedDelivery.estimatedDistanceKm.toFixed(2)} km</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedDelivery.estimatedDistanceKm.toFixed(2)} km
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Duration:</span>
-                        <span className="font-medium text-gray-900">{selectedDelivery.estimatedDurationMin} mins</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedDelivery.estimatedDurationMin} mins
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
+                  <div className="bg-linear-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="p-2 bg-emerald-600 rounded-lg">
                         <IconCash className="h-5 w-5 text-white" />
@@ -635,26 +663,45 @@ export default function DeliveriesPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Base Fare:</span>
-                        <span className="font-medium text-gray-900">{selectedDelivery.fare.currency} {selectedDelivery.fare.baseFare?.toLocaleString() || "0"}</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedDelivery.fare.currency}{" "}
+                          {selectedDelivery.fare.baseFare?.toLocaleString() ||
+                            "0"}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Distance Fare:</span>
-                        <span className="font-medium text-gray-900">{selectedDelivery.fare.currency} {selectedDelivery.fare.distanceFare?.toFixed(2) || "0"}</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedDelivery.fare.currency}{" "}
+                          {selectedDelivery.fare.distanceFare?.toFixed(2) ||
+                            "0"}
+                        </span>
                       </div>
                       <div className="border-t-2 border-emerald-300 pt-2 mt-2">
                         <div className="flex justify-between">
-                          <span className="font-bold text-gray-900">Total Fare:</span>
-                          <span className="font-bold text-emerald-700 text-lg">{selectedDelivery.fare.currency} {selectedDelivery.fare.totalFare?.toLocaleString() || "0"}</span>
+                          <span className="font-bold text-gray-900">
+                            Total Fare:
+                          </span>
+                          <span className="font-bold text-emerald-700 text-lg">
+                            {selectedDelivery.fare.currency}{" "}
+                            {selectedDelivery.fare.totalFare?.toLocaleString() ||
+                              "0"}
+                          </span>
                         </div>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Method:</span>
-                        <span className="font-medium text-gray-900">{selectedDelivery.payment.method}</span>
+                        <span className="font-medium text-gray-900">
+                          {selectedDelivery.payment.method}
+                        </span>
                       </div>
-                      {selectedDelivery.payment.method.toLowerCase() !== 'cash' && (
+                      {selectedDelivery.payment.method.toLowerCase() !==
+                        "cash" && (
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Status:</span>
-                          <span className="font-medium text-gray-900">{selectedDelivery.payment.status}</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedDelivery.payment.status}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -663,23 +710,28 @@ export default function DeliveriesPage() {
 
                 {/* Rider Info (if assigned) */}
                 {selectedDelivery.driverDetails && (
-                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
+                  <div className="bg-linear-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
                         <div className="p-2 bg-indigo-600 rounded-lg">
                           <IconTruck className="h-5 w-5 text-white" />
                         </div>
-                        <h3 className="font-bold text-gray-900">Rider Information</h3>
+                        <h3 className="font-bold text-gray-900">
+                          Rider Information
+                        </h3>
                       </div>
                       {selectedDelivery.driverDetails.currentLocation && (
                         <button
                           onClick={() =>
                             openMapModal(
-                              selectedDelivery.driverDetails!.currentLocation!.lat,
-                              selectedDelivery.driverDetails!.currentLocation!.lng,
+                              selectedDelivery.driverDetails!.currentLocation!
+                                .lat,
+                              selectedDelivery.driverDetails!.currentLocation!
+                                .lng,
                               "Rider Location",
                               `${selectedDelivery.driverDetails!.name}'s current location`,
-                              selectedDelivery.driverDetails!.currentLocation!.updatedAt
+                              selectedDelivery.driverDetails!.currentLocation!
+                                .updatedAt,
                             )
                           }
                           className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 text-sm font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -693,29 +745,42 @@ export default function DeliveriesPage() {
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Name:</span>
-                          <span className="font-medium text-gray-900">{selectedDelivery.driverDetails.name}</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedDelivery.driverDetails.name}
+                          </span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Phone:</span>
-                          <span className="font-medium text-gray-900">{selectedDelivery.driverDetails.phone || "N/A"}</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedDelivery.driverDetails.phone || "N/A"}
+                          </span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Rating:</span>
-                          <span className="font-medium text-gray-900">⭐ {selectedDelivery.driverDetails.rating || 0}</span>
+                          <span className="font-medium text-gray-900">
+                            ⭐ {selectedDelivery.driverDetails.rating || 0}
+                          </span>
                         </div>
                       </div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Vehicle:</span>
-                          <span className="font-medium text-gray-900">{selectedDelivery.driverDetails.vehicle.make} {selectedDelivery.driverDetails.vehicle.model}</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedDelivery.driverDetails.vehicle.make}{" "}
+                            {selectedDelivery.driverDetails.vehicle.model}
+                          </span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Plate:</span>
-                          <span className="font-medium text-gray-900">{selectedDelivery.driverDetails.vehicle.plateNumber}</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedDelivery.driverDetails.vehicle.plateNumber}
+                          </span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Type:</span>
-                          <span className="font-medium text-gray-900">{selectedDelivery.driverDetails.vehicle.type}</span>
+                          <span className="font-medium text-gray-900">
+                            {selectedDelivery.driverDetails.vehicle.type}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -723,7 +788,7 @@ export default function DeliveriesPage() {
                 )}
 
                 {/* Timeline */}
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+                <div className="bg-linear-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="p-2 bg-orange-600 rounded-lg">
                       <IconClock className="h-5 w-5 text-white" />
@@ -734,16 +799,24 @@ export default function DeliveriesPage() {
                     <div className="flex items-start gap-3">
                       <div className="w-3 h-3 rounded-full bg-blue-600 mt-1 ring-4 ring-blue-200"></div>
                       <div className="flex-1">
-                        <p className="text-sm font-semibold text-gray-900">Created</p>
-                        <p className="text-xs text-gray-600">{formatDate(selectedDelivery.createdAt)}</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          Created
+                        </p>
+                        <p className="text-xs text-gray-600">
+                          {formatDate(selectedDelivery.createdAt)}
+                        </p>
                       </div>
                     </div>
                     {selectedDelivery.assignedAt && (
                       <div className="flex items-start gap-3">
                         <div className="w-3 h-3 rounded-full bg-purple-600 mt-1 ring-4 ring-purple-200"></div>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900">Assigned</p>
-                          <p className="text-xs text-gray-600">{formatDate(selectedDelivery.assignedAt)}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            Assigned
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {formatDate(selectedDelivery.assignedAt)}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -751,8 +824,12 @@ export default function DeliveriesPage() {
                       <div className="flex items-start gap-3">
                         <div className="w-3 h-3 rounded-full bg-indigo-600 mt-1 ring-4 ring-indigo-200"></div>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900">Picked Up</p>
-                          <p className="text-xs text-gray-600">{formatDate(selectedDelivery.pickedUpAt)}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            Picked Up
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {formatDate(selectedDelivery.pickedUpAt)}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -760,8 +837,12 @@ export default function DeliveriesPage() {
                       <div className="flex items-start gap-3">
                         <div className="w-3 h-3 rounded-full bg-green-600 mt-1 ring-4 ring-green-200"></div>
                         <div className="flex-1">
-                          <p className="text-sm font-semibold text-gray-900">Delivered</p>
-                          <p className="text-xs text-gray-600">{formatDate(selectedDelivery.deliveredAt)}</p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            Delivered
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {formatDate(selectedDelivery.deliveredAt)}
+                          </p>
                         </div>
                       </div>
                     )}
@@ -774,7 +855,7 @@ export default function DeliveriesPage() {
             <div className="sticky bottom-0 bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end">
               <button
                 onClick={closeModal}
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="px-6 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Close
               </button>
