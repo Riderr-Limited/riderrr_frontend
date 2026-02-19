@@ -119,7 +119,6 @@ interface Stats {
 
 export default function DeliveriesPage() {
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
-  console.log("Deliveries state:", deliveries); // Debugging log
   const [allStats, setAllStats] = useState<Stats>({
     totalDeliveries: 0,
     totalDelivered: 0,
@@ -256,7 +255,9 @@ export default function DeliveriesPage() {
 
   const filteredDeliveries = deliveries.filter((delivery) => {
     const matchesSearch =
-      delivery.driverDetails?.name?.toLowerCase().includes(searchTerm.toLowerCase()) || false;
+      delivery.driverDetails?.name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) || false;
 
     const matchesStatus =
       statusFilter === "all" ||
@@ -388,7 +389,10 @@ export default function DeliveriesPage() {
       <div className="space-y-3">
         {loading ? (
           Array.from({ length: 5 }).map((_, idx) => (
-            <div key={idx} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-5">
+            <div
+              key={idx}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-5"
+            >
               <div className="space-y-3">
                 <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4"></div>
                 <div className="h-4 bg-gray-200 animate-pulse rounded w-1/2"></div>
@@ -403,7 +407,10 @@ export default function DeliveriesPage() {
           </div>
         ) : (
           filteredDeliveries.map((delivery) => (
-            <div key={delivery._id} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden">
+            <div
+              key={delivery._id}
+              className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden"
+            >
               {/* Header with Fare and Status */}
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 md:px-5 py-3 border-b border-gray-200 flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -412,7 +419,10 @@ export default function DeliveriesPage() {
                   </div>
                   <div>
                     <p className="text-xs text-gray-600">Total Fare</p>
-                    <p className="text-lg font-bold text-gray-900">{delivery.fare.currency} {delivery.fare.totalFare?.toLocaleString() || "0"}</p>
+                    <p className="text-lg font-bold text-gray-900">
+                      {delivery.fare.currency}{" "}
+                      {delivery.fare.totalFare?.toLocaleString() || "0"}
+                    </p>
                   </div>
                 </div>
                 <button
@@ -437,8 +447,12 @@ export default function DeliveriesPage() {
                       <div className="w-0.5 h-full bg-gray-300 my-1"></div>
                     </div>
                     <div className="flex-1 pb-2">
-                      <p className="text-xs font-semibold text-blue-600 mb-1">PICKUP</p>
-                      <p className="text-sm text-gray-900 font-medium">{delivery.pickup.address}</p>
+                      <p className="text-xs font-semibold text-blue-600 mb-1">
+                        PICKUP
+                      </p>
+                      <p className="text-sm text-gray-900 font-medium">
+                        {delivery.pickup.address}
+                      </p>
                     </div>
                   </div>
 
@@ -450,8 +464,12 @@ export default function DeliveriesPage() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <p className="text-xs font-semibold text-green-600 mb-1">DROPOFF</p>
-                      <p className="text-sm text-gray-900 font-medium">{delivery.dropoff.address}</p>
+                      <p className="text-xs font-semibold text-green-600 mb-1">
+                        DROPOFF
+                      </p>
+                      <p className="text-sm text-gray-900 font-medium">
+                        {delivery.dropoff.address}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -464,7 +482,9 @@ export default function DeliveriesPage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-xs text-gray-500">Assigned Rider</p>
-                      <p className="text-sm font-semibold text-gray-900">{delivery.driverDetails?.name || "Not Assigned"}</p>
+                      <p className="text-sm font-semibold text-gray-900">
+                        {delivery.driverDetails?.name || "Not Assigned"}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -477,7 +497,8 @@ export default function DeliveriesPage() {
         {!loading && pagination.pages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4">
             <div className="text-xs md:text-sm text-gray-500 text-center sm:text-left">
-              Page {pagination.page} of {pagination.pages} ({pagination.total} total)
+              Page {pagination.page} of {pagination.pages} ({pagination.total}{" "}
+              total)
             </div>
             <div className="flex gap-2">
               <button
@@ -538,24 +559,6 @@ export default function DeliveriesPage() {
                 </div>
               </div>
 
-              {/* Recipient Info */}
-              <div className="border border-gray-200 rounded-lg p-3 md:p-4">
-                <div className="flex items-center gap-2 mb-3">
-                  <IconUser className="h-5 w-5 text-green-600" />
-                  <h3 className="font-semibold text-gray-900">Recipient</h3>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-sm">
-                    <span className="font-medium">Name:</span>{" "}
-                    {selectedDelivery.recipientName}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Phone:</span>{" "}
-                    {selectedDelivery.recipientPhone}
-                  </p>
-                </div>
-              </div>
-
               {/* Pickup & Dropoff Locations */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border border-gray-200 rounded-lg p-4">
@@ -566,14 +569,6 @@ export default function DeliveriesPage() {
                     </h3>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm">
-                      <span className="font-medium">Contact:</span>{" "}
-                      {selectedDelivery.pickup.name}
-                    </p>
-                    <p className="text-sm">
-                      <span className="font-medium">Phone:</span>{" "}
-                      {selectedDelivery.pickup.phone}
-                    </p>
                     <p className="text-sm">
                       <span className="font-medium">Address:</span>{" "}
                       {selectedDelivery.pickup.address}
@@ -589,14 +584,6 @@ export default function DeliveriesPage() {
                     </h3>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm">
-                      <span className="font-medium">Contact:</span>{" "}
-                      {selectedDelivery.dropoff.name}
-                    </p>
-                    <p className="text-sm">
-                      <span className="font-medium">Phone:</span>{" "}
-                      {selectedDelivery.dropoff.phone}
-                    </p>
                     <p className="text-sm">
                       <span className="font-medium">Address:</span>{" "}
                       {selectedDelivery.dropoff.address}
@@ -681,11 +668,31 @@ export default function DeliveriesPage() {
               {/* Rider Info (if assigned) */}
               {selectedDelivery.driverDetails && (
                 <div className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <IconTruck className="h-5 w-5 text-indigo-600" />
-                    <h3 className="font-semibold text-gray-900">
-                      Rider Information
-                    </h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <IconTruck className="h-5 w-5 text-indigo-600" />
+                      <h3 className="font-semibold text-gray-900">
+                        Rider Information
+                      </h3>
+                    </div>
+                    {selectedDelivery.driverDetails.currentLocation && (
+                      <button
+                        onClick={() =>
+                          openMapModal(
+                            selectedDelivery.driverDetails!.currentLocation!
+                              .lat,
+                            selectedDelivery.driverDetails!.currentLocation!
+                              .lng,
+                            "Rider Location",
+                            `${selectedDelivery.driverDetails!.name}'s current location`,
+                          )
+                        }
+                        className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2"
+                      >
+                        <IconMapPin className="h-4 w-4" />
+                        View Rider Location
+                      </button>
+                    )}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
