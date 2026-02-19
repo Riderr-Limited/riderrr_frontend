@@ -403,49 +403,69 @@ export default function DeliveriesPage() {
           </div>
         ) : (
           filteredDeliveries.map((delivery) => (
-            <div key={delivery._id} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden">
-              <div className="p-4 md:p-5">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Pickup Location */}
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-blue-50 rounded-lg">
-                      <IconMapPin className="h-5 w-5 text-blue-600" />
+            <div key={delivery._id} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden">
+              {/* Header with Fare and Status */}
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 md:px-5 py-3 border-b border-gray-200 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white rounded-lg shadow-sm">
+                    <IconCash className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Total Fare</p>
+                    <p className="text-lg font-bold text-gray-900">{delivery.fare.currency} {delivery.fare.totalFare?.toLocaleString() || "0"}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleViewDelivery(delivery)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm shadow-sm"
+                >
+                  <IconEye className="h-4 w-4" />
+                  <span>Details</span>
+                </button>
+              </div>
+
+              {/* Body with Route and Rider */}
+              <div className="p-4 md:p-5 space-y-4">
+                {/* Route Section */}
+                <div className="space-y-3">
+                  {/* Pickup */}
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="p-2 bg-blue-100 rounded-full">
+                        <IconMapPin className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div className="w-0.5 h-full bg-gray-300 my-1"></div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-blue-600 mb-1">PICKUP</p>
-                      <p className="text-sm text-gray-900 font-medium line-clamp-2">{delivery.pickup.address}</p>
+                    <div className="flex-1 pb-2">
+                      <p className="text-xs font-semibold text-blue-600 mb-1">PICKUP</p>
+                      <p className="text-sm text-gray-900 font-medium">{delivery.pickup.address}</p>
                     </div>
                   </div>
 
-                  {/* Dropoff Location */}
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-green-50 rounded-lg">
-                      <IconMapPin className="h-5 w-5 text-green-600" />
+                  {/* Dropoff */}
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="p-2 bg-green-100 rounded-full">
+                        <IconMapPin className="h-4 w-4 text-green-600" />
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-green-600 mb-1">DROPOFF</p>
-                      <p className="text-sm text-gray-900 font-medium line-clamp-2">{delivery.dropoff.address}</p>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-green-600 mb-1">DROPOFF</p>
+                      <p className="text-sm text-gray-900 font-medium">{delivery.dropoff.address}</p>
                     </div>
                   </div>
+                </div>
 
-                  {/* Rider & Action */}
-                  <div className="flex items-center justify-between md:justify-end gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 bg-purple-50 rounded-lg">
-                        <IconTruck className="h-5 w-5 text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500">Rider</p>
-                        <p className="text-sm font-medium text-gray-900">{delivery.driverDetails?.name || "Not Assigned"}</p>
-                      </div>
+                {/* Rider Info */}
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-purple-100 rounded-lg">
+                      <IconTruck className="h-5 w-5 text-purple-600" />
                     </div>
-                    <button
-                      onClick={() => handleViewDelivery(delivery)}
-                      className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm shadow-sm"
-                    >
-                      <IconEye className="h-4 w-4" />
-                      <span className="hidden sm:inline">View</span>
-                    </button>
+                    <div className="flex-1">
+                      <p className="text-xs text-gray-500">Assigned Rider</p>
+                      <p className="text-sm font-semibold text-gray-900">{delivery.driverDetails?.name || "Not Assigned"}</p>
+                    </div>
                   </div>
                 </div>
               </div>
