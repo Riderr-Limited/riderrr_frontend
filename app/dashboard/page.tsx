@@ -19,6 +19,7 @@ import {
 } from "@tabler/icons-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import DeliveryDetailsModal from "@/components/DeliveryDetailsModal";
 import { API_CONFIG } from "./../lib/config";
 import { formatDate } from "./../lib/utils";
 import { cn } from "@/lib/utils";
@@ -603,67 +604,11 @@ export default function DashboardPage() {
 
       {/* Modal */}
       {showModal && selectedDelivery && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-            <div className="bg-linear-to-r from-blue-600 to-indigo-600 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-white">Delivery Details</h2>
-                  <p className="text-sm text-white/80">#{selectedDelivery.referenceId}</p>
-                </div>
-                <button onClick={closeModal} className="p-2 hover:bg-white/20 rounded-lg transition-all">
-                  <IconX className="h-6 w-6 text-white" />
-                </button>
-              </div>
-            </div>
-            <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-blue-50 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <IconMapPin className="h-5 w-5 text-blue-600" />
-                    <h3 className="font-bold text-gray-900">Pickup</h3>
-                  </div>
-                  <p className="text-sm text-gray-700">{selectedDelivery.pickup.address}</p>
-                </div>
-                <div className="bg-green-50 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <IconMapPin className="h-5 w-5 text-green-600" />
-                    <h3 className="font-bold text-gray-900">Dropoff</h3>
-                  </div>
-                  <p className="text-sm text-gray-700">{selectedDelivery.dropoff.address}</p>
-                </div>
-              </div>
-              <div className="bg-emerald-50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <IconCash className="h-5 w-5 text-emerald-600" />
-                  <h3 className="font-bold text-gray-900">Fare</h3>
-                </div>
-                <p className="text-2xl font-bold text-emerald-700">
-                  {selectedDelivery.fare.currency} {(selectedDelivery.fare.totalFare || selectedDelivery.fare.amount)?.toLocaleString() || "0"}
-                </p>
-              </div>
-              <div className="bg-purple-50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <IconTruck className="h-5 w-5 text-purple-600" />
-                  <h3 className="font-bold text-gray-900">Rider</h3>
-                </div>
-                <p className="text-sm text-gray-700">{selectedDelivery.driverDetails?.name || "Not Assigned"}</p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <IconClock className="h-5 w-5 text-gray-600" />
-                  <h3 className="font-bold text-gray-900">Created</h3>
-                </div>
-                <p className="text-sm text-gray-700">{formatDate(selectedDelivery.createdAt)}</p>
-              </div>
-            </div>
-            <div className="bg-gray-50 px-6 py-4 flex justify-end border-t">
-              <button onClick={closeModal} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeliveryDetailsModal
+          isOpen={showModal}
+          onClose={closeModal}
+          delivery={selectedDelivery}
+        />
       )}
     </div>
   );
