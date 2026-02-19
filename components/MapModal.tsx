@@ -9,6 +9,7 @@ declare global {
       maps: {
         Map: new (element: HTMLElement, options: unknown) => unknown;
         Marker: new (options: unknown) => unknown;
+        Point: new (x: number, y: number) => unknown;
         Animation: {
           DROP: unknown;
         };
