@@ -5,7 +5,13 @@ import { useEffect, useRef } from "react";
 
 declare global {
   interface Window {
-    google: any;
+    google: {
+      maps: {
+        Map: any;
+        Marker: any;
+        Animation: any;
+      };
+    };
   }
 }
 
