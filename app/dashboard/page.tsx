@@ -14,6 +14,8 @@ import {
   IconTruck,
   IconRefresh,
   IconArrowUpRight,
+  IconEye,
+  IconX,
 } from "@tabler/icons-react";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -28,11 +30,14 @@ interface Delivery {
   pickup: { address: string; lat: number; lng: number; name: string };
   dropoff: { address: string; lat: number; lng: number; name: string };
   status: string;
-  fare: { amount?: number; currency: string };
+  fare: { amount?: number; totalFare?: number; currency: string };
   payment: { status: string; method: string };
   createdAt: string;
   customerName: string;
   recipientName: string;
+  driverDetails?: {
+    name: string;
+  };
 }
 
 interface Driver {
@@ -87,6 +92,8 @@ export default function DashboardPage() {
 
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [selectedDelivery, setSelectedDelivery] = useState<Delivery | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState({
     stats: true,
     deliveries: true,
@@ -246,6 +253,16 @@ export default function DashboardPage() {
     }
   };
 
+  const handleViewDelivery = (delivery: Delivery) => {
+    setSelectedDelivery(delivery);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedDelivery(null);
+  };
+
   return (
     <div className="space-y-8 p-6 bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 min-h-screen">
       {/* Professional Header */}
@@ -334,144 +351,134 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Recent Deliveries Table */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden">
-        <div className="px-6 py-5 border-b border-gray-200 bg-linear-to-r from-gray-50 to-slate-50">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <IconPackage className="h-6 w-6 text-blue-600" />
-                Recent Deliveries
-              </h3>
-              <p className="text-sm text-gray-600 mt-1 font-medium">
-                Latest delivery requests and updates
-              </p>
-            </div>
-            <Link
-              href="/dashboard/deliveries"
-              className="text-blue-600 hover:text-blue-700 text-sm font-semibold px-4 py-2 rounded-lg border-2 border-blue-200 hover:bg-blue-50 transition-all duration-200 hover:scale-105 flex items-center gap-1"
-            >
-              View All
-              <IconArrowUpRight className="h-4 w-4" />
-            </Link>
+      {/* Recent Deliveries */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <IconPackage className="h-6 w-6 text-blue-600" />
+              Recent Deliveries
+            </h3>
+            <p className="text-sm text-gray-600 mt-1 font-medium">
+              Latest delivery requests and updates
+            </p>
           </div>
+          <Link
+            href="/dashboard/deliveries"
+            className="text-blue-600 hover:text-blue-700 text-sm font-semibold px-4 py-2 rounded-lg border-2 border-blue-200 hover:bg-blue-50 transition-all duration-200 hover:scale-105 flex items-center gap-1"
+          >
+            View All
+            <IconArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-linear-to-r from-slate-100 to-gray-100">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  ID
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Pickup
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Dropoff
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {loading.deliveries ? (
-                Array.from({ length: 3 }).map((_, index) => (
-                  <tr key={index}>
-                    {Array.from({ length: 6 }).map((_, colIndex) => (
-                      <td key={colIndex} className="px-6 py-4">
-                        <div className="h-4 bg-gray-200 animate-pulse rounded-lg"></div>
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : deliveries.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-gray-500"
-                  >
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="bg-gray-100 p-4 rounded-full mb-4">
-                        <IconPackage className="h-12 w-12 text-gray-400" />
-                      </div>
-                      <p className="text-base font-semibold text-gray-700">
-                        No deliveries yet
-                      </p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Start creating deliveries to see them here
+        {/* Deliveries Cards */}
+        <div className="space-y-3">
+          {loading.deliveries ? (
+            Array.from({ length: 3 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-5"
+              >
+                <div className="space-y-3">
+                  <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 animate-pulse rounded w-1/2"></div>
+                  <div className="h-4 bg-gray-200 animate-pulse rounded w-2/3"></div>
+                </div>
+              </div>
+            ))
+          ) : deliveries.length === 0 ? (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+              <IconPackage className="h-16 w-16 mx-auto text-gray-400 mb-3" />
+              <p className="text-gray-500 text-lg">No deliveries found</p>
+            </div>
+          ) : (
+            deliveries.slice(0, 5).map((delivery) => (
+              <div
+                key={delivery._id}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden"
+              >
+                {/* Header with Fare and Status */}
+                <div className="bg-linear-to-r from-blue-50 to-purple-50 px-4 md:px-5 py-3 border-b border-gray-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
+                      <IconCash className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-600">Total Fare</p>
+                      <p className="text-lg font-bold text-gray-900">
+                        {delivery.fare.currency}{" "}
+                        {(delivery.fare.totalFare || delivery.fare.amount)?.toLocaleString() || "0"}
                       </p>
                     </div>
-                  </td>
-                </tr>
-              ) : (
-                deliveries.map((delivery) => (
-                  <tr
-                    key={delivery._id}
-                    className="hover:bg-blue-50/50 transition-colors duration-150 cursor-pointer"
+                  </div>
+                  <button
+                    onClick={() => handleViewDelivery(delivery)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium text-sm shadow-sm"
                   >
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-bold text-blue-600">
-                        {delivery.referenceId}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-start gap-2">
-                        <div className="bg-blue-100 p-1.5 rounded-lg mt-0.5">
+                    <IconEye className="h-4 w-4" />
+                    <span>Details</span>
+                  </button>
+                </div>
+
+                {/* Body with Route and Rider */}
+                <div className="p-4 md:p-5 space-y-4">
+                  {/* Route Section */}
+                  <div className="space-y-3">
+                    {/* Pickup */}
+                    <div className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div className="p-2 bg-blue-100 rounded-full">
                           <IconMapPin className="h-4 w-4 text-blue-600" />
                         </div>
-                        <div className="min-w-0">
-                          <div className="text-sm text-gray-900 font-semibold truncate">
-                            {delivery.pickup.name}
-                          </div>
-                          <div className="text-xs text-gray-500 truncate max-w-[180px] mt-0.5">
-                            {delivery.pickup.address}
-                          </div>
-                        </div>
+                        <div className="w-0.5 h-full bg-gray-300 my-1"></div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-start gap-2">
-                        <div className="bg-green-100 p-1.5 rounded-lg mt-0.5">
+                      <div className="flex-1 pb-2">
+                        <p className="text-xs font-semibold text-blue-600 mb-1">
+                          PICKUP
+                        </p>
+                        <p className="text-sm text-gray-900 font-medium">
+                          {delivery.pickup.address}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Dropoff */}
+                    <div className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div className="p-2 bg-green-100 rounded-full">
                           <IconMapPin className="h-4 w-4 text-green-600" />
                         </div>
-                        <div className="min-w-0">
-                          <div className="text-sm text-gray-900 font-semibold truncate">
-                            {delivery.recipientName}
-                          </div>
-                          <div className="text-xs text-gray-500 truncate max-w-[180px] mt-0.5">
-                            {delivery.dropoff.address}
-                          </div>
-                        </div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm font-bold text-gray-900">
-                        {delivery.fare.currency}{" "}
-                        {delivery.fare.amount?.toLocaleString() || "0"}
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-green-600 mb-1">
+                          DROPOFF
+                        </p>
+                        <p className="text-sm text-gray-900 font-medium">
+                          {delivery.dropoff.address}
+                        </p>
                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(delivery.status)}
-                        <StatusBadge status={delivery.status} />
+                    </div>
+                  </div>
+
+                  {/* Rider Info */}
+                  <div className="pt-3 border-t border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-purple-100 rounded-lg">
+                        <IconTruck className="h-5 w-5 text-purple-600" />
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 font-medium">
-                      {formatDate(delivery.createdAt)}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      <div className="flex-1">
+                        <p className="text-xs text-gray-500">Assigned Rider</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {delivery.driverDetails?.name || "Not Assigned"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -593,6 +600,71 @@ export default function DashboardPage() {
           </div>
         </div> */}
       </div>
+
+      {/* Modal */}
+      {showModal && selectedDelivery && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="bg-linear-to-r from-blue-600 to-indigo-600 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-white">Delivery Details</h2>
+                  <p className="text-sm text-white/80">#{selectedDelivery.referenceId}</p>
+                </div>
+                <button onClick={closeModal} className="p-2 hover:bg-white/20 rounded-lg transition-all">
+                  <IconX className="h-6 w-6 text-white" />
+                </button>
+              </div>
+            </div>
+            <div className="p-6 space-y-4 overflow-y-auto max-h-[calc(90vh-140px)]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-blue-50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <IconMapPin className="h-5 w-5 text-blue-600" />
+                    <h3 className="font-bold text-gray-900">Pickup</h3>
+                  </div>
+                  <p className="text-sm text-gray-700">{selectedDelivery.pickup.address}</p>
+                </div>
+                <div className="bg-green-50 rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <IconMapPin className="h-5 w-5 text-green-600" />
+                    <h3 className="font-bold text-gray-900">Dropoff</h3>
+                  </div>
+                  <p className="text-sm text-gray-700">{selectedDelivery.dropoff.address}</p>
+                </div>
+              </div>
+              <div className="bg-emerald-50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <IconCash className="h-5 w-5 text-emerald-600" />
+                  <h3 className="font-bold text-gray-900">Fare</h3>
+                </div>
+                <p className="text-2xl font-bold text-emerald-700">
+                  {selectedDelivery.fare.currency} {(selectedDelivery.fare.totalFare || selectedDelivery.fare.amount)?.toLocaleString() || "0"}
+                </p>
+              </div>
+              <div className="bg-purple-50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <IconTruck className="h-5 w-5 text-purple-600" />
+                  <h3 className="font-bold text-gray-900">Rider</h3>
+                </div>
+                <p className="text-sm text-gray-700">{selectedDelivery.driverDetails?.name || "Not Assigned"}</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <IconClock className="h-5 w-5 text-gray-600" />
+                  <h3 className="font-bold text-gray-900">Created</h3>
+                </div>
+                <p className="text-sm text-gray-700">{formatDate(selectedDelivery.createdAt)}</p>
+              </div>
+            </div>
+            <div className="bg-gray-50 px-6 py-4 flex justify-end border-t">
+              <button onClick={closeModal} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
