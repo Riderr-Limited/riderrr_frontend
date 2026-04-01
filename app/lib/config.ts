@@ -5,7 +5,6 @@ interface ApiConfig {
     AUTH: Record<string, string>;
     COMPANY: Record<string, string>;
     DELIVERIES: Record<string, string>;
-    NOTIFICATIONS: Record<string, string>;
     PAYMENTS: Record<string, string>;
   };
   buildUrl: (endpoint: string) => string;
@@ -20,11 +19,12 @@ export const API_CONFIG: ApiConfig = {
     // Auth endpoints
     AUTH: {
       LOGIN: "/auth/login",
-      SIGNUP_COMPANY_DRIVER: "/auth/signup-company-driver",
-      VERIFY_EMAIL: "/auth/verify-email",
-      RESEND_VERIFICATION: "/auth/resend-verification",
-      CHANGE_PASSWORD: "/auth/change-password",
+      SIGNUP: "/auth/signup",
+      REFRESH: "/auth/refresh",
       LOGOUT: "/auth/logout",
+      ME: "/auth/me",
+      PROFILE: "/auth/profile",
+      CHANGE_PASSWORD: "/auth/change-password",
     },
 
     // Company endpoints
@@ -32,8 +32,8 @@ export const API_CONFIG: ApiConfig = {
       PROFILE: "/company/profile",
       SETTINGS: "/company/settings",
       DRIVERS: "/company/drivers",
-      STATISTICS: "/company/statistics",
-      DOCUMENTS: "/company/documents",
+      STATS: "/company/stats",
+      NOTIFICATIONS: "/company/notifications",
     },
 
     // Deliveries endpoints
@@ -41,16 +41,13 @@ export const API_CONFIG: ApiConfig = {
       COMPANY_DELIVERIES: "/deliveries/company/deliveries",
     },
 
-    // Notifications endpoints
-    NOTIFICATIONS: {
-      UNREAD_COUNT: "/notifications/unread-count",
-    },
-
     // Payments endpoints
     PAYMENTS: {
       BANKS: "/payments/banks",
       VERIFY_ACCOUNT: "/payments/verify-account",
-      SETUP_BANK: "/payments/company/setup-bank-account",
+      COMPANY_PAYMENTS: "/payments/company-payments",
+      COMPANY_BANK_ACCOUNT: "/payments/company/bank-account",
+      SETUP_BANK_ACCOUNT: "/payments/company/setup-bank-account",
     },
   },
 

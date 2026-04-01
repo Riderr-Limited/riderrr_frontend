@@ -2,6 +2,8 @@
 
 import { useAuth, useRole, usePermissions } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
+import { useBankAccount } from "@/hooks/useBankAccount";
+import { BankSetupAlert } from "@/components/BankSetupAlert";
 import {
   IconPackage,
   IconTrendingUp,
@@ -23,6 +25,7 @@ import DeliveryDetailsModal from "@/components/DeliveryDetailsModal";
 import { API_CONFIG } from "./../lib/config";
 import { formatDate } from "./../lib/utils";
 import { cn } from "@/lib/utils";
+import { TokenUtils } from "@/lib/tokenUtils";
 import Link from "next/link";
 
 interface Delivery {
@@ -54,12 +57,13 @@ interface Driver {
 export default function DashboardPage() {
   const { user } = useAuth();
   const { getUserRole } = useRole();
+  const { bankData, loading: bankLoading, needsSetup, setupStatus } = useBankAccount();
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const fetchUnreadCount = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = TokenUtils.getToken();
         const response = await fetch(
           API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.NOTIFICATIONS.UNREAD_COUNT),
           {
@@ -105,7 +109,7 @@ export default function DashboardPage() {
     const fetchDashboardData = async () => {
       try {
         setLoading({ stats: true, deliveries: true, drivers: true });
-        const token = localStorage.getItem("access_token");
+        const token = TokenUtils.getToken();
 
         // Use Promise.all to fetch data in parallel
         const [deliveriesRes, driversRes, statsRes] = await Promise.all([
@@ -193,7 +197,7 @@ export default function DashboardPage() {
   const refreshData = async () => {
     try {
       setLoading({ stats: true, deliveries: true, drivers: true });
-      const token = localStorage.getItem("access_token");
+      const token = TokenUtils.getToken();
 
       const [deliveriesRes, driversRes, statsRes] = await Promise.all([
         fetch(
@@ -266,43 +270,13 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 p-6 bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50 min-h-screen">
-      {/* Professional Header */}
-      {/* <div className="bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 text-white p-8 rounded-2xl shadow-xl border border-blue-500/20">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Welcome back, {user?.name || "User"}
-            </h1>
-            <p className="text-blue-100 mt-2 text-base font-medium">
-              Here&apos;s what&apos;s happening with your deliveries today
-            </p>
-          </div>
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/20">
-              <p className="text-xs font-semibold text-blue-200 uppercase tracking-wider">
-                Role
-              </p>
-              <p className="text-lg font-bold capitalize text-white mt-1">
-                Company Admin
-              </p>
-            </div>
-            <button
-              onClick={refreshData}
-              disabled={loading.stats || loading.deliveries || loading.drivers}
-              className="p-3 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-xl transition-all duration-200 disabled:opacity-50 border border-white/20 hover:scale-105"
-              title="Refresh Data"
-            >
-              <IconRefresh
-                className={cn(
-                  "h-5 w-5",
-                  (loading.stats || loading.deliveries || loading.drivers) &&
-                    "animate-spin",
-                )}
-              />
-            </button>
-          </div>
-        </div>
-      </div> */}
+      {/* Bank Setup Alert */}
+      {user?.role === 'company_admin' && !bankLoading && needsSetup && (
+        <BankSetupAlert 
+          setupStatus={setupStatus}
+          bankAccount={bankData?.bankAccount}
+        />
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -126,29 +126,18 @@ export default function BankSetupPage() {
       const token = getToken();
       const user = TokenUtils.getUser();
       
-      // Debug: Log what we're sending
-      console.log("Token:", token ? "Present" : "Missing");
-      console.log("User:", user);
-      console.log("User role:", user?.role);
-      console.log("API URL:", API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.PAYMENTS.SETUP_BANK));
-      
       if (!token) {
         setSaveError("Authentication token missing. Please log in again.");
         return;
       }
       
-      if (!user || user.role !== 'company_admin') {
-        setSaveError(`Invalid user role: ${user?.role || 'unknown'}. Only company admins can setup bank accounts.`);
-        return;
-      }
-      
       // Check company status
-      if (user.companyId?.status === 'pending') {
+      if (user?.companyId?.status === 'pending') {
         setSaveError('Your company registration is still pending approval. Bank setup will be available once your company is approved.');
         return;
       }
       
-      if (!user.companyId || typeof user.companyId !== 'object') {
+      if (!user?.companyId || typeof user.companyId !== 'object') {
         setSaveError('No company associated with your account. Please contact support.');
         return;
       }
@@ -167,10 +156,6 @@ export default function BankSetupPage() {
       });
 
       const data = await res.json();
-      
-      // Debug: Log response
-      console.log("Response status:", res.status);
-      console.log("Response data:", data);
 
       if (data.success) {
         setSuccess(true);
