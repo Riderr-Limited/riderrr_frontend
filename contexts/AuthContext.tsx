@@ -8,6 +8,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import { TokenUtils } from "@/lib/tokenUtils";
 
 export interface User {
   _id: string;
@@ -121,24 +122,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Token management
   const getAccessToken = (): string | null => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("access_token");
+    return TokenUtils.getToken() || null;
   };
 
   const getRefreshToken = (): string | null => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("refresh_token");
+    return TokenUtils.getRefreshToken() || null;
   };
 
   const setTokens = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem("access_token", accessToken);
-    localStorage.setItem("refresh_token", refreshToken);
+    TokenUtils.setToken(accessToken);
+    TokenUtils.setRefreshToken(refreshToken);
   };
 
   const clearTokens = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
+    TokenUtils.clearAuth();
   };
 
   // Store user data in localStorage for persistence
@@ -360,10 +357,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json();
 
       if (data.success && data.data?.accessToken) {
-        localStorage.setItem("access_token", data.data.accessToken);
+        TokenUtils.setToken(data.data.accessToken);
         // Refresh token might also be rotated
         if (data.data.refreshToken) {
-          localStorage.setItem("refresh_token", data.data.refreshToken);
+          TokenUtils.setRefreshToken(data.data.refreshToken);
         }
         return true;
       }

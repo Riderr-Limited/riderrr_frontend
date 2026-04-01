@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { API_CONFIG } from "@/app/lib/config";
+import { TokenUtils } from "@/lib/tokenUtils";
 
 interface Bank {
   code: string;
@@ -39,6 +40,8 @@ export default function BankSetupPage() {
 
   const [banksLoading, setBanksLoading] = useState(true);
 
+  const getToken = () => TokenUtils.getToken();
+
   const filteredBanks = banks.filter((b) =>
     b.name.toLowerCase().includes(bankSearch.toLowerCase())
   );
@@ -58,7 +61,7 @@ export default function BankSetupPage() {
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const token = localStorage.getItem("access_token");
+        const token = getToken();
         const res = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.PAYMENTS.BANKS), {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -84,7 +87,7 @@ export default function BankSetupPage() {
       setVerified(false);
 
       try {
-        const token = localStorage.getItem("access_token");
+        const token = getToken();
         const res = await fetch(
           API_CONFIG.buildUrl(
             `${API_CONFIG.ENDPOINTS.PAYMENTS.VERIFY_ACCOUNT}?accountNumber=${accountNumber}&bankCode=${selectedBank.code}`
@@ -120,7 +123,36 @@ export default function BankSetupPage() {
     setSaveError("");
 
     try {
-      const token = localStorage.getItem("access_token");
+      const token = getToken();
+      const user = TokenUtils.getUser();
+      
+      // Debug: Log what we're sending
+      console.log("Token:", token ? "Present" : "Missing");
+      console.log("User:", user);
+      console.log("User role:", user?.role);
+      console.log("API URL:", API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.PAYMENTS.SETUP_BANK));
+      
+      if (!token) {
+        setSaveError("Authentication token missing. Please log in again.");
+        return;
+      }
+      
+      if (!user || user.role !== 'company_admin') {
+        setSaveError(`Invalid user role: ${user?.role || 'unknown'}. Only company admins can setup bank accounts.`);
+        return;
+      }
+      
+      // Check company status
+      if (user.companyId?.status === 'pending') {
+        setSaveError('Your company registration is still pending approval. Bank setup will be available once your company is approved.');
+        return;
+      }
+      
+      if (!user.companyId || typeof user.companyId !== 'object') {
+        setSaveError('No company associated with your account. Please contact support.');
+        return;
+      }
+
       const res = await fetch(API_CONFIG.buildUrl(API_CONFIG.ENDPOINTS.PAYMENTS.SETUP_BANK), {
         method: "POST",
         headers: {
@@ -135,6 +167,10 @@ export default function BankSetupPage() {
       });
 
       const data = await res.json();
+      
+      // Debug: Log response
+      console.log("Response status:", res.status);
+      console.log("Response data:", data);
 
       if (data.success) {
         setSuccess(true);
@@ -142,7 +178,8 @@ export default function BankSetupPage() {
       } else {
         setSaveError(data.message || "Failed to save bank account.");
       }
-    } catch {
+    } catch (error) {
+      console.error("Bank setup error:", error);
       setSaveError("Something went wrong. Please try again.");
     } finally {
       setSaving(false);

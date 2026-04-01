@@ -8,6 +8,7 @@ import { TermsModal } from "@/components/ui/TermsModal";
 import axios from "axios";
 import { useAuthStore } from "@/store/authStore";
 import { useOrgStore } from "@/store/orgRegistration.store";
+import { TokenUtils } from "@/lib/tokenUtils";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const VERIFICATION_API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -213,8 +214,8 @@ export default function OrgRegistration() {
           requiresVerification: data.requiresVerification || true,
         });
 
-        localStorage.setItem("accessToken", data.data.accessToken);
-        localStorage.setItem("refreshToken", data.data.refreshToken);
+        TokenUtils.setToken(data.data.accessToken);
+        TokenUtils.setRefreshToken(data.data.refreshToken);
         localStorage.setItem("userId", data.data.user?._id || "");
         localStorage.setItem("userEmail", form.email.trim().toLowerCase());
         if (data.data.user)
@@ -260,7 +261,7 @@ export default function OrgRegistration() {
 
       if (data.data?.accessToken) {
         setAuth({ accessToken: data.data.accessToken, user: data.data.user });
-        localStorage.setItem("accessToken", data.data.accessToken);
+        TokenUtils.setToken(data.data.accessToken);
         localStorage.setItem("isVerified", "true");
         if (data.data.user)
           localStorage.setItem("user", JSON.stringify(data.data.user));
