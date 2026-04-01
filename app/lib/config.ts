@@ -6,13 +6,14 @@ interface ApiConfig {
     COMPANY: Record<string, string>;
     DELIVERIES: Record<string, string>;
     NOTIFICATIONS: Record<string, string>;
+    PAYMENTS: Record<string, string>;
   };
   buildUrl: (endpoint: string) => string;
   getEndpoint: (category: keyof ApiConfig["ENDPOINTS"], key: string) => string;
 }
 
 export const API_CONFIG: ApiConfig = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "",
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "https://riderr-backend.onrender.com/api",
 
   // API Endpoints
   ENDPOINTS: {
@@ -43,6 +44,13 @@ export const API_CONFIG: ApiConfig = {
     // Notifications endpoints
     NOTIFICATIONS: {
       UNREAD_COUNT: "/notifications/unread-count",
+    },
+
+    // Payments endpoints
+    PAYMENTS: {
+      BANKS: "/payments/banks",
+      VERIFY_ACCOUNT: "/payments/verify-account",
+      SETUP_BANK: "/payments/company/setup-bank-account",
     },
   },
 
