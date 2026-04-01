@@ -72,6 +72,7 @@ function getPageTitle(pathname: string): string {
     "/dashboard/overview": "Dashboard Overview",
     "/dashboard/riders": "Riders Management",
     "/dashboard/deliveries": "Deliveries Tracking",
+    "/dashboard/payments": "Payments",
     "/dashboard/profile": "My Profile",
     "/dashboard/settings": "Settings",
     "/company/profile": "Company Profile",
@@ -87,6 +88,8 @@ function getPageDescription(pathname: string, userName?: string): string {
     "/dashboard/riders": "Manage and monitor all riders in your fleet.",
     "/dashboard/deliveries":
       "Track all deliveries in real-time, assign riders, and monitor progress.",
+    "/dashboard/payments":
+      "View earnings, settlements, and payment history.",
     "/dashboard/profile":
       "Manage your personal information and account settings.",
     "/dashboard/settings":
