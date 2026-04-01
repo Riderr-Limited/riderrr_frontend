@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Building,
-  MapPin,
   Phone,
   Mail,
   Calendar,
@@ -21,6 +21,7 @@ import {
   Lock,
   Globe,
   FileText,
+  ArrowRight,
 } from "lucide-react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { cn } from "@/libs/utils";
@@ -423,24 +424,50 @@ export default function CompanyProfilePage() {
                   </span>
                 )}
               </div>
-              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Account Name</label>
-                  <p className="text-gray-900">{profile.bankAccount?.accountName || "—"}</p>
+
+              {profile.bankAccount?.accountNumber ? (
+                <div className="p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Account Name</label>
+                      <p className="text-gray-900">{profile.bankAccount.accountName}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+                      <p className="text-gray-900">{profile.bankAccount.accountNumber}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
+                      <p className="text-gray-900">{profile.bankAccount.bankName}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Bank Code</label>
+                      <p className="text-gray-900">{profile.bankAccount.bankCode}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/dashboard/bank-setup"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 transition-colors text-sm font-medium"
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    Manage Bank Account
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
-                  <p className="text-gray-900">{profile.bankAccount?.accountNumber || "—"}</p>
+              ) : (
+                <div className="p-6 flex flex-col items-center text-center gap-3">
+                  <CreditCard className="h-10 w-10 text-gray-300" />
+                  <p className="text-sm text-gray-500">No bank account set up yet.</p>
+                  <Link
+                    href="/dashboard/bank-setup"
+                    className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-medium"
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    Set Up Bank Account
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
-                  <p className="text-gray-900">{profile.bankAccount?.bankName || "—"}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bank Code</label>
-                  <p className="text-gray-900">{profile.bankAccount?.bankCode || "—"}</p>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* Change Password */}
