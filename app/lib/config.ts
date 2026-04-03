@@ -6,6 +6,7 @@ interface ApiConfig {
     COMPANY: Record<string, string>;
     DELIVERIES: Record<string, string>;
     PAYMENTS: Record<string, string>;
+    NOTIFICATIONS: Record<string, string>;
   };
   buildUrl: (endpoint: string) => string;
   getEndpoint: (category: keyof ApiConfig["ENDPOINTS"], key: string) => string;
@@ -33,7 +34,13 @@ export const API_CONFIG: ApiConfig = {
       SETTINGS: "/company/settings",
       DRIVERS: "/company/drivers",
       STATS: "/company/stats",
+      STATISTICS: "/company/stats",
       NOTIFICATIONS: "/company/notifications",
+    },
+
+    // Notifications endpoints
+    NOTIFICATIONS: {
+      UNREAD_COUNT: "/notifications/unread-count",
     },
 
     // Deliveries endpoints
