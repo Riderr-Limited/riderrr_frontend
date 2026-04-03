@@ -8,6 +8,7 @@ import {
   IconUser,
   IconLogout,
   IconSettings,
+  IconMenu2,
 } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 import NotificationModal from "@/components/notifications/NotificationModal";
@@ -16,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 export default function TopBar() {
   const { user, logout } = useAuth();
-  const { isCollapsed } = useSidebar();
+  const { isCollapsed, setIsMobileOpen } = useSidebar();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -88,11 +89,19 @@ export default function TopBar() {
       <header
         className={cn(
           "fixed top-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm transition-all duration-300",
-          isCollapsed ? "left-20" : "left-64",
+          isCollapsed ? "left-0 md:left-20" : "left-0 md:left-64",
         )}
       >
         <div className="px-4 py-3 md:px-6">
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-between">
+            {/* Hamburger - mobile only */}
+            <button
+              onClick={() => setIsMobileOpen(true)}
+              className="md:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              aria-label="Open menu"
+            >
+              <IconMenu2 className="h-6 w-6" />
+            </button>
             {/* Right: Action Icons */}
             <div className="flex items-center space-x-4">
               {/* Notifications */}
