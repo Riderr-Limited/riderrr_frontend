@@ -46,6 +46,8 @@ export const API_CONFIG: ApiConfig = {
       BANKS: "/payments/banks",
       VERIFY_ACCOUNT: "/payments/verify-account",
       COMPANY_PAYMENTS: "/payments/company-payments",
+      COMPANY_SETTLEMENTS: "/payments/company-settlements",
+      COMPLETE_AND_SETTLE: "/payments/complete-and-settle",
       COMPANY_BANK_ACCOUNT: "/payments/company/bank-account",
       SETUP_BANK_ACCOUNT: "/payments/company/setup-bank-account",
     },

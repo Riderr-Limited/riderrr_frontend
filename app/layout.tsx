@@ -1,7 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ToastProvider } from "@/components/ToastProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "Riderr - Fast, Reliable Logistics Simplified",
@@ -31,7 +36,6 @@ export const metadata: Metadata = {
     description:
       "Connect with nearby riders instantly for fast, affordable deliveries.",
   },
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
 };
 
