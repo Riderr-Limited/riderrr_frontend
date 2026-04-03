@@ -213,7 +213,7 @@ export default function Sidebar() {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden md:flex flex-col h-screen transition-all duration-300 sticky top-0 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white shadow-lg overflow-x-hidden relative",
+          "hidden md:flex flex-col h-screen transition-all duration-300 fixed top-0 left-0 z-30 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white shadow-lg overflow-hidden",
           isCollapsed ? "w-20" : "w-64",
         )}
       >
