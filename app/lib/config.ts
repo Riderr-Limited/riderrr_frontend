@@ -21,6 +21,9 @@ export const API_CONFIG: ApiConfig = {
     AUTH: {
       LOGIN: "/auth/login",
       SIGNUP: "/auth/signup",
+      SIGNUP_COMPANY_DRIVER: "/auth/signup-company-driver",
+      VERIFY_EMAIL: "/auth/verify-email",
+      RESEND_VERIFICATION: "/auth/resend-verification",
       REFRESH: "/auth/refresh",
       LOGOUT: "/auth/logout",
       ME: "/auth/me",
