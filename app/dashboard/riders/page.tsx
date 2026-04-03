@@ -693,7 +693,9 @@ export default function RidersPage() {
         {filteredDrivers.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
             <IconUser className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg font-semibold text-gray-600">No riders found</p>
+            <p className="text-lg font-semibold text-gray-600">
+              No riders found
+            </p>
             {searchTerm && (
               <p className="text-sm text-gray-500 mt-2">
                 Try changing your search criteria
@@ -734,7 +736,9 @@ export default function RidersPage() {
                   {/* Contact Info */}
                   <div className="flex items-center text-gray-700">
                     <IconPhone className="w-5 h-5 mr-3 text-gray-400" />
-                    <span className="text-sm font-medium">{driver.userId.phone}</span>
+                    <span className="text-sm font-medium">
+                      {driver.userId.phone}
+                    </span>
                   </div>
 
                   {/* Vehicle Info */}
@@ -748,7 +752,9 @@ export default function RidersPage() {
                       </div>
                       <div
                         className="w-5 h-5 rounded-full border-2 border-gray-300"
-                        style={{ backgroundColor: driver.vehicleColor.toLowerCase() }}
+                        style={{
+                          backgroundColor: driver.vehicleColor.toLowerCase(),
+                        }}
                         title={driver.vehicleColor}
                       />
                     </div>
@@ -769,16 +775,22 @@ export default function RidersPage() {
                       <p className="text-lg font-bold text-gray-900">
                         {driver.stats?.totalDeliveries || 0}
                       </p>
-                      <p className="text-xs text-gray-500 font-medium">Deliveries</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Deliveries
+                      </p>
                     </div>
                     <div className="text-center border-x border-gray-200">
                       <div className="flex items-center justify-center mb-1">
                         <IconCash className="w-4 h-4 text-green-600" />
                       </div>
                       <p className="text-lg font-bold text-gray-900">
-                        ₦{((driver.stats?.totalEarnings || 0) / 1000).toFixed(0)}k
+                        ₦
+                        {((driver.stats?.totalEarnings || 0) / 1000).toFixed(0)}
+                        k
                       </p>
-                      <p className="text-xs text-gray-500 font-medium">Earnings</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Earnings
+                      </p>
                     </div>
                     <div className="text-center">
                       <div className="flex items-center justify-center mb-1">
@@ -787,13 +799,17 @@ export default function RidersPage() {
                       <p className="text-lg font-bold text-gray-900">
                         {driver.rating?.average || 0}
                       </p>
-                      <p className="text-xs text-gray-500 font-medium">Rating</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Rating
+                      </p>
                     </div>
                   </div>
 
                   {/* Approval Status */}
                   <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span className="text-xs text-gray-500 font-medium">Status:</span>
+                    <span className="text-xs text-gray-500 font-medium">
+                      Status:
+                    </span>
                     {getApprovalStatusBadge(driver.approvalStatus)}
                   </div>
                 </div>
@@ -917,7 +933,11 @@ export default function RidersPage() {
                                   onClick={() => setShowPassword(!showPassword)}
                                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                 >
-                                  {showPassword ? <IconEyeOff className="w-5 h-5" /> : <IconEye className="w-5 h-5" />}
+                                  {showPassword ? (
+                                    <IconEyeOff className="w-5 h-5" />
+                                  ) : (
+                                    <IconEye className="w-5 h-5" />
+                                  )}
                                 </button>
                               </div>
                             </div>
@@ -928,7 +948,9 @@ export default function RidersPage() {
                               </label>
                               <div className="relative">
                                 <input
-                                  type={showConfirmPassword ? "text" : "password"}
+                                  type={
+                                    showConfirmPassword ? "text" : "password"
+                                  }
                                   name="confirmPassword"
                                   value={formData.confirmPassword}
                                   onChange={handleInputChange}
@@ -938,10 +960,16 @@ export default function RidersPage() {
                                 />
                                 <button
                                   type="button"
-                                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                  onClick={() =>
+                                    setShowConfirmPassword(!showConfirmPassword)
+                                  }
                                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                 >
-                                  {showConfirmPassword ? <IconEyeOff className="w-5 h-5" /> : <IconEye className="w-5 h-5" />}
+                                  {showConfirmPassword ? (
+                                    <IconEyeOff className="w-5 h-5" />
+                                  ) : (
+                                    <IconEye className="w-5 h-5" />
+                                  )}
                                 </button>
                               </div>
                               {passwordError && (
@@ -1202,12 +1230,17 @@ export default function RidersPage() {
                           ✓ Verified
                         </span>
                       )}
-                      <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                        selectedDriver.approvalStatus === 'approved' ? 'bg-green-400 text-white' :
-                        selectedDriver.approvalStatus === 'rejected' ? 'bg-red-400 text-white' :
-                        'bg-yellow-400 text-white'
-                      }`}>
-                        {selectedDriver.approvalStatus.charAt(0).toUpperCase() + selectedDriver.approvalStatus.slice(1)}
+                      <span
+                        className={`px-3 py-1 text-xs font-bold rounded-full ${
+                          selectedDriver.approvalStatus === "approved"
+                            ? "bg-green-400 text-white"
+                            : selectedDriver.approvalStatus === "rejected"
+                              ? "bg-red-400 text-white"
+                              : "bg-yellow-400 text-white"
+                        }`}
+                      >
+                        {selectedDriver.approvalStatus.charAt(0).toUpperCase() +
+                          selectedDriver.approvalStatus.slice(1)}
                       </span>
                     </div>
                   </div>
@@ -1224,15 +1257,22 @@ export default function RidersPage() {
                       <p className="text-2xl font-bold text-gray-900">
                         {selectedDriver.stats?.totalDeliveries || 0}
                       </p>
-                      <p className="text-sm text-gray-600 font-medium">Total Deliveries</p>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Total Deliveries
+                      </p>
                     </div>
 
                     <div className="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-xl border border-green-200">
                       <IconCash className="w-8 h-8 text-green-600 mb-2" />
                       <p className="text-2xl font-bold text-gray-900">
-                        ₦{(selectedDriver.stats?.totalEarnings || 0).toLocaleString()}
+                        ₦
+                        {(
+                          selectedDriver.stats?.totalEarnings || 0
+                        ).toLocaleString()}
                       </p>
-                      <p className="text-sm text-gray-600 font-medium">Total Earnings</p>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Total Earnings
+                      </p>
                     </div>
 
                     <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 rounded-xl border border-yellow-200">
@@ -1240,7 +1280,9 @@ export default function RidersPage() {
                       <p className="text-2xl font-bold text-gray-900">
                         {selectedDriver.rating?.average || 0}/5
                       </p>
-                      <p className="text-sm text-gray-600 font-medium">Average Rating</p>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Average Rating
+                      </p>
                     </div>
 
                     <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-xl border border-blue-200">
@@ -1248,7 +1290,9 @@ export default function RidersPage() {
                       <p className="text-2xl font-bold text-gray-900">
                         {selectedDriver.stats?.acceptanceRate || 0}%
                       </p>
-                      <p className="text-sm text-gray-600 font-medium">Acceptance Rate</p>
+                      <p className="text-sm text-gray-600 font-medium">
+                        Acceptance Rate
+                      </p>
                     </div>
                   </div>
 
@@ -1262,16 +1306,28 @@ export default function RidersPage() {
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Phone Number</p>
-                          <p className="text-gray-900 font-semibold text-lg">{selectedDriver.userId.phone}</p>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                            Phone Number
+                          </p>
+                          <p className="text-gray-900 font-semibold text-lg">
+                            {selectedDriver.userId.phone}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">License Number</p>
-                          <p className="text-gray-900 font-semibold">{selectedDriver.licenseNumber}</p>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                            License Number
+                          </p>
+                          <p className="text-gray-900 font-semibold">
+                            {selectedDriver.licenseNumber}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">License Expiry</p>
-                          <p className="text-gray-900 font-semibold">{formatDate(selectedDriver.licenseExpiry)}</p>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                            License Expiry
+                          </p>
+                          <p className="text-gray-900 font-semibold">
+                            {formatDate(selectedDriver.licenseExpiry)}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1284,24 +1340,40 @@ export default function RidersPage() {
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Vehicle</p>
-                          <p className="text-gray-900 font-semibold text-lg">
-                            {selectedDriver.vehicleMake} {selectedDriver.vehicleModel}
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                            Vehicle
                           </p>
-                          <p className="text-sm text-gray-600">Year: {selectedDriver.vehicleYear}</p>
+                          <p className="text-gray-900 font-semibold text-lg">
+                            {selectedDriver.vehicleMake}{" "}
+                            {selectedDriver.vehicleModel}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Year: {selectedDriver.vehicleYear}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Plate Number</p>
-                          <p className="text-gray-900 font-bold text-lg font-mono">{selectedDriver.plateNumber}</p>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                            Plate Number
+                          </p>
+                          <p className="text-gray-900 font-bold text-lg font-mono">
+                            {selectedDriver.plateNumber}
+                          </p>
                         </div>
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Color</p>
-                            <p className="text-gray-900 font-semibold capitalize">{selectedDriver.vehicleColor}</p>
+                            <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                              Color
+                            </p>
+                            <p className="text-gray-900 font-semibold capitalize">
+                              {selectedDriver.vehicleColor}
+                            </p>
                           </div>
                           <div
                             className="w-12 h-12 rounded-lg border-2 border-gray-300 shadow-sm"
-                            style={{ backgroundColor: selectedDriver.vehicleColor.toLowerCase() }}
+                            style={{
+                              backgroundColor:
+                                selectedDriver.vehicleColor.toLowerCase(),
+                            }}
                           />
                         </div>
                       </div>
@@ -1317,12 +1389,20 @@ export default function RidersPage() {
                       </h3>
                       <div className="space-y-3">
                         <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Last Online</p>
-                          <p className="text-gray-900 font-semibold">{formatDate(selectedDriver.lastOnlineAt)}</p>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                            Last Online
+                          </p>
+                          <p className="text-gray-900 font-semibold">
+                            {formatDate(selectedDriver.lastOnlineAt)}
+                          </p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">Member Since</p>
-                          <p className="text-gray-900 font-semibold">{formatDate(selectedDriver.createdAt)}</p>
+                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
+                            Member Since
+                          </p>
+                          <p className="text-gray-900 font-semibold">
+                            {formatDate(selectedDriver.createdAt)}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -1334,13 +1414,17 @@ export default function RidersPage() {
                           Bank Details
                         </h3>
                         <div className="flex items-center">
-                          <span className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold ${
-                            selectedDriver.bankDetails.verified
-                              ? "bg-green-100 text-green-800 border border-green-300"
-                              : "bg-yellow-100 text-yellow-800 border border-yellow-300"
-                          }`}>
+                          <span
+                            className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold ${
+                              selectedDriver.bankDetails.verified
+                                ? "bg-green-100 text-green-800 border border-green-300"
+                                : "bg-yellow-100 text-yellow-800 border border-yellow-300"
+                            }`}
+                          >
                             {selectedDriver.bankDetails.verified ? (
-                              <><IconCheck className="w-4 h-4 mr-2" /> Verified</>
+                              <>
+                                <IconCheck className="w-4 h-4 mr-2" /> Verified
+                              </>
                             ) : (
                               "Not Verified"
                             )}
@@ -1361,7 +1445,9 @@ export default function RidersPage() {
                   Close
                 </button>
                 <button
-                  onClick={() => showToast("Edit functionality coming soon!", "info")}
+                  onClick={() =>
+                    showToast("Edit functionality coming soon!", "info")
+                  }
                   className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
                 >
                   Edit Profile
