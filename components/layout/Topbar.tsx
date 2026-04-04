@@ -22,7 +22,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
       </div>
 
       {/* Profile dropdown */}
-      <div className="flex items-center gap-3 relative">
+      <div className="flex items-center gap-3 relative ml-auto">
         {/* 🔔 Notifications */}
         <button className="relative cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
           <IoNotificationsOutline size={22} />

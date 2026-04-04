@@ -93,7 +93,7 @@ export default function TopBar() {
         )}
       >
         <div className="px-4 py-3 md:px-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between w-full">
             {/* Hamburger - mobile only */}
             <button
               onClick={() => setIsMobileOpen(true)}
@@ -103,7 +103,7 @@ export default function TopBar() {
               <IconMenu2 className="h-6 w-6" />
             </button>
             {/* Right: Action Icons */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 ml-auto">
               {/* Notifications */}
               <div className="relative">
                 <button
