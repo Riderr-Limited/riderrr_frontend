@@ -127,8 +127,6 @@ export default function OrgRegistration() {
       accountNumber: form.accountNumber.trim(),
     };
 
-    console.log("Submitting payload:", payload);
-
     try {
       const { data } = await axios.post(`${API_BASE_URL}/auth/signup`, payload);
 
