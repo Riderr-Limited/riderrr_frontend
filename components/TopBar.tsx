@@ -88,38 +88,21 @@ export default function TopBar() {
     <>
       <header
         className={cn(
-          "fixed top-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm transition-all duration-300",
+          "fixed top-0 right-0 z-40 h-16 bg-white border-b border-gray-200 shadow-sm transition-all duration-300",
           isCollapsed ? "left-0 md:left-20" : "left-0 md:left-64",
         )}
       >
-        <div className="px-4 py-3 md:px-6">
-          <div className="flex items-center justify-between">
-            {/* Hamburger - mobile only */}
-            <button
-              onClick={() => setIsMobileOpen(true)}
-              className="md:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-              aria-label="Open menu"
-            >
-              <IconMenu2 className="h-6 w-6" />
-            </button>
-            {/* Right: Action Icons */}
-            <div className="flex items-center space-x-4">
-              {/* Notifications */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsNotificationOpen(true)}
-                  className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  aria-label="Notifications"
-                >
-                  <IconBell className="h-6 w-6" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                      {unreadCount > 9 ? "9+" : unreadCount}
-                    </span>
-                  )}
-                </button>
-                <div className="absolute top-full right-0 w-2 h-2 bg-blue-500 rounded-full opacity-0 animate-ping"></div>
-              </div>
+        <div className="px-4 h-full md:px-6">
+          <div className="flex items-center justify-between h-full">
+            {/* Left: Hamburger (mobile) + Profile */}
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setIsMobileOpen(true)}
+                className="md:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                aria-label="Open menu"
+              >
+                <IconMenu2 className="h-6 w-6" />
+              </button>
 
               {/* User Profile */}
               <div className="relative user-menu">
@@ -127,7 +110,12 @@ export default function TopBar() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-3 p-1 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  <div className="hidden md:block text-right">
+                  <div className="h-9 w-9 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center">
+                    <span className="text-white font-semibold text-sm">
+                      {user?.name?.charAt(0).toUpperCase() || "U"}
+                    </span>
+                  </div>
+                  <div className="hidden md:block text-left">
                     <p className="text-sm font-medium text-gray-900 truncate max-w-[150px]">
                       {user?.name || "User"}
                     </p>
@@ -135,16 +123,11 @@ export default function TopBar() {
                       {user?.role?.replace("_", " ") || "User"}
                     </p>
                   </div>
-                  <div className="h-9 w-9 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
-                      {user?.name?.charAt(0).toUpperCase() || "U"}
-                    </span>
-                  </div>
                 </button>
 
                 {/* User Dropdown Menu */}
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                  <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                     <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900">
                         {user?.name || "User"}
@@ -153,7 +136,6 @@ export default function TopBar() {
                         {user?.email || "user@example.com"}
                       </p>
                     </div>
-
                     <div className="py-1">
                       <button
                         onClick={handleProfileClick}
@@ -162,7 +144,6 @@ export default function TopBar() {
                         <IconUser className="h-4 w-4 mr-3 text-gray-500" />
                         My Profile
                       </button>
-
                       <button
                         onClick={handleSettingsClick}
                         className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
@@ -171,7 +152,6 @@ export default function TopBar() {
                         Settings
                       </button>
                     </div>
-
                     <div className="border-t border-gray-100 py-1">
                       <button
                         onClick={handleLogout}
@@ -184,6 +164,22 @@ export default function TopBar() {
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Right: Notifications */}
+            <div className="relative">
+              <button
+                onClick={() => setIsNotificationOpen(true)}
+                className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                aria-label="Notifications"
+              >
+                <IconBell className="h-6 w-6" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
         </div>
