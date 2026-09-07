@@ -4,6 +4,7 @@ interface ApiConfig {
   ENDPOINTS: {
     AUTH: Record<string, string>;
     COMPANY: Record<string, string>;
+    COMPANY_DASHBOARD: Record<string, string | ((...args: string[]) => string)>;
     DELIVERIES: Record<string, string>;
     PAYMENTS: Record<string, string>;
     NOTIFICATIONS: Record<string, string>;
@@ -39,6 +40,20 @@ export const API_CONFIG: ApiConfig = {
       STATS: "/company/stats",
       STATISTICS: "/company/stats",
       NOTIFICATIONS: "/company/notifications",
+    },
+
+    // Company Dashboard endpoints
+    COMPANY_DASHBOARD: {
+      OVERVIEW: "/company-dashboard/overview",
+      RIDERS: "/company-dashboard/riders",
+      RIDER_APPROVE: (id: string) => `/company-dashboard/riders/${id}/approve`,
+      RIDER_SUSPEND: (id: string) => `/company-dashboard/riders/${id}/suspend`,
+      RIDER_ACTIVATE: (id: string) => `/company-dashboard/riders/${id}/activate`,
+      RIDER_DELIVERIES: (id: string) => `/company-dashboard/riders/${id}/deliveries`,
+      DELIVERIES: "/company-dashboard/deliveries",
+      MANUAL_RECORDS: "/company-dashboard/manual-records",
+      MANUAL_RECORDS_SUMMARY: "/company-dashboard/manual-records/summary",
+      MANUAL_RECORD: (id: string) => `/company-dashboard/manual-records/${id}`,
     },
 
     // Notifications endpoints

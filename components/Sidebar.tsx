@@ -12,6 +12,7 @@ import {
   IconLogout,
   IconCreditCard,
   IconX,
+  IconClipboardList,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { useAuth, useCompany, usePermissions } from "@/contexts/AuthContext";
@@ -24,6 +25,7 @@ const navItems = [
   { name: "Overview", icon: IconDashboard, href: "/dashboard" },
   { name: "Riders", icon: IconUsers, href: "/dashboard/riders" },
   { name: "Deliveries", icon: IconPackage, href: "/dashboard/deliveries" },
+  { name: "Manual Records", icon: IconClipboardList, href: "/dashboard/manual-records" },
   { name: "Payments", icon: IconCreditCard, href: "/dashboard/payments" },
 ];
 
@@ -43,6 +45,8 @@ export default function Sidebar() {
     return navItems.filter((item) => {
       if (!user) return false;
       switch (item.name) {
+        case "Manual Records":
+          return user.role === "admin" || user.role === "company_admin";
         case "Riders":
           return permissions.canManageDrivers && (user.role === "admin" || user.role === "company_admin");
         case "Reports":
