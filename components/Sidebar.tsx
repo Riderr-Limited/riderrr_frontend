@@ -108,7 +108,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation Section */}
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden">
+      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden">
         {filteredNavItems.map((item) => (
           <Link
             key={item.name}
