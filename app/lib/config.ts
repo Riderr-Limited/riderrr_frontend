@@ -56,6 +56,7 @@ export const API_CONFIG: ApiConfig = {
     MANUAL_RECORDS: {
       BASE: "/company-dashboard/manual-records",
       SUMMARY: "/company-dashboard/manual-records/summary",
+      DRIVERS: "/company-dashboard/manual-records/drivers",
     },
 
     // Payments endpoints
