@@ -1,17 +1,15 @@
 "use client";
 
 import { BikeIcon } from "lucide-react";
-// import { useAuthStore } from "@/store/useAuthStore";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import {
-  FaUserFriends,
-  FaComments,
   FaUser,
   FaCog,
   FaSignOutAlt,
+  FaRunning,
 } from "react-icons/fa";
 import { GrDeliver } from "react-icons/gr";
 import { MdSummarize } from "react-icons/md";
@@ -19,10 +17,9 @@ import { MdSummarize } from "react-icons/md";
 // Memoize menu items config
 const menuItemsConfig = [
   { label: "Overview", icon: MdSummarize, href: "/dashboard" },
-
   { label: "Riders", icon: BikeIcon, href: "/dashboard/riders" },
   { label: "Deliveries", icon: GrDeliver, href: "/dashboard/deliveries" },
-  // { label: 'Report', icon: FaComments, href: '/dashboard/report' },
+  { label: "Errand", icon: FaRunning, href: "/dashboard/errand" },
 ];
 
 export default function Sidebar() {

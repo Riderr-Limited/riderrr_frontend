@@ -5,6 +5,7 @@ interface ApiConfig {
     AUTH: Record<string, string>;
     COMPANY: Record<string, string>;
     DELIVERIES: Record<string, string>;
+    ERRANDS: Record<string, string>;
     POD: Record<string, string>;
     PAYMENTS: Record<string, string>;
     NOTIFICATIONS: Record<string, string>;
@@ -51,6 +52,14 @@ export const API_CONFIG: ApiConfig = {
     // Deliveries endpoints
     DELIVERIES: {
       COMPANY_DELIVERIES: "/deliveries/company/deliveries",
+    },
+
+    // Errands endpoints
+    ERRANDS: {
+      LIST: "/errands",
+      DETAIL: "/errands/:id",
+      ASSIGN: "/errands/:id/assign",
+      CANCEL: "/errands/:id/cancel",
     },
 
     // POD endpoints
