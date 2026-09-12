@@ -11,6 +11,7 @@ import {
   IconChevronRight,
   IconLogout,
   IconCreditCard,
+  IconCash,
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ const navItems = [
   { name: "Riders", icon: IconUsers, href: "/dashboard/riders" },
   { name: "Deliveries", icon: IconPackage, href: "/dashboard/deliveries" },
   { name: "Payments", icon: IconCreditCard, href: "/dashboard/payments" },
+  { name: "Payment on Delivery", icon: IconCash, href: "/dashboard/payment-on-delivery" },
 ];
 
 const bottomItems = [
@@ -52,6 +54,8 @@ export default function Sidebar() {
         case "Deliveries":
           return permissions.canManageDeliveries;
         case "Payments":
+          return user.role === "admin" || user.role === "company_admin";
+        case "Payment on Delivery":
           return user.role === "admin" || user.role === "company_admin";
         default:
           return true;
