@@ -67,6 +67,21 @@ export class ApiClient {
     return response.json();
   }
 
+  static async patch(url: string, data: any) {
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
   static async delete(url: string) {
     const response = await fetch(url, {
       method: 'DELETE',

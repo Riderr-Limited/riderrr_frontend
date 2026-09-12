@@ -23,12 +23,33 @@ type PaymentMethod = "CASH" | "TRANSFER" | "POS" | "CREDIT" | "OTHER";
 type RecordStatus = "COMPLETED" | "PENDING" | "CANCELLED" | "FAILED";
 type PaymentStatus = "PAID" | "PARTIAL" | "UNPAID";
 
+interface DriverPopulated {
+  _id: string;
+  plateNumber: string;
+  vehicleType: string;
+  vehicleColor?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+  approvalStatus: string;
+  isOnline?: boolean;
+  userId: {
+    _id: string;
+    name: string;
+    phone: string;
+    email: string;
+    avatarUrl?: string | null;
+  };
+}
+
 interface ManualRecord {
   _id: string;
+  referenceId?: string;
   serviceType: ServiceType;
   customServiceLabel?: string;
   description: string;
-  driverId?: { _id: string; name: string; plateNumber?: string; vehicleType?: string } | string;
+  driverId?: DriverPopulated;
+  driverName?: string;
+  driverPhone?: string;
   pickupAddress?: string;
   dropoffAddress?: string;
   customerName?: string;
@@ -41,9 +62,10 @@ interface ManualRecord {
   paymentStatus: PaymentStatus;
   status: RecordStatus;
   deliveryDate: string;
-  notes?: string;
-  recordedBy?: { name: string };
+  notes?: string | null;
+  recordedBy?: { _id: string; name: string; email: string };
   createdAt: string;
+  updatedAt: string;
 }
 
 interface Driver {
@@ -151,7 +173,13 @@ export default function ManualRecordPage() {
       if (filterPayment !== "all") params.set("paymentStatus", filterPayment);
       if (filterStatus !== "all") params.set("status", filterStatus);
       const data = await ApiClient.get(ApiClient.buildUrl(BASE) + "?" + params.toString());
-      if (data.success) { setRecords(data.data); setPagination(data.pagination); }
+      if (data.success) {
+        const sorted = [...data.data].sort((a: ManualRecord, b: ManualRecord) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setRecords(sorted);
+        setPagination(data.pagination);
+      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to load records");
     } finally { setLoading(false); }
@@ -213,7 +241,7 @@ export default function ManualRecordPage() {
     if (!form.description.trim()) { setError("Description is required"); return; }
     setSubmitting(true); setError("");
     try {
-      await ApiClient.put(ApiClient.buildUrl(`${BASE}/${editRecord._id}`), buildPayload(form));
+      await ApiClient.patch(ApiClient.buildUrl(`${BASE}/${editRecord._id}`), buildPayload(form));
       setEditRecord(null); setForm(EMPTY_FORM);
       fetchRecords(pagination.page); fetchSummary();
     } catch (e: unknown) {
@@ -237,7 +265,7 @@ export default function ManualRecordPage() {
       serviceType: r.serviceType,
       customServiceLabel: r.customServiceLabel || "",
       description: r.description,
-      driverId: typeof r.driverId === "object" ? r.driverId?._id || "" : r.driverId || "",
+      driverId: r.driverId?._id || "",
       pickupAddress: r.pickupAddress || "",
       dropoffAddress: r.dropoffAddress || "",
       customerName: r.customerName || "",
@@ -256,14 +284,8 @@ export default function ManualRecordPage() {
     search === "" ||
     r.description.toLowerCase().includes(search.toLowerCase()) ||
     r.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-    (typeof r.driverId === "object" ? r.driverId?.name : drivers.find((d) => d._id === r.driverId)?.name || "").toLowerCase().includes(search.toLowerCase())
+    (r.driverName || "").toLowerCase().includes(search.toLowerCase())
   );
-
-  const resolveDriver = (driverId: ManualRecord["driverId"]) => {
-    if (!driverId) return null;
-    if (typeof driverId === "object") return driverId;
-    return drivers.find((d) => d._id === driverId) || null;
-  };
 
   // Inline form JSX — defined as a variable, NOT a nested component,
   // so React never unmounts/remounts it on state change (fixes the focus bug).
@@ -489,7 +511,7 @@ export default function ManualRecordPage() {
                     <div className="p-2.5 bg-purple-100 rounded-lg"><IconTruck className="h-5 w-5 text-purple-600" /></div>
                     <div>
                       <p className="text-xs text-gray-500">Assigned Rider</p>
-                      <p className="text-sm font-semibold text-gray-900">{resolveDriver(r.driverId)?.name || "Not Assigned"}</p>
+                      <p className="text-sm font-semibold text-gray-900">{r.driverName || "Not Assigned"}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -573,8 +595,10 @@ export default function ManualRecordPage() {
                   ["Description", viewRecord.description],
                   ["Customer", viewRecord.customerName || "—"],
                   ["Phone", viewRecord.customerPhone || "—"],
-                  ["Driver", (typeof viewRecord.driverId === "object" ? viewRecord.driverId?.name : drivers.find((d) => d._id === viewRecord.driverId)?.name) || "—"],
-                  ["Plate", (typeof viewRecord.driverId === "object" ? viewRecord.driverId?.plateNumber : drivers.find((d) => d._id === viewRecord.driverId)?.plateNumber) || "—"],
+                  ["Driver", viewRecord.driverName || "—"],
+                  ["Driver Phone", viewRecord.driverPhone || "—"],
+                  ["Plate", viewRecord.driverId?.plateNumber || "—"],
+                  ["Vehicle", viewRecord.driverId ? `${viewRecord.driverId.vehicleMake || ""} ${viewRecord.driverId.vehicleModel || ""} (${viewRecord.driverId.vehicleType})`.trim() : "—"],
                   ["Pickup", viewRecord.pickupAddress || "—"],
                   ["Dropoff", viewRecord.dropoffAddress || "—"],
                   ["Delivery Fee", fmt(viewRecord.deliveryFee)],
