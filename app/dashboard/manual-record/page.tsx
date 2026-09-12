@@ -46,6 +46,14 @@ interface ManualRecord {
   createdAt: string;
 }
 
+interface Driver {
+  _id: string;
+  name: string;
+  phone: string;
+  plateNumber: string;
+  vehicleType: string;
+}
+
 interface Summary {
   byType: { _id: string; count: number; totalAmount: number; totalPaid: number }[];
   byPayment: { _id: string; count: number; totalAmount: number }[];
@@ -90,6 +98,7 @@ const EMPTY_FORM: FormData = {
 
 const BASE = API_CONFIG.ENDPOINTS.MANUAL_RECORDS.BASE;
 const SUMMARY = API_CONFIG.ENDPOINTS.MANUAL_RECORDS.SUMMARY;
+const DRIVERS_URL = API_CONFIG.ENDPOINTS.MANUAL_RECORDS.DRIVERS;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -136,6 +145,7 @@ export default function ManualRecordPage() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
 
@@ -159,6 +169,15 @@ export default function ManualRecordPage() {
     }
   }, [filterService, filterPayment, filterStatus]);
 
+  const fetchDrivers = useCallback(async () => {
+    try {
+      const data = await ApiClient.get(ApiClient.buildUrl(DRIVERS_URL));
+      if (data.success) setDrivers(data.data);
+    } catch {
+      // non-critical
+    }
+  }, []);
+
   const fetchSummary = useCallback(async () => {
     setSummaryLoading(true);
     try {
@@ -173,6 +192,7 @@ export default function ManualRecordPage() {
 
   useEffect(() => { fetchRecords(1); }, [fetchRecords]);
   useEffect(() => { fetchSummary(); }, [fetchSummary]);
+  useEffect(() => { fetchDrivers(); }, [fetchDrivers]);
 
   // ── CRUD ───────────────────────────────────────────────────────────────────
 
@@ -314,6 +334,21 @@ export default function ManualRecordPage() {
             className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
             placeholder="Brief description of the service"
           />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="block text-xs font-medium text-gray-700 mb-1">Assign Driver</label>
+          <select
+            value={form.driverId}
+            onChange={(e) => setForm({ ...form, driverId: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">— No driver —</option>
+            {drivers.map((d) => (
+              <option key={d._id} value={d._id}>
+                {d.name} · {d.plateNumber} · {d.vehicleType}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">Customer Name</label>
