@@ -231,8 +231,12 @@ export default function RidersPage() {
   const fetchDrivers = async () => {
     try {
       setLoading(true);
-      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY_DASHBOARD.RIDERS as string);
+
+      // Using centralized config
+      const url = ApiClient.buildUrl(API_CONFIG.ENDPOINTS.COMPANY.DRIVERS);
+
       const data = await ApiClient.get(url);
+
       if (data.success) {
         setDrivers(data.data || []);
       }
@@ -414,44 +418,6 @@ export default function RidersPage() {
       setVerificationError((error as Error).message || "Failed to resend code");
     } finally {
       setResendLoading(false);
-    }
-  };
-
-  const handleApproveRider = async (driverId: string) => {
-    try {
-      const endpoint = (API_CONFIG.ENDPOINTS.COMPANY_DASHBOARD.RIDER_APPROVE as (id: string) => string)(driverId);
-      await ApiClient.patch(ApiClient.buildUrl(endpoint));
-      showToast("Rider approved successfully", "success");
-      fetchDrivers();
-      setShowProfileModal(false);
-    } catch (error) {
-      showToast((error as Error).message || "Failed to approve rider", "error");
-    }
-  };
-
-  const handleSuspendRider = async (driverId: string) => {
-    const reason = prompt("Enter suspension reason:");
-    if (!reason) return;
-    try {
-      const endpoint = (API_CONFIG.ENDPOINTS.COMPANY_DASHBOARD.RIDER_SUSPEND as (id: string) => string)(driverId);
-      await ApiClient.patch(ApiClient.buildUrl(endpoint), { reason });
-      showToast("Rider suspended", "success");
-      fetchDrivers();
-      setShowProfileModal(false);
-    } catch (error) {
-      showToast((error as Error).message || "Failed to suspend rider", "error");
-    }
-  };
-
-  const handleActivateRider = async (driverId: string) => {
-    try {
-      const endpoint = (API_CONFIG.ENDPOINTS.COMPANY_DASHBOARD.RIDER_ACTIVATE as (id: string) => string)(driverId);
-      await ApiClient.patch(ApiClient.buildUrl(endpoint));
-      showToast("Rider activated successfully", "success");
-      fetchDrivers();
-      setShowProfileModal(false);
-    } catch (error) {
-      showToast((error as Error).message || "Failed to activate rider", "error");
     }
   };
 
@@ -1478,29 +1444,14 @@ export default function RidersPage() {
                 >
                   Close
                 </button>
-                {selectedDriver.approvalStatus === "pending" && (
-                  <button
-                    onClick={() => handleApproveRider(selectedDriver._id)}
-                    className="px-6 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition-all shadow-sm"
-                  >
-                    Approve
-                  </button>
-                )}
-                {!selectedDriver.isActive ? (
-                  <button
-                    onClick={() => handleActivateRider(selectedDriver._id)}
-                    className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-sm"
-                  >
-                    Activate
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleSuspendRider(selectedDriver._id)}
-                    className="px-6 py-2.5 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-all shadow-sm"
-                  >
-                    Suspend
-                  </button>
-                )}
+                <button
+                  onClick={() =>
+                    showToast("Edit functionality coming soon!", "info")
+                  }
+                  className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
+                >
+                  Edit Profile
+                </button>
               </div>
             </div>
           </div>
