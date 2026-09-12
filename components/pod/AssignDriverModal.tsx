@@ -7,8 +7,10 @@ import { TokenUtils } from "@/lib/tokenUtils";
 
 interface Driver {
   _id: string;
-  name: string;
-  phone: string;
+  userId: {
+    name: string;
+    phone: string;
+  };
   isOnline: boolean;
   isAvailable: boolean;
 }
@@ -94,8 +96,8 @@ export default function AssignDriverModal({ podId, onClose, onAssigned }: Props)
                   <IconUser className="h-4 w-4 text-gray-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{d.name}</p>
-                  <p className="text-xs text-gray-500">{d.phone}</p>
+                  <p className="text-sm font-medium text-gray-900">{d.userId?.name}</p>
+                  <p className="text-xs text-gray-500">{d.userId?.phone}</p>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${d.isAvailable ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                   {d.isAvailable ? "Available" : "Busy"}
