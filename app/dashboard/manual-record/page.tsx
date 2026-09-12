@@ -28,7 +28,7 @@ interface ManualRecord {
   serviceType: ServiceType;
   customServiceLabel?: string;
   description: string;
-  driverId?: { _id: string; name: string; plateNumber?: string; vehicleType?: string };
+  driverId?: { _id: string; name: string; plateNumber?: string; vehicleType?: string } | string;
   pickupAddress?: string;
   dropoffAddress?: string;
   customerName?: string;
@@ -237,7 +237,7 @@ export default function ManualRecordPage() {
       serviceType: r.serviceType,
       customServiceLabel: r.customServiceLabel || "",
       description: r.description,
-      driverId: r.driverId?._id || "",
+      driverId: typeof r.driverId === "object" ? r.driverId?._id || "" : r.driverId || "",
       pickupAddress: r.pickupAddress || "",
       dropoffAddress: r.dropoffAddress || "",
       customerName: r.customerName || "",
@@ -256,8 +256,14 @@ export default function ManualRecordPage() {
     search === "" ||
     r.description.toLowerCase().includes(search.toLowerCase()) ||
     r.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-    r.driverId?.name?.toLowerCase().includes(search.toLowerCase())
+    (typeof r.driverId === "object" ? r.driverId?.name : drivers.find((d) => d._id === r.driverId)?.name || "").toLowerCase().includes(search.toLowerCase())
   );
+
+  const resolveDriver = (driverId: ManualRecord["driverId"]) => {
+    if (!driverId) return null;
+    if (typeof driverId === "object") return driverId;
+    return drivers.find((d) => d._id === driverId) || null;
+  };
 
   // Inline form JSX — defined as a variable, NOT a nested component,
   // so React never unmounts/remounts it on state change (fixes the focus bug).
@@ -483,7 +489,7 @@ export default function ManualRecordPage() {
                     <div className="p-2.5 bg-purple-100 rounded-lg"><IconTruck className="h-5 w-5 text-purple-600" /></div>
                     <div>
                       <p className="text-xs text-gray-500">Assigned Rider</p>
-                      <p className="text-sm font-semibold text-gray-900">{r.driverId?.name || "Not Assigned"}</p>
+                      <p className="text-sm font-semibold text-gray-900">{resolveDriver(r.driverId)?.name || "Not Assigned"}</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -567,8 +573,8 @@ export default function ManualRecordPage() {
                   ["Description", viewRecord.description],
                   ["Customer", viewRecord.customerName || "—"],
                   ["Phone", viewRecord.customerPhone || "—"],
-                  ["Driver", viewRecord.driverId?.name || "—"],
-                  ["Plate", viewRecord.driverId?.plateNumber || "—"],
+                  ["Driver", (typeof viewRecord.driverId === "object" ? viewRecord.driverId?.name : drivers.find((d) => d._id === viewRecord.driverId)?.name) || "—"],
+                  ["Plate", (typeof viewRecord.driverId === "object" ? viewRecord.driverId?.plateNumber : drivers.find((d) => d._id === viewRecord.driverId)?.plateNumber) || "—"],
                   ["Pickup", viewRecord.pickupAddress || "—"],
                   ["Dropoff", viewRecord.dropoffAddress || "—"],
                   ["Delivery Fee", fmt(viewRecord.deliveryFee)],
