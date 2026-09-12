@@ -11,6 +11,9 @@ import {
   IconX,
   IconLoader2,
   IconClipboardList,
+  IconMapPin,
+  IconCash,
+  IconTruck,
 } from "@tabler/icons-react";
 import { ApiClient } from "../../lib/api-client";
 import { API_CONFIG } from "../../lib/config";
@@ -20,12 +23,33 @@ type PaymentMethod = "CASH" | "TRANSFER" | "POS" | "CREDIT" | "OTHER";
 type RecordStatus = "COMPLETED" | "PENDING" | "CANCELLED" | "FAILED";
 type PaymentStatus = "PAID" | "PARTIAL" | "UNPAID";
 
+interface DriverPopulated {
+  _id: string;
+  plateNumber: string;
+  vehicleType: string;
+  vehicleColor?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+  approvalStatus: string;
+  isOnline?: boolean;
+  userId: {
+    _id: string;
+    name: string;
+    phone: string;
+    email: string;
+    avatarUrl?: string | null;
+  };
+}
+
 interface ManualRecord {
   _id: string;
+  referenceId?: string;
   serviceType: ServiceType;
   customServiceLabel?: string;
   description: string;
-  driverId?: { _id: string; name: string; plateNumber?: string; vehicleType?: string };
+  driverId?: DriverPopulated;
+  driverName?: string;
+  driverPhone?: string;
   pickupAddress?: string;
   dropoffAddress?: string;
   customerName?: string;
@@ -38,9 +62,10 @@ interface ManualRecord {
   paymentStatus: PaymentStatus;
   status: RecordStatus;
   deliveryDate: string;
-  notes?: string;
-  recordedBy?: { name: string };
+  notes?: string | null;
+  recordedBy?: { _id: string; name: string; email: string };
   createdAt: string;
+  updatedAt: string;
 }
 
 interface Driver {
@@ -148,7 +173,13 @@ export default function ManualRecordPage() {
       if (filterPayment !== "all") params.set("paymentStatus", filterPayment);
       if (filterStatus !== "all") params.set("status", filterStatus);
       const data = await ApiClient.get(ApiClient.buildUrl(BASE) + "?" + params.toString());
-      if (data.success) { setRecords(data.data); setPagination(data.pagination); }
+      if (data.success) {
+        const sorted = [...data.data].sort((a: ManualRecord, b: ManualRecord) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setRecords(sorted);
+        setPagination(data.pagination);
+      }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Failed to load records");
     } finally { setLoading(false); }
@@ -210,7 +241,7 @@ export default function ManualRecordPage() {
     if (!form.description.trim()) { setError("Description is required"); return; }
     setSubmitting(true); setError("");
     try {
-      await ApiClient.put(ApiClient.buildUrl(`${BASE}/${editRecord._id}`), buildPayload(form));
+      await ApiClient.patch(ApiClient.buildUrl(`${BASE}/${editRecord._id}`), buildPayload(form));
       setEditRecord(null); setForm(EMPTY_FORM);
       fetchRecords(pagination.page); fetchSummary();
     } catch (e: unknown) {
@@ -253,7 +284,7 @@ export default function ManualRecordPage() {
     search === "" ||
     r.description.toLowerCase().includes(search.toLowerCase()) ||
     r.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-    r.driverId?.name?.toLowerCase().includes(search.toLowerCase())
+    (r.driverName || "").toLowerCase().includes(search.toLowerCase())
   );
 
   // Inline form JSX — defined as a variable, NOT a nested component,
@@ -419,29 +450,77 @@ export default function ManualRecordPage() {
           </div>
         ) : (
           filtered.map((r) => (
-            <div key={r._id} className="bg-white rounded-xl border border-gray-200 hover:shadow-md transition-shadow overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
-                    {r.serviceType === "OTHER" ? r.customServiceLabel || "OTHER" : r.serviceType}
-                  </span>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded ${statusBadge[r.status]}`}>{r.status}</span>
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded ${paymentBadge[r.paymentStatus]}`}>{r.paymentStatus}</span>
+            <div key={r._id} className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-200 overflow-hidden">
+
+              {/* Header — amount + actions */}
+              <div className="bg-linear-to-r from-blue-50 to-purple-50 px-4 md:px-5 py-3 border-b border-gray-200 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white rounded-lg shadow-sm">
+                    <IconCash className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-600">Total Amount</p>
+                    <p className="text-lg font-bold text-gray-900">{fmt(r.totalAmount)}</p>
+                  </div>
+                  <div className="flex gap-1.5 ml-2">
+                    <span className="text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                      {r.serviceType === "OTHER" ? r.customServiceLabel || "OTHER" : r.serviceType}
+                    </span>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${statusBadge[r.status]}`}>{r.status}</span>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${paymentBadge[r.paymentStatus]}`}>{r.paymentStatus}</span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-1">
-                  <button onClick={() => setViewRecord(r)} className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors" title="View"><IconEye className="h-4 w-4 text-gray-600" /></button>
-                  <button onClick={() => openEdit(r)} className="p-1.5 hover:bg-blue-100 rounded-lg transition-colors" title="Edit"><IconEdit className="h-4 w-4 text-blue-600" /></button>
-                  <button onClick={() => setDeleteId(r._id)} className="p-1.5 hover:bg-red-100 rounded-lg transition-colors" title="Delete"><IconTrash className="h-4 w-4 text-red-500" /></button>
+                  <button onClick={() => setViewRecord(r)} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium shadow-sm">
+                    <IconEye className="h-4 w-4" /><span className="hidden sm:inline">Details</span>
+                  </button>
+                  <button onClick={() => openEdit(r)} className="p-1.5 hover:bg-white rounded-lg transition-colors" title="Edit"><IconEdit className="h-4 w-4 text-blue-600" /></button>
+                  <button onClick={() => setDeleteId(r._id)} className="p-1.5 hover:bg-white rounded-lg transition-colors" title="Delete"><IconTrash className="h-4 w-4 text-red-500" /></button>
                 </div>
               </div>
-              <div className="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-                <div><p className="text-xs text-gray-500">Description</p><p className="font-medium text-gray-900 truncate">{r.description}</p></div>
-                <div><p className="text-xs text-gray-500">Customer</p><p className="font-medium text-gray-900">{r.customerName || "—"}</p></div>
-                <div><p className="text-xs text-gray-500">Total Amount</p><p className="font-bold text-gray-900">{fmt(r.totalAmount)}</p></div>
-                <div><p className="text-xs text-gray-500">Balance</p><p className={`font-bold ${r.balance > 0 ? "text-red-500" : "text-green-600"}`}>{fmt(r.balance)}</p></div>
-                {r.driverId && <div><p className="text-xs text-gray-500">Driver</p><p className="font-medium text-gray-900">{r.driverId.name}</p></div>}
-                <div><p className="text-xs text-gray-500">Date</p><p className="text-gray-700">{fmtDate(r.deliveryDate || r.createdAt)}</p></div>
+
+              {/* Body — route + rider */}
+              <div className="p-4 md:p-5 space-y-4">
+                <div className="space-y-3">
+                  {/* Pickup */}
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="p-2 bg-blue-100 rounded-full"><IconMapPin className="h-4 w-4 text-blue-600" /></div>
+                      <div className="w-0.5 h-full bg-gray-300 my-1" />
+                    </div>
+                    <div className="flex-1 pb-2">
+                      <p className="text-xs font-semibold text-blue-600 mb-1">PICKUP</p>
+                      <p className="text-sm text-gray-900 font-medium">{r.pickupAddress || "—"}</p>
+                    </div>
+                  </div>
+                  {/* Dropoff */}
+                  <div className="flex gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="p-2 bg-green-100 rounded-full"><IconMapPin className="h-4 w-4 text-green-600" /></div>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-green-600 mb-1">DROPOFF</p>
+                      <p className="text-sm text-gray-900 font-medium">{r.dropoffAddress || "—"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Rider + balance */}
+                <div className="pt-3 border-t border-gray-200 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-purple-100 rounded-lg"><IconTruck className="h-5 w-5 text-purple-600" /></div>
+                    <div>
+                      <p className="text-xs text-gray-500">Assigned Rider</p>
+                      <p className="text-sm font-semibold text-gray-900">{r.driverName || "Not Assigned"}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500">Balance</p>
+                    <p className={`text-sm font-bold ${r.balance > 0 ? "text-red-500" : "text-green-600"}`}>{fmt(r.balance)}</p>
+                  </div>
+                </div>
               </div>
+
             </div>
           ))
         )}
@@ -516,8 +595,10 @@ export default function ManualRecordPage() {
                   ["Description", viewRecord.description],
                   ["Customer", viewRecord.customerName || "—"],
                   ["Phone", viewRecord.customerPhone || "—"],
-                  ["Driver", viewRecord.driverId?.name || "—"],
+                  ["Driver", viewRecord.driverName || "—"],
+                  ["Driver Phone", viewRecord.driverPhone || "—"],
                   ["Plate", viewRecord.driverId?.plateNumber || "—"],
+                  ["Vehicle", viewRecord.driverId ? `${viewRecord.driverId.vehicleMake || ""} ${viewRecord.driverId.vehicleModel || ""} (${viewRecord.driverId.vehicleType})`.trim() : "—"],
                   ["Pickup", viewRecord.pickupAddress || "—"],
                   ["Dropoff", viewRecord.dropoffAddress || "—"],
                   ["Delivery Fee", fmt(viewRecord.deliveryFee)],
