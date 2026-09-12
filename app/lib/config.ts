@@ -7,6 +7,7 @@ interface ApiConfig {
     DELIVERIES: Record<string, string>;
     PAYMENTS: Record<string, string>;
     NOTIFICATIONS: Record<string, string>;
+    MANUAL_RECORDS: Record<string, string>;
   };
   buildUrl: (endpoint: string) => string;
   getEndpoint: (category: keyof ApiConfig["ENDPOINTS"], key: string) => string;
@@ -49,6 +50,13 @@ export const API_CONFIG: ApiConfig = {
     // Deliveries endpoints
     DELIVERIES: {
       COMPANY_DELIVERIES: "/deliveries/company/deliveries",
+    },
+
+    // Manual Records endpoints
+    MANUAL_RECORDS: {
+      BASE: "/company-dashboard/manual-records",
+      SUMMARY: "/company-dashboard/manual-records/summary",
+      DRIVERS: "/company-dashboard/manual-records/drivers",
     },
 
     // Payments endpoints

@@ -11,6 +11,9 @@ import {
   IconChevronRight,
   IconLogout,
   IconCreditCard,
+  IconCash,
+  IconRun,
+  IconClipboardList,
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
@@ -25,6 +28,9 @@ const navItems = [
   { name: "Riders", icon: IconUsers, href: "/dashboard/riders" },
   { name: "Deliveries", icon: IconPackage, href: "/dashboard/deliveries" },
   { name: "Payments", icon: IconCreditCard, href: "/dashboard/payments" },
+  { name: "Payment on Delivery", icon: IconCash, href: "/dashboard/payment-on-delivery" },
+  { name: "Errand", icon: IconRun, href: "/dashboard/errand" },
+  { name: "Manual Record", icon: IconClipboardList, href: "/dashboard/manual-record" },
 ];
 
 const bottomItems = [
@@ -52,6 +58,12 @@ export default function Sidebar() {
         case "Deliveries":
           return permissions.canManageDeliveries;
         case "Payments":
+          return user.role === "admin" || user.role === "company_admin";
+        case "Payment on Delivery":
+          return user.role === "admin" || user.role === "company_admin";
+        case "Errand":
+          return user.role === "admin" || user.role === "company_admin";
+        case "Manual Record":
           return user.role === "admin" || user.role === "company_admin";
         default:
           return true;
@@ -96,7 +108,7 @@ export default function Sidebar() {
       </div>
 
       {/* Navigation Section */}
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden">
+      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden">
         {filteredNavItems.map((item) => (
           <Link
             key={item.name}
