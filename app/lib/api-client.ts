@@ -1,5 +1,5 @@
 // lib/api-client.ts
-import { API_CONFIG } from './config';
+import { API_CONFIG } from '@/app/lib/config';
 
 export class ApiClient {
   private static getToken(): string | null {
