@@ -226,7 +226,7 @@ const sections = [
           You may request deletion of your Riderr account by contacting us at:
         </p>
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 inline-block">
-          <p className="text-[#1E5FD8] font-medium">support@riderr.ng</p>
+          <p className="text-[#1E5FD8] font-medium">contact@riderr.ng</p>
         </div>
         <p className="text-gray-600 mt-4">
           When you request account deletion, we will review and process the request in accordance with applicable law. Some information may need to be retained for legal, security, or financial record purposes.
@@ -271,7 +271,7 @@ const sections = [
         </p>
         <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 space-y-2 text-sm text-gray-700">
           <p><span className="font-semibold">Company:</span> Riderr</p>
-          <p><span className="font-semibold">Email:</span> support@riderr.ng</p>
+          <p><span className="font-semibold">Email:</span> contact@riderr.ng</p>
           <p><span className="font-semibold">Location:</span> Nigeria</p>
         </div>
       </>
