@@ -122,6 +122,7 @@ export default function Footer() {
                 { label: "Contact Us", href: "#contact" },
                 { label: "Privacy Policy", href: "/privacy-policy" },
                 { label: "Terms & Conditions", href: "/terms-of-service" },
+                { label: "Delete My Account", href: "/account-deletion" },
               ].map((item) => (
                 <li key={item.label}>
                   <Link
@@ -181,6 +182,9 @@ export default function Footer() {
             </Link>
             <Link href="/cookie-policy" className="hover:text-white transition-colors">
               Cookie Policy
+            </Link>
+            <Link href="/account-deletion" className="hover:text-white transition-colors">
+              Delete Account
             </Link>
           </div>
         </div>
