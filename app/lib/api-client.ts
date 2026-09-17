@@ -1,5 +1,5 @@
 // lib/api-client.ts
-import { API_CONFIG } from './config';
+import { API_CONFIG } from '@/app/lib/config';
 
 export class ApiClient {
   private static getToken(): string | null {
@@ -55,6 +55,21 @@ export class ApiClient {
   static async put(url: string, data: any) {
     const response = await fetch(url, {
       method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  static async patch(url: string, data: any) {
+    const response = await fetch(url, {
+      method: 'PATCH',
       headers: this.getHeaders(),
       body: JSON.stringify(data),
     });

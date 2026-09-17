@@ -5,6 +5,8 @@ interface ApiConfig {
     AUTH: Record<string, string>;
     COMPANY: Record<string, string>;
     DELIVERIES: Record<string, string>;
+    ERRANDS: Record<string, string>;
+    POD: Record<string, string>;
     PAYMENTS: Record<string, string>;
     NOTIFICATIONS: Record<string, string>;
     MANUAL_RECORDS: Record<string, string>;
@@ -50,6 +52,25 @@ export const API_CONFIG: ApiConfig = {
     // Deliveries endpoints
     DELIVERIES: {
       COMPANY_DELIVERIES: "/deliveries/company/deliveries",
+    },
+
+    // Errands endpoints
+    ERRANDS: {
+      LIST: "/errands",
+      DETAIL: "/errands/:id",
+      ASSIGN: "/errands/:id/assign",
+      CANCEL: "/errands/:id/cancel",
+    },
+
+    // POD endpoints
+    POD: {
+      LIST: "/pod",
+      DETAIL: "/pod/:id",
+      CONFIRM: "/pod/:id/confirm",
+      READY: "/pod/:id/ready",
+      ASSIGN: "/pod/:id/assign",
+      SETTLE: "/pod/:id/settle",
+      CANCEL: "/pod/:id/cancel",
     },
 
     // Manual Records endpoints
