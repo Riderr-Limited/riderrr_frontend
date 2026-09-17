@@ -268,7 +268,7 @@ const sections = [
         </p>
         <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 space-y-2 text-sm text-gray-700">
           <p><span className="font-semibold">Company:</span> Riderr</p>
-          <p><span className="font-semibold">Email:</span> support@riderr.ng</p>
+          <p><span className="font-semibold">Email:</span> contact@riderr.ng</p>
           <p><span className="font-semibold">Location:</span> Nigeria</p>
         </div>
       </>
