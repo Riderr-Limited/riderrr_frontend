@@ -34,30 +34,24 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section id="faqs" className="py-28 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-blue-100/20 via-transparent to-transparent" />
-      
+    <section id="faqs" className="py-24 bg-white relative overflow-hidden">
       <div className="max-w-4xl mx-auto px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-14"
         >
-          <div className="inline-flex items-center gap-2 bg-blue-100 rounded-full px-4 py-2 mb-6">
-            <span className="w-2 h-2 bg-blue-600 rounded-full" />
-            <span className="text-sm font-medium text-blue-800">FAQs</span>
-          </div>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
-            Frequently Asked Questions
+          <h2 className="text-4xl md:text-5xl font-bold tracking-[-0.02em] text-brand-ink mb-4">
+            Frequently asked questions
           </h2>
-          <p className="text-xl text-gray-600">
+          <p className="text-lg text-brand-ink-muted">
             Everything you need to know about Riderr
           </p>
         </motion.div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {faqs.map((faq, index) => (
             <motion.div
               key={index}
@@ -65,20 +59,20 @@ export function FAQ() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-blue-300 transition-colors"
+              className="bg-brand-canvas-soft rounded-xl border border-brand-hairline overflow-hidden"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-black/[0.02] transition-colors"
               >
-                <h4 className="font-bold text-lg text-gray-900 pr-8">{faq.q}</h4>
+                <h4 className="font-semibold text-[15px] text-brand-ink pr-8">{faq.q}</h4>
                 <motion.div
                   animate={{ rotate: openIndex === index ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
                   className="flex-shrink-0"
                 >
                   <svg
-                    className="w-6 h-6 text-[#1E5FD8]"
+                    className="w-5 h-5 text-brand-primary"
                     fill="none"
                     viewBox="0 0 24 24"
                     strokeWidth={2}
@@ -97,7 +91,7 @@ export function FAQ() {
                 transition={{ duration: 0.3 }}
                 className="overflow-hidden"
               >
-                <div className="px-8 pb-6 text-gray-600 leading-relaxed">
+                <div className="px-6 pb-5 text-brand-ink-muted leading-relaxed text-[15px]">
                   {faq.a}
                 </div>
               </motion.div>
@@ -112,10 +106,10 @@ export function FAQ() {
           viewport={{ once: true }}
           className="mt-12 text-center"
         >
-          <p className="text-gray-600 mb-4">Still have questions?</p>
+          <p className="text-brand-ink-muted mb-4">Still have questions?</p>
           <a
             href="#contact"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#1E5FD8] to-blue-600 text-white font-semibold px-8 py-4 rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300"
+            className="inline-flex items-center gap-2 bg-brand-primary text-white font-semibold px-7 py-3.5 rounded-full hover:bg-brand-primary-active transition-colors duration-200"
           >
             Contact Support
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

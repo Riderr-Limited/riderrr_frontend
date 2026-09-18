@@ -38,11 +38,14 @@ const ArrowRightIcon = ({ className }: { className?: string }) => (
 
 export function PartnerCTA() {
   return (
-    <section className="py-28 bg-gradient-to-br from-[#1E5FD8] via-slate-900 to-[#1E5FD8] text-white relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-      <div className="absolute top-0 right-1/4 w-72 h-72 bg-[#1E5FD8]/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#1E5FD8]/20 rounded-full blur-3xl" />
+    <section className="py-28 bg-brand-secondary text-white relative overflow-hidden">
+      {/* Decorative sticker constellation — the site's single dark "night" moment */}
+      <div className="absolute top-16 left-[12%] w-2 h-2 rounded-full bg-sky-300/70" />
+      <div className="absolute top-32 right-[18%] w-1.5 h-1.5 rounded-full bg-pink-300/70" />
+      <div className="absolute bottom-24 left-[22%] w-1.5 h-1.5 rounded-full bg-orange-300/70" />
+      <div className="absolute bottom-16 right-[28%] w-2 h-2 rounded-full bg-teal-300/70" />
+      <div className="absolute top-1/2 left-[8%] w-1 h-1 rounded-full bg-white/60" />
+      <div className="absolute top-1/3 right-[10%] w-1 h-1 rounded-full bg-white/60" />
 
       <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
         <motion.div
@@ -51,43 +54,32 @@ export function PartnerCTA() {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-            <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-white/80">
-              Partnership
-            </span>
-          </div>
-
           {/* Icon */}
           <div className="mb-8">
-            <div className="w-20 h-20 rounded-2xl bg-white p-5 shadow-lg mx-auto">
-              <HandshakeIcon className="w-full h-full text-[#1E5FD8]" />
+            <div className="w-16 h-16 rounded-2xl bg-white p-4 mx-auto">
+              <HandshakeIcon className="w-full h-full text-brand-primary" />
             </div>
           </div>
 
           {/* Heading */}
-          <h2 className="text-5xl md:text-6xl font-extrabold leading-tight bg-gradient-to-r from-white via-white to-yellow-400 bg-clip-text text-transparent mb-6">
-            Partner With
-            <br />
-            <span className="text-yellow-400">Riderr</span>
+          <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-[-0.02em] mb-5">
+            Partner with Riderr
           </h2>
 
           {/* Description */}
-          <p className="max-w-2xl mx-auto text-white/70 text-xl mb-10 leading-relaxed">
+          <p className="max-w-2xl mx-auto text-white/70 text-lg mb-9 leading-relaxed">
             Grow your logistics business with more delivery requests and
             powerful rider management tools. Join our network today.
           </p>
 
           {/* CTA Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold px-8 py-4 rounded-full hover:shadow-lg hover:shadow-yellow-400/25 transition-all duration-300"
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 bg-white text-brand-ink font-semibold px-7 py-3.5 rounded-full hover:bg-white/90 transition-colors duration-200"
           >
-            <Link href={"/signup"}>Become a Partner</Link>
+            Become a Partner
             <ArrowRightIcon className="w-5 h-5" />
-          </motion.button>
+          </Link>
         </motion.div>
       </div>
     </section>

@@ -42,7 +42,7 @@ const steps = [
     description:
       "Enter pickup and drop-off details. Riderr instantly scans nearby riders and logistics partners.",
     icon: MapPinIcon,
-    iconColor: "text-blue-600",
+    color: "from-blue-500 to-blue-600",
   },
   {
     step: "02",
@@ -50,7 +50,7 @@ const steps = [
     description:
       "Our system matches you with the most efficient rider based on distance, availability, and pricing.",
     icon: UserGroupIcon,
-    iconColor: "text-black",
+    color: "from-purple-500 to-purple-600",
   },
   {
     step: "03",
@@ -58,7 +58,7 @@ const steps = [
     description:
       "Follow your delivery live from pickup to drop-off with real-time status updates.",
     icon: EyeIcon,
-    iconColor: "text-yellow-600",
+    color: "from-orange-400 to-orange-500",
   },
   {
     step: "04",
@@ -66,44 +66,35 @@ const steps = [
     description:
       "Confirm delivery, rate the rider, and keep records — seamless and transparent.",
     icon: CheckCircleIcon,
-    iconColor: "text-blue-600",
+    color: "from-green-500 to-green-600",
   },
 ];
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-28 bg-gradient-to-br from-[#1E5FD8] via-slate-900 to-[#1E5FD8] text-white relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-      <div className="absolute top-0 left-1/4 w-72 h-72 bg-[#1E5FD8]/30 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#1E5FD8]/20 rounded-full blur-3xl" />
-      
+    <section id="how-it-works" className="py-24 bg-brand-canvas-soft relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         {/* SECTION HEADER */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-            <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-            <span className="text-sm font-medium text-white/80">How It Works</span>
-          </div>
-          <h2 className="text-5xl md:text-6xl font-extrabold leading-tight bg-gradient-to-r from-white via-white to-yellow-400 bg-clip-text text-transparent">
-            Simple Steps to
+          <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-[-0.02em] text-brand-ink">
+            Simple steps to
             <br />
-            <span className="text-yellow-400">Fast Delivery</span>
+            <span className="text-brand-primary">fast delivery</span>
           </h2>
-          <p className="mt-6 text-white/70 text-xl max-w-2xl mx-auto">
+          <p className="mt-5 text-brand-ink-muted text-lg max-w-2xl mx-auto">
             From request to delivery, Riderr simplifies logistics with speed,
             transparency, and intelligent automation.
           </p>
         </motion.div>
 
         {/* STEPS GRID */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {steps.map((item, index) => {
             const IconComponent = item.icon;
             return (
@@ -113,53 +104,39 @@ export default function HowItWorks() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="group relative"
+                className="relative rounded-xl border border-brand-hairline bg-white p-7 hover:shadow-soft transition-shadow duration-300"
               >
-                {/* Connection line for desktop */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 -right-4 w-8 h-0.5 bg-gradient-to-r from-white/20 to-transparent z-0" />
-                )}
-                
-                <div className="relative rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl p-8 hover:bg-white/10 hover:border-white/30 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
-                  {/* STEP NUMBER */}
-                  <div className="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center text-black font-bold text-sm shadow-lg">
-                    {item.step}
-                  </div>
+                {/* STEP NUMBER */}
+                <span className="absolute top-6 right-6 text-xs font-semibold text-brand-ink-faint tracking-wide">
+                  {item.step}
+                </span>
 
-                  {/* ICON */}
-                  <div className="mb-6">
-                    <div className="w-16 h-16 rounded-2xl bg-white p-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className={`w-full h-full ${item.iconColor}`} />
-                    </div>
-                  </div>
-
-                  {/* CONTENT */}
-                  <h3 className="text-xl font-bold mb-4 group-hover:text-yellow-400 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-white/70 leading-relaxed text-sm group-hover:text-white/90 transition-colors">
-                    {item.description}
-                  </p>
-                  
-                  {/* Hover arrow */}
-                  <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ArrowRightIcon className="w-5 h-5 text-yellow-400" />
-                  </div>
+                {/* ICON */}
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} p-3 mb-5`}>
+                  <IconComponent className="w-full h-full text-white" />
                 </div>
+
+                {/* CONTENT */}
+                <h3 className="text-lg font-bold mb-2 text-brand-ink">
+                  {item.title}
+                </h3>
+                <p className="text-brand-ink-muted leading-relaxed text-[15px]">
+                  {item.description}
+                </p>
               </motion.div>
             );
           })}
         </div>
-        
+
         {/* Call to action */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="text-center mt-14"
         >
-          <button className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold px-8 py-4 rounded-full hover:scale-105 transition-transform duration-300 shadow-lg hover:shadow-yellow-400/25">
+          <button className="inline-flex items-center gap-2 bg-brand-primary text-white font-semibold px-7 py-3.5 rounded-full hover:bg-brand-primary-active transition-colors duration-200">
             Get Started Now
             <ArrowRightIcon className="w-5 h-5" />
           </button>

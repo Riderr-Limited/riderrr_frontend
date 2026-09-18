@@ -5,63 +5,54 @@ import Link from "next/link";
 
 export default function CallToAction() {
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-br from-[#337BFF] via-[#4A90E2] to-[#2563EB] min-h-screen">
-      {/* Decorative Background */}
-      <div className="absolute inset-0">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-white/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/10 rounded-full blur-2xl" />
-      </div>
-
-      <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-20 py-20 lg:py-32">
+    <section className="relative w-full overflow-hidden bg-brand-canvas-soft">
+      <div className="relative z-10 container mx-auto px-6 md:px-12 lg:px-20 py-20 lg:py-28">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white drop-shadow-lg">
-              Deliver Faster. <span className="text-yellow-300">Earn More.</span> Scale Smarter.
+          <div className="space-y-7">
+            <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-[-0.02em] text-brand-ink">
+              Deliver faster. <span className="text-brand-primary">Earn more.</span> Scale smarter.
             </h2>
 
-            <p className="text-white/90 text-xl leading-relaxed max-w-xl">
+            <p className="text-brand-ink-muted text-lg leading-relaxed max-w-xl">
               Request deliveries in seconds, connect with nearby riders at the
               best cost, or partner with us to manage riders and deliveries
               efficiently—all in one powerful platform.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-6 pt-6">
+            <div className="flex flex-wrap gap-3 pt-2">
               <Link
                 href="#download"
-                className="px-8 py-4 bg-white text-[#337BFF] font-bold rounded-2xl hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="px-7 py-3.5 bg-brand-primary text-white font-semibold rounded-full hover:bg-brand-primary-active transition-colors duration-200"
               >
                 Download the App
               </Link>
 
               <Link
                 href="#partners"
-                className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white/20 hover:scale-105 transition-all duration-300"
+                className="px-7 py-3.5 bg-white border border-brand-hairline text-brand-ink font-semibold rounded-full shadow-soft hover:border-brand-primary/40 transition-colors duration-200"
               >
                 Become a Partner
               </Link>
             </div>
 
             {/* App Store Badges */}
-            <div className="flex items-center gap-6 pt-8">
+            <div className="flex items-center gap-6 pt-6">
               <div className="hover:scale-105 transition-transform duration-300">
                 <Image
                   src="/app-store.svg"
                   alt="Download on App Store"
-                  width={160}
-                  height={55}
-                  className="drop-shadow-lg"
+                  width={150}
+                  height={50}
                 />
               </div>
               <div className="hover:scale-105 transition-transform duration-300">
                 <Image
                   src="/google-play.svg"
                   alt="Get it on Google Play"
-                  width={160}
-                  height={55}
-                  className="drop-shadow-lg"
+                  width={150}
+                  height={50}
                 />
               </div>
             </div>
@@ -69,17 +60,14 @@ export default function CallToAction() {
 
           {/* Right Visual */}
           <div className="relative flex justify-center lg:justify-end">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-pink-400 rounded-3xl blur-xl opacity-30 animate-pulse" />
-              <div className="relative bg-white/15 border border-white/30 backdrop-blur-xl rounded-3xl p-8 shadow-2xl hover:scale-105 transition-transform duration-500">
-                <Image
-                  src="/deliveries.png"
-                  alt="Delivery App Preview"
-                  width={380}
-                  height={760}
-                  className="rounded-2xl shadow-2xl"
-                />
-              </div>
+            <div className="relative bg-white border border-brand-hairline rounded-2xl p-6 shadow-elevated">
+              <Image
+                src="/deliveries.png"
+                alt="Delivery App Preview"
+                width={340}
+                height={680}
+                className="rounded-xl"
+              />
             </div>
           </div>
         </div>

@@ -33,77 +33,68 @@ export default function Navbar() {
   return (
     <motion.header
       animate={{
-        backgroundColor: scrolled ? "rgba(255,255,255,0.98)" : "transparent",
-        boxShadow: scrolled ? "0 8px 32px rgba(0,0,0,0.08)" : "none",
+        backgroundColor: scrolled ? "rgba(255,255,255,0.98)" : "rgba(255,255,255,0)",
+        borderBottomColor: scrolled ? "#e6e6e6" : "rgba(230,230,230,0)",
         backdropFilter: scrolled ? "blur(12px)" : "none",
       }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="fixed top-0 inset-x-0 z-50 border-b border-transparent"
+      className="fixed top-0 inset-x-0 z-50 border-b"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* LOGO */}
-          <motion.div 
-            className="flex items-center gap-3"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-br from-[#1E5FD8] to-[#1a4fb8] flex items-center justify-center shadow-lg">
-              <Image className="rounded-lg" width={24} height={24} alt="logo" src="/favicon.ico" />
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-brand-primary flex items-center justify-center">
+              <Image className="rounded-md" width={22} height={22} alt="logo" src="/favicon.ico" />
             </div>
-            <span className="font-bold text-xl sm:text-2xl text-[#1E5FD8] tracking-tight">RIDERR</span>
-          </motion.div>
+            <span className="font-bold text-lg sm:text-xl text-brand-ink tracking-[-0.02em]">RIDERR</span>
+          </div>
 
           {/* DESKTOP NAV LINKS */}
           <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item, index) => (
+            {navItems.map((item) => (
               item.href ? (
                 <Link key={item.label} href={item.href}>
-                  <motion.div
-                    className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
-                    whileHover={{ y: -1 }}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
+                  <div className="px-4 py-2 text-[15px] font-medium text-brand-ink-muted hover:text-brand-primary rounded-lg transition-colors duration-150">
                     {item.label}
-                  </motion.div>
+                  </div>
                 </Link>
               ) : (
-                <motion.button
+                <button
                   key={item.label}
                   onClick={() => scrollToSection(item.id!)}
-                  className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
-                  whileHover={{ y: -1 }}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  className="px-4 py-2 text-[15px] font-medium text-brand-ink-muted hover:text-brand-primary rounded-lg transition-colors duration-150"
                 >
                   {item.label}
-                </motion.button>
+                </button>
               )
             ))}
           </nav>
 
           {/* DESKTOP LOGIN & MOBILE MENU BUTTON */}
           <div className="flex items-center gap-3">
-            <motion.button 
-              className="hidden sm:block rounded-full bg-gradient-to-r from-[#1E5FD8] to-[#1a4fb8] px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-200"
-              whileHover={{ scale: 1.05, y: -1 }}
-              whileTap={{ scale: 0.98 }}
+            <Link
+              href="/login"
+              className="hidden sm:inline-flex items-center rounded-lg border border-brand-hairline bg-white px-4 py-2 text-sm font-medium text-brand-ink hover:border-brand-primary/40 hover:text-brand-primary transition-colors duration-150"
             >
-              <Link href={"/login"}>Login</Link>
-            </motion.button>
-            
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="hidden sm:inline-flex items-center rounded-full bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-primary-active transition-colors duration-150"
+            >
+              Get Riderr free
+            </Link>
+
             {/* MOBILE MENU BUTTON */}
             <motion.button
-              className="md:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-brand-canvas-soft transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               whileTap={{ scale: 0.95 }}
             >
               <div className="w-6 h-6 flex flex-col justify-center items-center">
                 <motion.span
-                  className="w-5 h-0.5 bg-neutral-700 block mb-1"
+                  className="w-5 h-0.5 bg-brand-ink block mb-1"
                   animate={{
                     rotate: mobileMenuOpen ? 45 : 0,
                     y: mobileMenuOpen ? 6 : 0,
@@ -111,14 +102,14 @@ export default function Navbar() {
                   transition={{ duration: 0.2 }}
                 />
                 <motion.span
-                  className="w-5 h-0.5 bg-neutral-700 block mb-1"
+                  className="w-5 h-0.5 bg-brand-ink block mb-1"
                   animate={{
                     opacity: mobileMenuOpen ? 0 : 1,
                   }}
                   transition={{ duration: 0.2 }}
                 />
                 <motion.span
-                  className="w-5 h-0.5 bg-neutral-700 block"
+                  className="w-5 h-0.5 bg-brand-ink block"
                   animate={{
                     rotate: mobileMenuOpen ? -45 : 0,
                     y: mobileMenuOpen ? -6 : 0,
@@ -138,48 +129,38 @@ export default function Navbar() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="md:hidden border-t border-neutral-200 bg-white/95 backdrop-blur-sm"
+              className="md:hidden border-t border-brand-hairline bg-white/95 backdrop-blur-sm"
             >
-              <div className="px-4 py-6 space-y-4">
-                {navItems.map((item, index) => (
+              <div className="px-4 py-6 space-y-2">
+                {navItems.map((item) => (
                   item.href ? (
                     <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)}>
-                      <motion.div
-                        className="block w-full text-left px-4 py-3 text-base font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
+                      <div className="block w-full text-left px-4 py-3 text-base font-medium text-brand-ink-muted hover:text-brand-primary rounded-lg transition-colors duration-150">
                         {item.label}
-                      </motion.div>
+                      </div>
                     </Link>
                   ) : (
-                    <motion.button
+                    <button
                       key={item.label}
                       onClick={() => {
                         scrollToSection(item.id!);
                         setMobileMenuOpen(false);
                       }}
-                      className="block w-full text-left px-4 py-3 text-base font-medium text-neutral-700 hover:text-[#1E5FD8] hover:bg-[#1E5FD8]/5 rounded-lg transition-all duration-200"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      className="block w-full text-left px-4 py-3 text-base font-medium text-brand-ink-muted hover:text-brand-primary rounded-lg transition-colors duration-150"
                     >
                       {item.label}
-                    </motion.button>
+                    </button>
                   )
                 ))}
-                <Link href="/login">
-                  <motion.button
-                    className="w-full mt-4 rounded-full bg-gradient-to-r from-[#1E5FD8] to-[#1a4fb8] px-6 py-3 text-base font-semibold text-white shadow-lg"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Login
-                  </motion.button>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                  <div className="w-full mt-2 text-center rounded-lg border border-brand-hairline px-6 py-3 text-base font-medium text-brand-ink">
+                    Log in
+                  </div>
+                </Link>
+                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                  <div className="w-full mt-2 text-center rounded-full bg-brand-primary px-6 py-3 text-base font-semibold text-white">
+                    Get Riderr free
+                  </div>
                 </Link>
               </div>
             </motion.div>

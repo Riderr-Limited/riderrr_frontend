@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ToastProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -54,7 +61,7 @@ export default function RootLayout({
         ></script>
       </head>
       <body
-        className="font-sans antialiased"
+        className={`${inter.variable} font-sans antialiased`}
       >
         <AuthProvider>
           <ToastProvider>
