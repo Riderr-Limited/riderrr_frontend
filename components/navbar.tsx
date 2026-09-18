@@ -44,9 +44,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 sm:h-20">
           {/* LOGO */}
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-brand-primary flex items-center justify-center">
-              <Image className="rounded-md" width={22} height={22} alt="logo" src="/favicon.ico" />
-            </div>
+            <Image
+              className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg"
+              width={40}
+              height={40}
+              alt="Riderr logo"
+              src="/logo.png"
+              priority
+            />
             <span className="font-bold text-lg sm:text-xl text-brand-ink tracking-[-0.02em]">RIDERR</span>
           </div>
 

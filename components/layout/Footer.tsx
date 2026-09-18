@@ -19,15 +19,13 @@ export default function Footer() {
           {/* Column 1: Brand */}
           <div className="space-y-5">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-brand-primary flex items-center justify-center">
-                <Image
-                  className="rounded-md"
-                  width={22}
-                  height={22}
-                  alt="logo"
-                  src="/favicon.ico"
-                />
-              </div>
+              <Image
+                className="h-9 w-9 rounded-lg"
+                width={36}
+                height={36}
+                alt="Riderr logo"
+                src="/logo.png"
+              />
               <span className="font-bold text-xl text-brand-ink tracking-[-0.02em]">
                 RIDERR
               </span>
