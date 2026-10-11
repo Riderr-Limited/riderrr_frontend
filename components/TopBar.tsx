@@ -9,6 +9,8 @@ import {
   IconLogout,
   IconSettings,
   IconMenu2,
+  IconLayoutSidebar,
+  IconChevronDown,
 } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
 import NotificationModal from "@/components/notifications/NotificationModal";
@@ -17,7 +19,7 @@ import { cn } from "@/lib/utils";
 
 export default function TopBar() {
   const { user, logout } = useAuth();
-  const { isCollapsed, setIsMobileOpen } = useSidebar();
+  const { isCollapsed, setIsCollapsed, setIsMobileOpen } = useSidebar();
   const router = useRouter();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -88,98 +90,98 @@ export default function TopBar() {
     <>
       <header
         className={cn(
-          "fixed top-0 right-0 z-40 h-16 bg-white border-b border-gray-200 shadow-sm transition-all duration-300",
-          isCollapsed ? "left-0 md:left-20" : "left-0 md:left-64",
+          "fixed top-0 right-0 z-40 h-14 border-b border-brand-hairline bg-white transition-[left] duration-200",
+          isCollapsed ? "left-0 md:left-16" : "left-0 md:left-60",
         )}
       >
-        <div className="px-4 h-full md:px-6">
-          <div className="flex items-center justify-between h-full">
-            {/* Left: Hamburger (mobile) + Profile */}
-            <div className="flex items-center space-x-3">
+        <div className="flex h-full items-center justify-between px-4 md:px-6">
+          {/* Left: menu (mobile) / collapse (desktop) */}
+          <div className="flex items-center">
+            <button
+              onClick={() => setIsMobileOpen(true)}
+              className="dash-icon-btn md:hidden"
+              aria-label="Open menu"
+            >
+              <IconMenu2 className="size-5" stroke={1.75} />
+            </button>
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="dash-icon-btn -ml-1.5 hidden md:inline-flex"
+              aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              <IconLayoutSidebar className="size-[18px]" stroke={1.75} />
+            </button>
+          </div>
+
+          {/* Right: notifications + account */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setIsNotificationOpen(true)}
+              className="dash-icon-btn relative"
+              aria-label="Notifications"
+            >
+              <IconBell className="size-[18px]" stroke={1.75} />
+              {unreadCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] leading-none font-semibold text-white ring-2 ring-white">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </button>
+
+            <div className="user-menu relative">
               <button
-                onClick={() => setIsMobileOpen(true)}
-                className="md:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                aria-label="Open menu"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex cursor-pointer items-center gap-2.5 rounded-md py-1 pr-2 pl-1 transition-colors hover:bg-brand-canvas-soft"
               >
-                <IconMenu2 className="h-6 w-6" />
+                <span className="flex size-7 items-center justify-center rounded-full bg-brand-secondary text-xs font-medium text-white">
+                  {user?.name?.charAt(0).toUpperCase() || "U"}
+                </span>
+                <span className="hidden text-left md:block">
+                  <span className="block max-w-[150px] truncate text-[13px] leading-4 font-medium text-brand-ink">
+                    {user?.name || "User"}
+                  </span>
+                  <span className="block text-xs leading-4 text-brand-ink-muted capitalize">
+                    {user?.role?.replace("_", " ") || "User"}
+                  </span>
+                </span>
+                <IconChevronDown className="hidden size-3.5 text-brand-ink-faint md:block" />
               </button>
 
-              {/* User Profile */}
-              <div className="relative user-menu">
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-3 p-1 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <div className="h-9 w-9 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
-                      {user?.name?.charAt(0).toUpperCase() || "U"}
-                    </span>
-                  </div>
-                  <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium text-gray-900 truncate max-w-[150px]">
+              {showUserMenu && (
+                <div className="absolute right-0 z-50 mt-1.5 w-56 rounded-lg border border-brand-hairline bg-white p-1 shadow-elevated">
+                  <div className="px-2.5 py-2">
+                    <p className="truncate text-sm font-medium text-brand-ink">
                       {user?.name || "User"}
                     </p>
-                    <p className="text-xs text-gray-500 capitalize">
-                      {user?.role?.replace("_", " ") || "User"}
+                    <p className="truncate text-xs text-brand-ink-muted">
+                      {user?.email || "user@example.com"}
                     </p>
                   </div>
-                </button>
-
-                {/* User Dropdown Menu */}
-                {showUserMenu && (
-                  <div className="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                    <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-medium text-gray-900">
-                        {user?.name || "User"}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {user?.email || "user@example.com"}
-                      </p>
-                    </div>
-                    <div className="py-1">
-                      <button
-                        onClick={handleProfileClick}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        <IconUser className="h-4 w-4 mr-3 text-gray-500" />
-                        My Profile
-                      </button>
-                      <button
-                        onClick={handleSettingsClick}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      >
-                        <IconSettings className="h-4 w-4 mr-3 text-gray-500" />
-                        Settings
-                      </button>
-                    </div>
-                    <div className="border-t border-gray-100 py-1">
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        <IconLogout className="h-4 w-4 mr-3" />
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Right: Notifications */}
-            <div className="relative">
-              <button
-                onClick={() => setIsNotificationOpen(true)}
-                className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                aria-label="Notifications"
-              >
-                <IconBell className="h-6 w-6" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </button>
+                  <div className="my-1 border-t border-brand-hairline" />
+                  <button
+                    onClick={handleProfileClick}
+                    className="flex h-8 w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 text-sm text-brand-ink-secondary transition-colors hover:bg-brand-canvas-soft"
+                  >
+                    <IconUser className="size-4 text-brand-ink-muted" stroke={1.75} />
+                    My Profile
+                  </button>
+                  <button
+                    onClick={handleSettingsClick}
+                    className="flex h-8 w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 text-sm text-brand-ink-secondary transition-colors hover:bg-brand-canvas-soft"
+                  >
+                    <IconSettings className="size-4 text-brand-ink-muted" stroke={1.75} />
+                    Settings
+                  </button>
+                  <div className="my-1 border-t border-brand-hairline" />
+                  <button
+                    onClick={handleLogout}
+                    className="flex h-8 w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                  >
+                    <IconLogout className="size-4" stroke={1.75} />
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

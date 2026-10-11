@@ -7,8 +7,6 @@ import {
   IconPackage,
   IconUser,
   IconSettings,
-  IconChevronLeft,
-  IconChevronRight,
   IconLogout,
   IconCreditCard,
   IconCash,
@@ -17,7 +15,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { useAuth, useCompany, usePermissions } from "@/contexts/AuthContext";
+import { useAuth, usePermissions } from "@/contexts/AuthContext";
 import { useSidebar } from "@/contexts/SidebarContext";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -39,10 +37,9 @@ const bottomItems = [
 ];
 
 export default function Sidebar() {
-  const { isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
+  const { isCollapsed, isMobileOpen, setIsMobileOpen } = useSidebar();
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { company } = useCompany();
   const permissions = usePermissions();
 
   const filteredNavItems = React.useMemo(() => {
@@ -87,111 +84,65 @@ export default function Sidebar() {
 
   const closeMobile = () => setIsMobileOpen(false);
 
+  const itemClass = (collapsed: boolean, active = false) =>
+    cn(
+      "flex h-9 w-full items-center rounded-md text-sm transition-colors",
+      collapsed ? "justify-center" : "gap-2.5 px-2.5",
+      active
+        ? "bg-black/[0.06] font-medium text-brand-ink"
+        : "text-brand-ink-muted hover:bg-black/[0.04] hover:text-brand-ink",
+    );
+
+  const renderLink = (item: (typeof navItems)[number], collapsed: boolean) => {
+    const active = isActiveItem(item.href);
+    return (
+      <Link
+        key={item.name}
+        href={item.href}
+        onClick={closeMobile}
+        title={collapsed ? item.name : undefined}
+        aria-current={active ? "page" : undefined}
+        className={itemClass(collapsed, active)}
+      >
+        <item.icon className="size-[18px] shrink-0" stroke={1.75} />
+        {!collapsed && <span className="truncate">{item.name}</span>}
+      </Link>
+    );
+  };
+
   const sidebarContent = (collapsed: boolean) => (
     <>
-      {/* Logo/Title Section */}
-      <div className={cn("flex items-center px-6 py-5 border-b border-white/20", collapsed && "justify-center px-0")}>
-        <div className="flex items-center space-x-3">
-          <div className="rounded-lg">
-            <Image
-              src="/logo.png"
-              alt="logo"
-              width={collapsed ? 32 : 40}
-              height={collapsed ? 32 : 40}
-              className="border-none rounded-full object-cover"
-            />
-          </div>
+      <div className={cn("flex h-14 shrink-0 items-center", collapsed ? "justify-center" : "px-4")}>
+        <Link href="/dashboard" onClick={closeMobile} className="flex items-center gap-2.5">
+          <Image
+            src="/logo.png"
+            alt="Riderr"
+            width={28}
+            height={28}
+            className="rounded-md object-cover"
+          />
           {!collapsed && (
-            <h1 className="text-lg font-semibold text-white tracking-wide leading-tight">RIDERR</h1>
+            <span className="text-[15px] font-semibold tracking-tight text-brand-ink">
+              Riderr
+            </span>
           )}
-        </div>
+        </Link>
       </div>
 
-      {/* Navigation Section */}
-      <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden scrollbar-none [&::-webkit-scrollbar]:hidden">
-        {filteredNavItems.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            onClick={closeMobile}
-            className={cn(
-              "flex items-center rounded-xl transition-all duration-200 group relative",
-              collapsed ? "px-0 py-3 justify-center" : "px-4 py-3",
-              isActiveItem(item.href)
-                ? "bg-white/20 text-white shadow-md border border-white/30"
-                : "text-white/80 hover:bg-white/10 hover:text-white hover:shadow-sm",
-            )}
-          >
-            {isActiveItem(item.href) && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm" />
-            )}
-            <item.icon className={cn("transition-transform group-hover:scale-110", collapsed ? "h-6 w-6" : "h-5 w-5 mr-3")} />
-            {!collapsed && <span className="font-medium text-sm">{item.name}</span>}
-            {collapsed && (
-              <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-xl pointer-events-none">
-                {item.name}
-              </div>
-            )}
-          </Link>
-        ))}
+      <nav className="flex-1 space-y-0.5 overflow-x-hidden overflow-y-auto px-2 py-2 [&::-webkit-scrollbar]:hidden">
+        {filteredNavItems.map((item) => renderLink(item, collapsed))}
       </nav>
 
-      {/* Bottom Section */}
-      <div className="mt-auto">
-        <div className="px-4 mb-3">
-          <div className="border-t border-white/20" />
-        </div>
-
-        <div className="px-4 space-y-2 mb-3">
-          {bottomItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={closeMobile}
-              className={cn(
-                "flex items-center rounded-xl transition-all duration-200 group relative",
-                collapsed ? "px-0 py-3 justify-center" : "px-4 py-3",
-                isActiveItem(item.href)
-                  ? "bg-white/20 text-white shadow-md border border-white/30"
-                  : "text-white/80 hover:bg-white/10 hover:text-white hover:shadow-sm",
-              )}
-            >
-              {isActiveItem(item.href) && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm" />
-              )}
-              <item.icon className={cn("transition-transform group-hover:scale-110", collapsed ? "h-6 w-6" : "h-5 w-5 mr-3")} />
-              {!collapsed && <span className="font-medium text-sm">{item.name}</span>}
-              {collapsed && (
-                <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-xl pointer-events-none">
-                  {item.name}
-                </div>
-              )}
-            </Link>
-          ))}
-        </div>
-
-        <div className="px-4 mb-3">
-          <div className="border-t border-white/20" />
-        </div>
-
-        <div className="px-4 pb-4">
-          <button
-            onClick={handleLogout}
-            className={cn(
-              "flex items-center rounded-xl transition-all duration-200 group w-full relative",
-              collapsed ? "px-0 py-3 justify-center" : "px-4 py-3",
-              "text-white/90 hover:text-white bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 hover:border-red-400/50 shadow-sm hover:shadow-md",
-            )}
-          >
-            <IconLogout className={cn("transition-transform group-hover:scale-110", collapsed ? "h-6 w-6" : "h-5 w-5 mr-3")} />
-            {!collapsed && <span className="font-medium text-sm">Logout</span>}
-            {collapsed && (
-              <div className="absolute left-full ml-3 px-3 py-1.5 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 shadow-xl pointer-events-none">
-                Logout
-              </div>
-            )}
-          </button>
-        </div>
+      <div className="space-y-0.5 border-t border-brand-hairline px-2 py-2">
+        {bottomItems.map((item) => renderLink(item, collapsed))}
+        <button
+          onClick={handleLogout}
+          title={collapsed ? "Logout" : undefined}
+          className={cn(itemClass(collapsed), "cursor-pointer hover:text-red-600")}
+        >
+          <IconLogout className="size-[18px] shrink-0" stroke={1.75} />
+          {!collapsed && <span>Logout</span>}
+        </button>
       </div>
     </>
   );
@@ -201,7 +152,7 @@ export default function Sidebar() {
       {/* Mobile overlay backdrop */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
           onClick={closeMobile}
         />
       )}
@@ -209,15 +160,16 @@ export default function Sidebar() {
       {/* Mobile sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 flex flex-col h-screen w-64 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white shadow-lg overflow-x-hidden transition-transform duration-300 md:hidden",
+          "fixed top-0 left-0 z-50 flex h-screen w-64 flex-col border-r border-brand-hairline bg-brand-canvas-soft transition-transform duration-200 md:hidden",
           isMobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <button
           onClick={closeMobile}
-          className="absolute top-4 right-4 text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+          aria-label="Close menu"
+          className="dash-icon-btn absolute top-3 right-3"
         >
-          <IconX size={20} />
+          <IconX className="size-[18px]" />
         </button>
         {sidebarContent(false)}
       </aside>
@@ -225,16 +177,10 @@ export default function Sidebar() {
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden md:flex flex-col h-screen transition-all duration-300 fixed top-0 left-0 z-30 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white shadow-lg overflow-hidden",
-          isCollapsed ? "w-20" : "w-64",
+          "fixed top-0 left-0 z-30 hidden h-screen flex-col border-r border-brand-hairline bg-brand-canvas-soft transition-[width] duration-200 md:flex",
+          isCollapsed ? "w-16" : "w-60",
         )}
       >
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-6 bg-blue-800 border-2 border-white text-white p-1.5 rounded-full z-50 hover:bg-blue-900 transition-colors shadow-lg"
-        >
-          {isCollapsed ? <IconChevronRight size={18} /> : <IconChevronLeft size={18} />}
-        </button>
         {sidebarContent(isCollapsed)}
       </aside>
     </>

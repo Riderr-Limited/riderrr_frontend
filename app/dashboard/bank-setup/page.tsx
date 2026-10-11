@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-  IconBuildingBank,
   IconAlertTriangle,
   IconCircleCheck,
   IconLoader2,
@@ -11,9 +10,9 @@ import {
   IconEdit,
   IconTrash,
   IconX,
+  IconChevronDown,
 } from "@tabler/icons-react";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { PageHeader, Field } from "@/components/dashboard/primitives";
 import { API_CONFIG } from "@/app/lib/config";
 import { TokenUtils } from "@/lib/tokenUtils";
 
@@ -271,114 +270,103 @@ export default function BankSetupPage() {
   };
 
   const statusLabel: Record<SetupStatus, { text: string; className: string }> = {
-    not_setup: { text: "Not Set Up", className: "text-gray-500" },
-    saved_unverified: { text: "Saved — Pending Verification", className: "text-yellow-600" },
-    verified: { text: "Verified", className: "text-green-600" },
+    not_setup: { text: "Not set up", className: "" },
+    saved_unverified: { text: "Pending verification", className: "dash-badge-warning" },
+    verified: { text: "Verified", className: "dash-badge-success" },
   };
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <IconLoader2 className="h-8 w-8 text-blue-500 animate-spin" />
+      <div className="flex h-64 items-center justify-center">
+        <IconLoader2 className="size-5 animate-spin text-brand-ink-muted" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 w-full max-w-md">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl p-6 text-white">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-white/20 rounded-lg">
-              <IconBuildingBank className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">Bank Account</h1>
-              <p className="text-blue-100 text-sm mt-0.5">
-                Delivery payments will be sent to this account.
-              </p>
-            </div>
-          </div>
-        </div>
+    <div className="max-w-lg">
+      <PageHeader
+        title="Bank account"
+        description="Delivery payments will be sent to this account."
+      />
 
-        <div className="p-6 space-y-5">
+      <div className="dash-card">
+        <div className="space-y-5 p-5">
           {pageError && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
-              <IconAlertTriangle className="h-4 w-4 shrink-0" />
+            <div className="dash-notice dash-notice-danger">
+              <IconAlertTriangle className="mt-0.5 size-4 shrink-0" />
               {pageError}
             </div>
           )}
 
           {/* Current account display */}
           {bankData?.isSetup && !showForm && (
-            <div className="space-y-4">
-              <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Current Account</span>
-                  <span className={`text-xs font-medium ${statusLabel[bankData.setupStatus].className}`}>
-                    {statusLabel[bankData.setupStatus].text}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Account Name</p>
-                  <p className="font-semibold text-gray-900">{bankData.bankAccount?.accountName}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-sm text-gray-500">Account Number</p>
-                    <p className="font-medium text-gray-900">{bankData.bankAccount?.accountNumber}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Bank</p>
-                    <p className="font-medium text-gray-900">{bankData.bankAccount?.bankName}</p>
-                  </div>
-                </div>
-                {bankData.message && (
-                  <p className="text-xs text-gray-500 border-t border-gray-200 pt-3">{bankData.message}</p>
-                )}
+            <div className="space-y-5">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm font-semibold text-brand-ink">Current account</span>
+                <span className={`dash-badge ${statusLabel[bankData.setupStatus].className}`}>
+                  {statusLabel[bankData.setupStatus].text}
+                </span>
               </div>
 
-              <div className="flex gap-3">
-                <Button
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                <Field label="Account name" className="col-span-2">
+                  <span className="font-medium">{bankData.bankAccount?.accountName}</span>
+                </Field>
+                <Field label="Account number">
+                  <span className="font-mono">{bankData.bankAccount?.accountNumber}</span>
+                </Field>
+                <Field label="Bank">{bankData.bankAccount?.bankName}</Field>
+              </div>
+
+              {bankData.message && (
+                <p className="border-t border-brand-hairline pt-4 text-[13px] text-brand-ink-muted">
+                  {bankData.message}
+                </p>
+              )}
+
+              <div className="flex gap-2">
+                <button
                   type="button"
                   onClick={handleOpenEdit}
-                  className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white h-10"
+                  className="dash-btn dash-btn-primary"
                 >
-                  <IconEdit className="h-4 w-4" /> Edit Account
-                </Button>
-                <Button
+                  <IconEdit className="size-4" stroke={1.75} /> Edit account
+                </button>
+                <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 h-10 px-4"
+                  className="dash-btn dash-btn-danger-outline"
                 >
-                  <IconTrash className="h-4 w-4" />
-                </Button>
+                  <IconTrash className="size-4" stroke={1.75} /> Remove
+                </button>
               </div>
             </div>
           )}
 
           {/* Delete confirm */}
           {showDeleteConfirm && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
-              <p className="text-sm font-medium text-red-700">Remove bank account?</p>
-              <p className="text-xs text-red-600">You won't receive payments until you add a new account.</p>
-              <div className="flex gap-2">
-                <Button
+            <div className="rounded-md border border-red-200 bg-red-50 p-4">
+              <p className="text-sm font-medium text-red-800">Remove bank account?</p>
+              <p className="mt-0.5 text-[13px] text-red-700">
+                You won&apos;t receive payments until you add a new account.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button
                   type="button"
                   onClick={handleDelete}
                   disabled={deleting}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white h-9 text-sm"
+                  className="dash-btn dash-btn-sm dash-btn-danger"
                 >
-                  {deleting ? <IconLoader2 className="h-4 w-4 animate-spin mx-auto" /> : "Yes, Remove"}
-                </Button>
-                <Button
+                  {deleting ? <IconLoader2 className="size-4 animate-spin" /> : "Yes, remove"}
+                </button>
+                <button
                   type="button"
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 h-9 text-sm"
+                  className="dash-btn dash-btn-sm dash-btn-secondary"
                 >
                   Cancel
-                </Button>
+                </button>
               </div>
             </div>
           )}
@@ -388,22 +376,25 @@ export default function BankSetupPage() {
             <form onSubmit={handleSave} className="space-y-5">
               {isEditing && (
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-gray-700">Edit Bank Account</p>
-                  <button type="button" onClick={handleCancelForm} className="text-gray-400 hover:text-gray-600">
-                    <IconX className="h-5 w-5" />
+                  <p className="text-sm font-semibold text-brand-ink">Edit bank account</p>
+                  <button
+                    type="button"
+                    onClick={handleCancelForm}
+                    className="dash-icon-btn -mr-1.5"
+                    aria-label="Cancel editing"
+                  >
+                    <IconX className="size-[18px]" />
                   </button>
                 </div>
               )}
 
               {/* Bank dropdown */}
-              <div className="space-y-1.5" ref={bankRef}>
-                <label className="text-sm font-medium text-gray-700">
-                  Bank <span className="text-red-500">*</span>
-                </label>
+              <div ref={bankRef}>
+                <label className="dash-label">Bank</label>
                 <div className="relative">
                   <input
                     type="text"
-                    placeholder={banksLoading ? "Loading banks..." : "Search or select bank..."}
+                    placeholder={banksLoading ? "Loading banks..." : "Search or select bank"}
                     value={selectedBank ? selectedBank.name : bankSearch}
                     disabled={banksLoading}
                     onFocus={() => {
@@ -420,13 +411,13 @@ export default function BankSetupPage() {
                       setBankSearch(e.target.value);
                       setShowBankDropdown(true);
                     }}
-                    className="w-full h-9 rounded-md border border-input bg-white px-4 pr-8 text-sm shadow-xs outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="dash-input pr-9"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs">▼</span>
+                  <IconChevronDown className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-brand-ink-faint" />
                   {showBankDropdown && !banksLoading && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                    <div className="absolute z-10 mt-1 max-h-52 w-full overflow-y-auto rounded-md border border-brand-hairline bg-white p-1 shadow-elevated">
                       {filteredBanks.length === 0 ? (
-                        <p className="px-4 py-3 text-sm text-gray-400">No banks found</p>
+                        <p className="px-2.5 py-2 text-sm text-brand-ink-muted">No banks found</p>
                       ) : (
                         filteredBanks.map((bank) => (
                           <button
@@ -440,7 +431,7 @@ export default function BankSetupPage() {
                               setVerified(false);
                               setVerifyError("");
                             }}
-                            className="w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                            className="w-full cursor-pointer rounded px-2.5 py-2 text-left text-sm text-brand-ink-secondary transition-colors hover:bg-brand-canvas-soft hover:text-brand-ink"
                           >
                             {bank.name}
                           </button>
@@ -452,16 +443,14 @@ export default function BankSetupPage() {
               </div>
 
               {/* Account Number */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">
-                  Account Number <span className="text-red-500">*</span>
-                </label>
+              <div>
+                <label className="dash-label">Account number</label>
                 <div className="relative">
-                  <Input
+                  <input
                     type="text"
                     inputMode="numeric"
                     maxLength={10}
-                    placeholder="Enter 10-digit account number"
+                    placeholder="10-digit account number"
                     value={accountNumber}
                     onChange={(e) => {
                       const val = e.target.value.replace(/\D/g, "");
@@ -472,53 +461,55 @@ export default function BankSetupPage() {
                         setVerifyError("");
                       }
                     }}
+                    className="dash-input pr-9 font-mono"
                   />
-                  {verifying && <IconLoader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-500 animate-spin" />}
-                  {verified && !verifying && <IconCircleCheck className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />}
+                  {verifying && <IconLoader2 className="absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin text-brand-ink-muted" />}
+                  {verified && !verifying && <IconCircleCheck className="absolute top-1/2 right-3 size-4 -translate-y-1/2 text-emerald-600" />}
                 </div>
-                {verifying && <p className="text-xs text-blue-500">Verifying account...</p>}
-                {verifyError && <p className="text-xs text-red-500">{verifyError}</p>}
+                {verifying && <p className="mt-1.5 text-xs text-brand-ink-muted">Verifying account...</p>}
+                {verifyError && <p className="mt-1.5 text-xs text-red-600">{verifyError}</p>}
               </div>
 
               {/* Account Name — read-only */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Account Name</label>
-                <div className="relative">
-                  <Input
-                    type="text"
-                    readOnly
-                    placeholder="Auto-filled after verification"
-                    value={accountName}
-                    className={`pr-10 ${verified ? "bg-green-50 border-green-300 text-green-800 font-medium" : "bg-gray-50 text-gray-400"}`}
-                  />
-                  {verified && <IconCircleCheck className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />}
-                </div>
-                {verified && <p className="text-xs text-green-600">✓ Verified by your bank</p>}
+              <div>
+                <label className="dash-label">Account name</label>
+                <input
+                  type="text"
+                  readOnly
+                  placeholder="Filled in after verification"
+                  value={accountName}
+                  className={`dash-input bg-brand-canvas-soft focus:border-brand-hairline focus:ring-0 ${
+                    verified ? "font-medium text-brand-ink" : "text-brand-ink-faint"
+                  }`}
+                />
+                {verified && (
+                  <p className="mt-1.5 text-xs text-emerald-700">Verified by your bank</p>
+                )}
               </div>
 
               {saveError && (
-                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-3">
-                  <IconAlertTriangle className="h-4 w-4 shrink-0" />
+                <div className="dash-notice dash-notice-danger">
+                  <IconAlertTriangle className="mt-0.5 size-4 shrink-0" />
                   {saveError}
                 </div>
               )}
 
-              <Button
+              <button
                 type="submit"
                 disabled={saving || !verified}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white h-11 disabled:opacity-50"
+                className="dash-btn dash-btn-primary h-10 w-full"
               >
                 {saving ? (
-                  <span className="flex items-center gap-2">
-                    <IconLoader2 className="h-4 w-4 animate-spin" /> Saving...
-                  </span>
-                ) : isEditing ? "Update Bank Account" : "Save Bank Account"}
-              </Button>
+                  <>
+                    <IconLoader2 className="size-4 animate-spin" /> Saving...
+                  </>
+                ) : isEditing ? "Update bank account" : "Save bank account"}
+              </button>
 
-              <div className="flex items-center gap-2 text-gray-400 text-xs justify-center">
-                <IconLock className="h-3.5 w-3.5" />
+              <p className="flex items-center justify-center gap-1.5 text-xs text-brand-ink-muted">
+                <IconLock className="size-3.5" stroke={1.75} />
                 Your account details are encrypted and secure.
-              </div>
+              </p>
             </form>
           )}
         </div>

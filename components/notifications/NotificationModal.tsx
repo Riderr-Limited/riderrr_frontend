@@ -98,7 +98,7 @@ export default function NotificationModal({
   }, [isOpen, activeTab]);
 
   const getNotificationIcon = (type: string) => {
-    const iconProps = { className: "h-5 w-5 text-gray-500" };
+    const iconProps = { className: "size-[18px] text-brand-ink-muted", stroke: 1.75 };
 
     switch (type) {
       case "order":
@@ -112,9 +112,9 @@ export default function NotificationModal({
       case "task":
         return <IconChecklist {...iconProps} />;
       case "success":
-        return <IconCheck {...iconProps} className="h-5 w-5 text-green-500" />;
+        return <IconCheck {...iconProps} className="size-[18px] text-emerald-600" />;
       case "pending":
-        return <IconClock {...iconProps} className="h-5 w-5 text-yellow-500" />;
+        return <IconClock {...iconProps} className="size-[18px] text-amber-600" />;
       default:
         return <IconBell {...iconProps} />;
     }
@@ -159,111 +159,94 @@ export default function NotificationModal({
   return (
     <div className="fixed inset-0 z-50">
       {/* Position the modal as a dropdown from the bell icon */}
-      <div className="absolute top-16 right-4 md:right-6">
+      <div className="absolute top-[60px] right-4 left-4 flex justify-end md:right-6 md:left-auto">
         <div
           ref={modalRef}
-          className="w-80 md:w-96 bg-white rounded-xl shadow-lg border border-gray-200 ring-1 ring-black ring-opacity-5"
+          className="w-full max-w-96 overflow-hidden rounded-lg border border-brand-hairline bg-white shadow-elevated"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
-            <div className="flex items-center space-x-2">
-              <IconBell className="h-5 w-5 text-gray-700" />
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Notifications
-                </h3>
-                <p className="text-xs text-gray-500">
-                  {activeTab === "all" ? "All" : "Unread"}
-                </p>
-              </div>
-            </div>
-
+          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+            <h3 className="text-sm font-semibold text-brand-ink">
+              Notifications
+            </h3>
             <button
               onClick={onClose}
-              className="p-1 text-gray-400 hover:text-gray-600"
+              className="dash-icon-btn -mr-1.5 size-7"
+              aria-label="Close"
             >
-              <IconX className="h-4 w-4" />
+              <IconX className="size-4" />
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="border-b border-gray-200">
-            <div className="flex">
-              <button
-                onClick={() => setActiveTab("all")}
-                className={`flex-1 px-3 py-2 text-xs font-medium ${
-                  activeTab === "all"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setActiveTab("unread")}
-                className={`flex-1 px-3 py-2 text-xs font-medium ${
-                  activeTab === "unread"
-                    ? "text-blue-600 border-b-2 border-blue-600"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
-              >
-                Unread ({unreadCount})
-              </button>
-            </div>
+          <div className="flex gap-4 border-b border-brand-hairline px-4" role="tablist">
+            <button
+              role="tab"
+              aria-selected={activeTab === "all"}
+              onClick={() => setActiveTab("all")}
+              className={`-mb-px cursor-pointer border-b-2 pb-2 text-[13px] font-medium transition-colors ${
+                activeTab === "all"
+                  ? "border-brand-ink text-brand-ink"
+                  : "border-transparent text-brand-ink-muted hover:text-brand-ink"
+              }`}
+            >
+              All
+            </button>
+            <button
+              role="tab"
+              aria-selected={activeTab === "unread"}
+              onClick={() => setActiveTab("unread")}
+              className={`-mb-px cursor-pointer border-b-2 pb-2 text-[13px] font-medium transition-colors ${
+                activeTab === "unread"
+                  ? "border-brand-ink text-brand-ink"
+                  : "border-transparent text-brand-ink-muted hover:text-brand-ink"
+              }`}
+            >
+              Unread ({unreadCount})
+            </button>
           </div>
 
           {/* Notifications List */}
           <div className="max-h-96 overflow-y-auto">
             {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+              <div className="flex items-center justify-center py-10">
+                <div className="size-5 animate-spin rounded-full border-2 border-brand-hairline border-t-brand-ink-muted"></div>
               </div>
             ) : notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8">
-                <IconBell className="h-10 w-10 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">No notifications</p>
+              <div className="px-4 py-10 text-center">
+                <p className="text-sm text-brand-ink-muted">No notifications</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-brand-hairline">
                 {notifications.slice(0, 10).map((notification) => (
                   <div
                     key={notification._id}
-                    className={`p-3 hover:bg-gray-50 ${!notification.read ? "bg-blue-50/30" : ""}`}
+                    className={`flex items-start gap-3 px-4 py-3 ${!notification.read ? "bg-brand-primary/[0.04]" : ""}`}
                   >
-                    <div className="flex items-start">
-                      <div className="flex-shrink-0 mt-0.5">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-
-                      <div className="ml-3 flex-1 min-w-0">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <p className="text-xs font-semibold text-gray-900">
-                              {notification.title}
-                            </p>
-                            <p className="text-xs text-gray-600 mt-0.5">
-                              {notification.message}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between mt-2">
-                          {/**<span className="text-xs text-gray-400">
-                            {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                          </span> */}
-                          <div className="flex items-center space-x-1">
-                            {!notification.read && (
-                              <button
-                                onClick={() => markAsRead(notification._id)}
-                                className="text-xs text-blue-600 hover:text-blue-800"
-                              >
-                                Mark read
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                    <div className="mt-0.5 shrink-0">
+                      {getNotificationIcon(notification.type)}
                     </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[13px] font-medium text-brand-ink">
+                        {notification.title}
+                      </p>
+                      <p className="mt-0.5 text-[13px] text-brand-ink-muted">
+                        {notification.message}
+                      </p>
+                      {!notification.read && (
+                        <button
+                          onClick={() => markAsRead(notification._id)}
+                          className="mt-1.5 cursor-pointer text-xs font-medium text-brand-primary hover:text-brand-primary-active"
+                        >
+                          Mark read
+                        </button>
+                      )}
+                    </div>
+
+                    {!notification.read && (
+                      <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand-primary" />
+                    )}
                   </div>
                 ))}
               </div>
@@ -272,21 +255,19 @@ export default function NotificationModal({
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="border-t border-gray-200 px-3 py-2">
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => (window.location.href = "/notifications")}
-                  className="text-xs text-blue-600 hover:text-blue-800"
-                >
-                  View all
-                </button>
-                <button
-                  onClick={markAllAsRead}
-                  className="text-xs text-gray-500 hover:text-gray-700"
-                >
-                  Mark all read
-                </button>
-              </div>
+            <div className="flex items-center justify-between border-t border-brand-hairline px-4 py-2.5">
+              <button
+                onClick={() => (window.location.href = "/notifications")}
+                className="cursor-pointer text-[13px] font-medium text-brand-ink-secondary hover:text-brand-ink"
+              >
+                View all
+              </button>
+              <button
+                onClick={markAllAsRead}
+                className="cursor-pointer text-[13px] text-brand-ink-muted hover:text-brand-ink"
+              >
+                Mark all read
+              </button>
             </div>
           )}
         </div>

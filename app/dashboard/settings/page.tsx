@@ -3,14 +3,13 @@
 import React, { useState } from "react";
 import {
   CheckCircle,
-  XCircle,
   AlertCircle,
-  Lock,
   Eye,
   EyeOff,
-  Key,
   LogOut,
+  X,
 } from "lucide-react";
+import { PageHeader } from "@/components/dashboard/primitives";
 import { API_CONFIG } from "../../lib/config";
 import { ApiClient } from "../../lib/api-client";
 
@@ -110,196 +109,188 @@ export default function CompanySettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-6">
-      <div className="max-w-5xl mx-auto">
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4 flex items-start">
-            <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5 shrink-0" />
-            <div className="flex-1">
-              <p className="text-green-700">{successMessage}</p>
-            </div>
-            <button
-              onClick={() => setSuccessMessage(null)}
-              className="text-green-500 hover:text-green-700"
-            >
-              <XCircle className="h-5 w-5" />
-            </button>
-          </div>
-        )}
+    <div className="max-w-2xl">
+      <PageHeader
+        title="Settings"
+        description="Password and session security for your account."
+      />
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 flex items-start">
-            <AlertCircle className="h-5 w-5 text-red-500 mr-3 mt-0.5 shrink-0" />
-            <div className="flex-1">
-              <p className="text-red-700">{error}</p>
-            </div>
-            <button
-              onClick={() => setError(null)}
-              className="text-red-500 hover:text-red-700"
-            >
-              <XCircle className="h-5 w-5" />
-            </button>
-          </div>
-        )}
-
-        {/* Settings Content */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="p-6">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Key className="h-5 w-5 mr-2 text-red-600" />
-                  Change Password
-                </h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Current Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPasswords.current ? "text" : "password"}
-                        value={passwordForm.currentPassword}
-                        onChange={(e) =>
-                          setPasswordForm((prev) => ({
-                            ...prev,
-                            currentPassword: e.target.value,
-                          }))
-                        }
-                        className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter current password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowPasswords((prev) => ({
-                            ...prev,
-                            current: !prev.current,
-                          }))
-                        }
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPasswords.current ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      New Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPasswords.new ? "text" : "password"}
-                        value={passwordForm.newPassword}
-                        onChange={(e) =>
-                          setPasswordForm((prev) => ({
-                            ...prev,
-                            newPassword: e.target.value,
-                          }))
-                        }
-                        className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter new password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowPasswords((prev) => ({
-                            ...prev,
-                            new: !prev.new,
-                          }))
-                        }
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPasswords.new ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Confirm New Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPasswords.confirm ? "text" : "password"}
-                        value={passwordForm.confirmPassword}
-                        onChange={(e) =>
-                          setPasswordForm((prev) => ({
-                            ...prev,
-                            confirmPassword: e.target.value,
-                          }))
-                        }
-                        className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Confirm new password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowPasswords((prev) => ({
-                            ...prev,
-                            confirm: !prev.confirm,
-                          }))
-                        }
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPasswords.confirm ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleChangePassword}
-                    disabled={saving}
-                    className="flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-                  >
-                    <Lock className="h-5 w-5 mr-2" />
-                    {saving ? "Changing..." : "Change Password"}
-                  </button>
-                </div>
-              </div>
-
-              <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-semibold  mb-4 flex items-center text-red-600">
-                  <LogOut className="h-5 w-5 mr-2" />
-                  Session Management
-                </h3>
-                <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-                  <h4 className="font-medium text-red-900 mb-2">
-                    Logout from all devices
-                  </h4>
-                  <p className="text-sm text-red-700 mb-4">
-                    This will log you out from all devices where you&apos;re
-                    currently signed in. You&apos;ll need to login again on each
-                    device.
-                  </p>
-                  <button
-                    onClick={handleLogoutAllDevices}
-                    disabled={saving}
-                    className="flex items-center px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-                  >
-                    <LogOut className="h-5 w-5 mr-2" />
-                    {saving ? "Logging out..." : "Logout All Devices"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* Success Message */}
+      {successMessage && (
+        <div className="dash-notice dash-notice-success mb-5">
+          <CheckCircle className="mt-0.5 size-4 shrink-0" />
+          <p className="flex-1">{successMessage}</p>
+          <button
+            onClick={() => setSuccessMessage(null)}
+            className="cursor-pointer opacity-70 hover:opacity-100"
+            aria-label="Dismiss"
+          >
+            <X className="size-4" />
+          </button>
         </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="dash-notice dash-notice-danger mb-5">
+          <AlertCircle className="mt-0.5 size-4 shrink-0" />
+          <p className="flex-1">{error}</p>
+          <button
+            onClick={() => setError(null)}
+            className="cursor-pointer opacity-70 hover:opacity-100"
+            aria-label="Dismiss"
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+      )}
+
+      <div className="space-y-5">
+        {/* Change Password */}
+        <section className="dash-card overflow-hidden">
+          <div className="border-b border-brand-hairline px-5 py-3.5">
+            <h2 className="text-sm font-semibold text-brand-ink">Change password</h2>
+            <p className="mt-0.5 text-[13px] text-brand-ink-muted">
+              Use at least 6 characters.
+            </p>
+          </div>
+
+          <div className="max-w-md space-y-4 p-5">
+            <div>
+              <label className="dash-label">Current password</label>
+              <div className="relative">
+                <input
+                  type={showPasswords.current ? "text" : "password"}
+                  value={passwordForm.currentPassword}
+                  onChange={(e) =>
+                    setPasswordForm((prev) => ({
+                      ...prev,
+                      currentPassword: e.target.value,
+                    }))
+                  }
+                  className="dash-input pr-10"
+                  placeholder="Enter current password"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPasswords((prev) => ({
+                      ...prev,
+                      current: !prev.current,
+                    }))
+                  }
+                  className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-brand-ink-faint hover:text-brand-ink-muted"
+                  aria-label={showPasswords.current ? "Hide password" : "Show password"}
+                >
+                  {showPasswords.current ? (
+                    <EyeOff className="size-[18px]" strokeWidth={1.75} />
+                  ) : (
+                    <Eye className="size-[18px]" strokeWidth={1.75} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="dash-label">New password</label>
+              <div className="relative">
+                <input
+                  type={showPasswords.new ? "text" : "password"}
+                  value={passwordForm.newPassword}
+                  onChange={(e) =>
+                    setPasswordForm((prev) => ({
+                      ...prev,
+                      newPassword: e.target.value,
+                    }))
+                  }
+                  className="dash-input pr-10"
+                  placeholder="Enter new password"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPasswords((prev) => ({
+                      ...prev,
+                      new: !prev.new,
+                    }))
+                  }
+                  className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-brand-ink-faint hover:text-brand-ink-muted"
+                  aria-label={showPasswords.new ? "Hide password" : "Show password"}
+                >
+                  {showPasswords.new ? (
+                    <EyeOff className="size-[18px]" strokeWidth={1.75} />
+                  ) : (
+                    <Eye className="size-[18px]" strokeWidth={1.75} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="dash-label">Confirm new password</label>
+              <div className="relative">
+                <input
+                  type={showPasswords.confirm ? "text" : "password"}
+                  value={passwordForm.confirmPassword}
+                  onChange={(e) =>
+                    setPasswordForm((prev) => ({
+                      ...prev,
+                      confirmPassword: e.target.value,
+                    }))
+                  }
+                  className="dash-input pr-10"
+                  placeholder="Confirm new password"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPasswords((prev) => ({
+                      ...prev,
+                      confirm: !prev.confirm,
+                    }))
+                  }
+                  className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-brand-ink-faint hover:text-brand-ink-muted"
+                  aria-label={showPasswords.confirm ? "Hide password" : "Show password"}
+                >
+                  {showPasswords.confirm ? (
+                    <EyeOff className="size-[18px]" strokeWidth={1.75} />
+                  ) : (
+                    <Eye className="size-[18px]" strokeWidth={1.75} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={handleChangePassword}
+              disabled={saving}
+              className="dash-btn dash-btn-primary"
+            >
+              {saving ? "Changing..." : "Change password"}
+            </button>
+          </div>
+        </section>
+
+        {/* Session Management */}
+        <section className="dash-card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold text-brand-ink">
+              Log out of all devices
+            </h2>
+            <p className="mt-0.5 text-[13px] text-brand-ink-muted">
+              Ends every active session. You&apos;ll need to log in again on
+              each device.
+            </p>
+          </div>
+          <button
+            onClick={handleLogoutAllDevices}
+            disabled={saving}
+            className="dash-btn dash-btn-danger-outline"
+          >
+            <LogOut className="size-4" strokeWidth={1.75} />
+            {saving ? "Logging out..." : "Log out everywhere"}
+          </button>
+        </section>
       </div>
     </div>
   );

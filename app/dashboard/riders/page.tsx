@@ -3,22 +3,23 @@
 import { useState, useEffect } from "react";
 import {
   IconPlus,
-  IconUser,
-  IconPhone,
-  IconCar,
   IconCheck,
   IconX,
   IconEye,
   IconEyeOff,
   IconRefresh,
-  IconPackage,
-  IconCash,
-  IconMapPin,
-  IconId,
-  IconCalendar,
-  IconCarCrash,
-  IconMail,
+  IconSearch,
+  IconInfoCircle,
+  IconAlertTriangle,
 } from "@tabler/icons-react";
+import {
+  PageHeader,
+  StatStrip,
+  Stat,
+  EmptyState,
+  Field,
+  Avatar,
+} from "@/components/dashboard/primitives";
 import { formatDate } from "../../lib/utils";
 import { API_CONFIG } from "../../lib/config";
 import { ApiClient } from "../../lib/api-client";
@@ -100,33 +101,26 @@ const Toast = ({
     return () => clearTimeout(timer);
   }, [toast.id, onRemove]);
 
-  const bgColor = {
-    success: "bg-green-100 border-green-300 text-green-800",
-    error: "bg-red-100 border-red-300 text-red-800",
-    info: "bg-blue-100 border-blue-300 text-blue-800",
-    warning: "bg-yellow-100 border-yellow-300 text-yellow-800",
-  }[toast.type];
-
   const icon = {
-    success: <IconCheck className="w-5 h-5 text-green-600" />,
-    error: <IconX className="w-5 h-5 text-red-600" />,
-    info: <IconMail className="w-5 h-5 text-blue-600" />,
-    warning: <IconX className="w-5 h-5 text-yellow-600" />,
+    success: <IconCheck className="size-[18px] text-emerald-600" />,
+    error: <IconAlertTriangle className="size-[18px] text-red-600" stroke={1.75} />,
+    info: <IconInfoCircle className="size-[18px] text-brand-primary" stroke={1.75} />,
+    warning: <IconAlertTriangle className="size-[18px] text-amber-600" stroke={1.75} />,
   }[toast.type];
 
   return (
     <div
-      className={`flex items-center p-4 mb-2 rounded-lg border ${bgColor} shadow-lg animate-slideIn`}
+      role="status"
+      className="animate-slideIn mb-2 flex items-start gap-2.5 rounded-lg border border-brand-hairline bg-white py-3 pr-2.5 pl-3.5 shadow-elevated"
     >
-      <div className="mr-3">{icon}</div>
-      <div className="flex-1">
-        <p className="text-sm font-semibold">{toast.message}</p>
-      </div>
+      <div className="mt-px shrink-0">{icon}</div>
+      <p className="min-w-0 flex-1 text-sm text-brand-ink">{toast.message}</p>
       <button
         onClick={() => onRemove(toast.id)}
-        className="ml-4 text-gray-500 hover:text-gray-700 transition-colors"
+        className="shrink-0 cursor-pointer rounded p-0.5 text-brand-ink-faint transition-colors hover:text-brand-ink"
+        aria-label="Dismiss"
       >
-        <IconX className="w-4 h-4" />
+        <IconX className="size-4" />
       </button>
     </div>
   );
@@ -143,7 +137,7 @@ const ToastContainer = ({
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-100 max-w-md w-full">
+    <div className="fixed top-[68px] right-4 z-100 w-[calc(100%-2rem)] max-w-sm">
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onRemove={removeToast} />
       ))}
@@ -161,16 +155,16 @@ const addToastStyles = () => {
   style.textContent = `
     @keyframes slideIn {
       from {
-        transform: translateX(100%);
+        transform: translateY(-6px);
         opacity: 0;
       }
       to {
-        transform: translateX(0);
+        transform: translateY(0);
         opacity: 1;
       }
     }
     .animate-slideIn {
-      animation: slideIn 0.3s ease-out;
+      animation: slideIn 0.18s ease-out;
     }
   `;
   document.head.appendChild(style);
@@ -482,26 +476,18 @@ export default function RidersPage() {
   const getStatusBadge = (driver: Driver) => {
     if (!driver.isActive) {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-          <IconX className="w-3 h-3 mr-1" />
-          Inactive
-        </span>
+        <span className="dash-badge dash-badge-danger">Inactive</span>
       );
     }
 
     if (driver.isOnline) {
       return (
-        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-          <IconCheck className="w-3 h-3 mr-1" />
-          Online
-        </span>
+        <span className="dash-badge dash-badge-success">Online</span>
       );
     }
 
     return (
-      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
-        Offline
-      </span>
+      <span className="dash-badge">Offline</span>
     );
   };
 
@@ -509,21 +495,15 @@ export default function RidersPage() {
     switch (status) {
       case "approved":
         return (
-          <span className="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800">
-            Approved
-          </span>
+          <span className="dash-badge dash-badge-success">Approved</span>
         );
       case "rejected":
         return (
-          <span className="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800">
-            Rejected
-          </span>
+          <span className="dash-badge dash-badge-danger">Rejected</span>
         );
       default:
         return (
-          <span className="px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800">
-            Pending
-          </span>
+          <span className="dash-badge dash-badge-warning">Pending</span>
         );
     }
   };
@@ -546,10 +526,21 @@ export default function RidersPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 font-medium">Loading riders...</p>
+      <div>
+        <PageHeader
+          title="Riders"
+          description="Manage and monitor the riders in your fleet."
+        />
+        <div className="dash-card divide-y divide-brand-hairline" aria-busy="true">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 px-5 py-3.5">
+              <div className="dash-skeleton size-8 rounded-full" />
+              <div className="flex-1 space-y-2">
+                <div className="dash-skeleton h-3 w-40" />
+                <div className="dash-skeleton h-3 w-56" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -560,630 +551,557 @@ export default function RidersPage() {
       {/* Toast Container */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                fetchDrivers();
-                showToast("Refreshing drivers list...", "info");
-              }}
-              className="inline-flex items-center px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow"
-            >
-              <IconRefresh className="w-4 h-4 mr-2" />
-              Refresh
-            </button>
+      <div>
+        <PageHeader
+          title="Riders"
+          description="Manage and monitor the riders in your fleet."
+        >
+          <button
+            onClick={() => {
+              fetchDrivers();
+              showToast("Refreshing drivers list...", "info");
+            }}
+            className="dash-btn dash-btn-secondary"
+          >
+            <IconRefresh className="size-4" stroke={1.75} />
+            Refresh
+          </button>
 
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="inline-flex items-center px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              <IconPlus className="w-4 h-4 mr-2" />
-              Add Rider
-            </button>
-          </div>
-        </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="dash-btn dash-btn-primary"
+          >
+            <IconPlus className="size-4" />
+            Add rider
+          </button>
+        </PageHeader>
 
-        {/* Filters */}
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search by name, phone, or plate number..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                />
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                  <IconUser className="w-5 h-5 text-gray-400" />
-                </div>
-              </div>
+        <div className="space-y-5">
+          {/* Stats Summary */}
+          <StatStrip className="grid-cols-2 lg:grid-cols-4">
+            <Stat label="Total riders" value={drivers.length} />
+            <Stat
+              label="Online now"
+              value={drivers.filter((d) => d.isOnline && d.isActive).length}
+            />
+            <Stat
+              label="Active vehicles"
+              value={drivers.filter((d) => d.isActive).length}
+            />
+            <Stat
+              label="Total deliveries"
+              value={drivers.reduce(
+                (sum, driver) => sum + (driver.stats?.totalDeliveries || 0),
+                0,
+              )}
+            />
+          </StatStrip>
+
+          {/* Filters */}
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <div className="relative flex-1 sm:max-w-sm">
+              <IconSearch className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-brand-ink-faint" />
+              <input
+                type="text"
+                placeholder="Search by name, phone or plate number"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="dash-input pl-9"
+              />
             </div>
 
-            <div className="flex items-center space-x-4">
-              <select
-                value={statusFilter}
-                onChange={(e) =>
-                  setStatusFilter(
-                    e.target.value as "all" | "online" | "offline",
-                  )
+            <select
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(
+                  e.target.value as "all" | "online" | "offline",
+                )
+              }
+              className="dash-input sm:w-40"
+              aria-label="Filter by status"
+            >
+              <option value="all">All statuses</option>
+              <option value="online">Online</option>
+              <option value="offline">Offline</option>
+            </select>
+          </div>
+
+          {/* Riders */}
+          {filteredDrivers.length === 0 ? (
+            <div className="dash-card">
+              <EmptyState
+                title="No riders found"
+                description={
+                  searchTerm ? "Try changing your search criteria." : undefined
                 }
-                className="px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium transition-all duration-200"
-              >
-                <option value="all">All Status</option>
-                <option value="online">Online</option>
-                <option value="offline">Offline</option>
-              </select>
+              />
             </div>
-          </div>
-        </div>
-
-        {/* Stats Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-50 rounded-xl">
-                <IconUser className="w-7 h-7 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Riders
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {drivers.length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-50 rounded-xl">
-                <IconCheck className="w-7 h-7 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Online Now</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {drivers.filter((d) => d.isOnline && d.isActive).length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-yellow-50 rounded-xl">
-                <IconCar className="w-7 h-7 text-yellow-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Active Vehicles
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {drivers.filter((d) => d.isActive).length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200">
-            <div className="flex items-center">
-              <div className="p-3 bg-purple-50 rounded-xl">
-                <IconPackage className="w-7 h-7 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Total Deliveries
-                </p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {drivers.reduce(
-                    (sum, driver) => sum + (driver.stats?.totalDeliveries || 0),
-                    0,
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Drivers Grid */}
-        {filteredDrivers.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <IconUser className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg font-semibold text-gray-600">
-              No riders found
-            </p>
-            {searchTerm && (
-              <p className="text-sm text-gray-500 mt-2">
-                Try changing your search criteria
-              </p>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDrivers.map((driver) => (
-              <div
-                key={driver._id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300 overflow-hidden group"
-              >
-                {/* Card Header */}
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 relative">
-                  <div className="absolute top-4 right-4 flex gap-2">
-                    {getStatusBadge(driver)}
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-blue-600 font-bold text-2xl">
-                        {driver.userId.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-white font-bold text-lg truncate">
-                        {driver.userId.name}
-                      </h3>
-                      <p className="text-blue-100 text-sm font-medium truncate">
-                        {driver.userId.email}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="p-6 space-y-4">
-                  {/* Contact Info */}
-                  <div className="flex items-center text-gray-700">
-                    <IconPhone className="w-5 h-5 mr-3 text-gray-400" />
-                    <span className="text-sm font-medium">
-                      {driver.userId.phone}
-                    </span>
-                  </div>
-
-                  {/* Vehicle Info */}
-                  <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-gray-700">
-                        <IconCar className="w-5 h-5 mr-2 text-gray-500" />
-                        <span className="text-sm font-semibold">
-                          {driver.vehicleMake} {driver.vehicleModel}
-                        </span>
-                      </div>
-                      <div
-                        className="w-5 h-5 rounded-full border-2 border-gray-300"
-                        style={{
-                          backgroundColor: driver.vehicleColor.toLowerCase(),
-                        }}
-                        title={driver.vehicleColor}
-                      />
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <IconId className="w-4 h-4 mr-2 text-gray-400" />
-                      <span className="text-xs font-mono font-semibold">
-                        {driver.plateNumber}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-3 pt-2">
-                    <div className="text-center">
-                      <div className="flex items-center justify-center mb-1">
-                        <IconPackage className="w-4 h-4 text-purple-600" />
-                      </div>
-                      <p className="text-lg font-bold text-gray-900">
+          ) : (
+            <div className="dash-card overflow-hidden">
+              {/* Wide screens: table */}
+              <table className="hidden w-full text-left text-sm xl:table">
+                <thead>
+                  <tr className="border-b border-brand-hairline text-xs text-brand-ink-muted">
+                    <th className="px-5 py-2.5 font-medium">Rider</th>
+                    <th className="px-3 py-2.5 font-medium">Phone</th>
+                    <th className="px-3 py-2.5 font-medium">Vehicle</th>
+                    <th className="px-3 py-2.5 text-right font-medium">Deliveries</th>
+                    <th className="px-3 py-2.5 text-right font-medium">Earnings</th>
+                    <th className="px-3 py-2.5 text-right font-medium">Rating</th>
+                    <th className="px-3 py-2.5 font-medium">Status</th>
+                    <th className="px-5 py-2.5" />
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-brand-hairline">
+                  {filteredDrivers.map((driver) => (
+                    <tr key={driver._id} className="transition-colors hover:bg-brand-canvas-soft/60">
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-3">
+                          <Avatar name={driver.userId.name} />
+                          <div className="min-w-0">
+                            <p className="truncate font-medium text-brand-ink">
+                              {driver.userId.name}
+                            </p>
+                            <p className="truncate text-xs text-brand-ink-muted">
+                              {driver.userId.email}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 whitespace-nowrap text-brand-ink-secondary tabular-nums">
+                        {driver.userId.phone}
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className="size-2.5 shrink-0 rounded-full ring-1 ring-black/10"
+                            style={{
+                              backgroundColor: driver.vehicleColor.toLowerCase(),
+                            }}
+                            title={driver.vehicleColor}
+                          />
+                          <div className="min-w-0">
+                            <p className="truncate text-brand-ink-secondary">
+                              {driver.vehicleMake} {driver.vehicleModel}
+                            </p>
+                            <p className="font-mono text-xs text-brand-ink-muted">
+                              {driver.plateNumber}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-right text-brand-ink-secondary tabular-nums">
                         {driver.stats?.totalDeliveries || 0}
-                      </p>
-                      <p className="text-xs text-gray-500 font-medium">
-                        Deliveries
-                      </p>
-                    </div>
-                    <div className="text-center border-x border-gray-200">
-                      <div className="flex items-center justify-center mb-1">
-                        <IconCash className="w-4 h-4 text-green-600" />
-                      </div>
-                      <p className="text-lg font-bold text-gray-900">
+                      </td>
+                      <td className="px-3 py-3 text-right text-brand-ink-secondary tabular-nums">
                         ₦
                         {((driver.stats?.totalEarnings || 0) / 1000).toFixed(0)}
                         k
-                      </p>
-                      <p className="text-xs text-gray-500 font-medium">
-                        Earnings
-                      </p>
-                    </div>
-                    <div className="text-center">
-                      <div className="flex items-center justify-center mb-1">
-                        <IconUser className="w-4 h-4 text-yellow-600" />
-                      </div>
-                      <p className="text-lg font-bold text-gray-900">
+                      </td>
+                      <td className="px-3 py-3 text-right text-brand-ink-secondary tabular-nums">
                         {driver.rating?.average || 0}
-                      </p>
-                      <p className="text-xs text-gray-500 font-medium">
-                        Rating
-                      </p>
-                    </div>
-                  </div>
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="flex flex-wrap gap-1.5">
+                          {getStatusBadge(driver)}
+                          {getApprovalStatusBadge(driver.approvalStatus)}
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-right">
+                        <button
+                          onClick={() => handleViewProfile(driver)}
+                          className="dash-btn dash-btn-sm dash-btn-secondary"
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-                  {/* Approval Status */}
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <span className="text-xs text-gray-500 font-medium">
-                      Status:
-                    </span>
-                    {getApprovalStatusBadge(driver.approvalStatus)}
-                  </div>
-                </div>
-
-                {/* Card Footer */}
-                <div className="px-6 pb-6">
-                  <button
-                    onClick={() => handleViewProfile(driver)}
-                    className="w-full inline-flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md group-hover:scale-[1.02]"
-                  >
-                    <IconEye className="w-4 h-4 mr-2" />
-                    View Full Profile
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Add Driver Modal */}
-        {showAddModal && (
-          <div className="fixed inset-0 z-50">
-            {/* No overlay/backdrop - just the modal positioned absolutely */}
-            <div className="absolute inset-0">
-              <div className="relative w-full h-full">
-                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-2xl font-bold text-gray-900">
-                        Add New Rider
-                      </h2>
+              {/* Narrow screens: stacked rows */}
+              <div className="divide-y divide-brand-hairline xl:hidden">
+                {filteredDrivers.map((driver) => (
+                  <div key={driver._id} className="px-4 py-4 sm:px-5">
+                    <div className="flex items-start gap-3">
+                      <Avatar name={driver.userId.name} className="size-9" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-brand-ink">
+                          {driver.userId.name}
+                        </p>
+                        <p className="truncate text-xs text-brand-ink-muted">
+                          {driver.userId.email}
+                        </p>
+                      </div>
                       <button
-                        onClick={() => setShowAddModal(false)}
-                        className="text-gray-400 hover:text-gray-500 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        onClick={() => handleViewProfile(driver)}
+                        className="dash-btn dash-btn-sm dash-btn-secondary"
                       >
-                        <IconX className="w-6 h-6" />
+                        View
                       </button>
                     </div>
 
-                    <form onSubmit={handleAddDriver}>
-                      <div className="space-y-6">
-                        {/* Personal Information */}
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                            <IconUser className="w-5 h-5 mr-2 text-blue-600" />
-                            Personal Information
-                          </h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Full Name *
-                              </label>
-                              <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                                minLength={2}
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                placeholder="John Doe"
-                              />
-                            </div>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {getStatusBadge(driver)}
+                      {getApprovalStatusBadge(driver.approvalStatus)}
+                    </div>
 
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Email Address *
-                              </label>
-                              <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                required
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                placeholder="john.doe@example.com"
-                              />
-                            </div>
+                    <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm sm:grid-cols-4">
+                      <div className="min-w-0">
+                        <dt className="dash-eyebrow">Phone</dt>
+                        <dd className="truncate text-brand-ink-secondary tabular-nums">
+                          {driver.userId.phone}
+                        </dd>
+                      </div>
+                      <div className="min-w-0">
+                        <dt className="dash-eyebrow">Vehicle</dt>
+                        <dd className="flex items-center gap-1.5 text-brand-ink-secondary">
+                          <span
+                            className="size-2 shrink-0 rounded-full ring-1 ring-black/10"
+                            style={{
+                              backgroundColor: driver.vehicleColor.toLowerCase(),
+                            }}
+                            title={driver.vehicleColor}
+                          />
+                          <span className="truncate font-mono text-xs">
+                            {driver.plateNumber}
+                          </span>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="dash-eyebrow">Deliveries</dt>
+                        <dd className="text-brand-ink-secondary tabular-nums">
+                          {driver.stats?.totalDeliveries || 0}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="dash-eyebrow">Earnings · Rating</dt>
+                        <dd className="text-brand-ink-secondary tabular-nums">
+                          ₦
+                          {((driver.stats?.totalEarnings || 0) / 1000).toFixed(0)}
+                          k · {driver.rating?.average || 0}
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
-                            <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Phone Number *
-                              </label>
-                              <input
-                                type="tel"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleInputChange}
-                                required
-                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                placeholder="+2348012345678"
-                              />
-                            </div>
+        {/* Add Driver Modal */}
+        {showAddModal && (
+          <div className="dash-overlay">
+            <div className="dash-modal max-w-xl">
+              <div className="dash-modal-header">
+                <div>
+                  <h2 className="dash-modal-title">Add rider</h2>
+                  <p className="mt-0.5 text-[13px] text-brand-ink-muted">
+                    A verification code is emailed to the rider once the
+                    account is created.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddModal(false)}
+                  className="dash-icon-btn -mr-1.5"
+                  aria-label="Close"
+                >
+                  <IconX className="size-[18px]" />
+                </button>
+              </div>
 
-                            <div className="md:col-span-2">
-                              <div className="flex items-center justify-between mb-2">
-                                <label className="block text-sm font-semibold text-gray-700">
-                                  Password *
-                                </label>
-                                <button
-                                  type="button"
-                                  onClick={generateRandomPassword}
-                                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                                >
-                                  Generate Strong Password
-                                </button>
-                              </div>
-                              <div className="relative">
-                                <input
-                                  type={showPassword ? "text" : "password"}
-                                  name="password"
-                                  value={formData.password}
-                                  onChange={handleInputChange}
-                                  required
-                                  minLength={6}
-                                  className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                  placeholder="SecurePass123!"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => setShowPassword(!showPassword)}
-                                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                >
-                                  {showPassword ? (
-                                    <IconEyeOff className="w-5 h-5" />
-                                  ) : (
-                                    <IconEye className="w-5 h-5" />
-                                  )}
-                                </button>
-                              </div>
-                            </div>
+              <form onSubmit={handleAddDriver} className="flex min-h-0 flex-1 flex-col">
+                <div className="dash-modal-body space-y-6">
+                  {/* Personal Information */}
+                  <div>
+                    <h3 className="mb-3 text-sm font-semibold text-brand-ink">
+                      Personal information
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="sm:col-span-2">
+                        <label className="dash-label">Full name</label>
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          required
+                          minLength={2}
+                          className="dash-input"
+                          placeholder="John Doe"
+                        />
+                      </div>
 
-                            <div className="md:col-span-2">
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                Confirm Password *
-                              </label>
-                              <div className="relative">
-                                <input
-                                  type={
-                                    showConfirmPassword ? "text" : "password"
-                                  }
-                                  name="confirmPassword"
-                                  value={formData.confirmPassword}
-                                  onChange={handleInputChange}
-                                  required
-                                  className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                  placeholder="Confirm password"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setShowConfirmPassword(!showConfirmPassword)
-                                  }
-                                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                                >
-                                  {showConfirmPassword ? (
-                                    <IconEyeOff className="w-5 h-5" />
-                                  ) : (
-                                    <IconEye className="w-5 h-5" />
-                                  )}
-                                </button>
-                              </div>
-                              {passwordError && (
-                                <p className="text-red-600 text-sm mt-2 font-medium">
-                                  {passwordError}
-                                </p>
-                              )}
-                            </div>
-                          </div>
+                      <div>
+                        <label className="dash-label">Email address</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          required
+                          className="dash-input"
+                          placeholder="john.doe@example.com"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="dash-label">Phone number</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          required
+                          className="dash-input"
+                          placeholder="+2348012345678"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <div className="mb-1.5 flex items-center justify-between">
+                          <label className="dash-label mb-0">Password</label>
+                          <button
+                            type="button"
+                            onClick={generateRandomPassword}
+                            className="cursor-pointer text-[13px] font-medium text-brand-primary hover:text-brand-primary-active"
+                          >
+                            Generate password
+                          </button>
                         </div>
-
-                        {/* Vehicle Information */}
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                            <IconCar className="w-5 h-5 mr-2 text-blue-600" />
-                            Vehicle Information
-                          </h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Vehicle Type *
-                              </label>
-                              <select
-                                name="vehicleType"
-                                value={formData.vehicleType}
-                                onChange={handleInputChange}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              >
-                                <option value="bike">Bike</option>
-                                <option value="car">Car</option>
-                                <option value="van">Van</option>
-                                <option value="truck">Truck</option>
-                              </select>
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Vehicle Color *
-                              </label>
-                              <input
-                                type="text"
-                                name="vehicleColor"
-                                value={formData.vehicleColor}
-                                onChange={handleInputChange}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Black"
-                              />
-                            </div>
-
-                            <div className="md:col-span-2">
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Plate Number *
-                              </label>
-                              <input
-                                type="text"
-                                name="plateNumber"
-                                value={formData.plateNumber}
-                                onChange={handleInputChange}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 uppercase"
-                                placeholder="ABC-123-XY"
-                              />
-                              <p className="text-xs text-gray-500 mt-1">
-                                Will be automatically converted to uppercase
-                              </p>
-                            </div>
-                          </div>
+                        <div className="relative">
+                          <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                            minLength={6}
+                            className="dash-input pr-10"
+                            placeholder="At least 6 characters"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-brand-ink-faint hover:text-brand-ink-muted"
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                          >
+                            {showPassword ? (
+                              <IconEyeOff className="size-[18px]" stroke={1.75} />
+                            ) : (
+                              <IconEye className="size-[18px]" stroke={1.75} />
+                            )}
+                          </button>
                         </div>
+                      </div>
 
-                        {/* Notes */}
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                          <p className="text-sm text-blue-800 font-medium">
-                            <strong className="font-bold">Note:</strong> After
-                            creating the account, you&apos;ll need to verify the
-                            driver&apos;s email address. A verification code
-                            will be sent to their email.
+                      <div className="sm:col-span-2">
+                        <label className="dash-label">Confirm password</label>
+                        <div className="relative">
+                          <input
+                            type={
+                              showConfirmPassword ? "text" : "password"
+                            }
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
+                            required
+                            className="dash-input pr-10"
+                            placeholder="Repeat the password"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setShowConfirmPassword(!showConfirmPassword)
+                            }
+                            className="absolute top-1/2 right-2.5 -translate-y-1/2 cursor-pointer text-brand-ink-faint hover:text-brand-ink-muted"
+                            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                          >
+                            {showConfirmPassword ? (
+                              <IconEyeOff className="size-[18px]" stroke={1.75} />
+                            ) : (
+                              <IconEye className="size-[18px]" stroke={1.75} />
+                            )}
+                          </button>
+                        </div>
+                        {passwordError && (
+                          <p className="mt-1.5 text-[13px] text-red-600">
+                            {passwordError}
                           </p>
-                        </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Vehicle Information */}
+                  <div className="border-t border-brand-hairline pt-5">
+                    <h3 className="mb-3 text-sm font-semibold text-brand-ink">
+                      Vehicle information
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="dash-label">Vehicle type</label>
+                        <select
+                          name="vehicleType"
+                          value={formData.vehicleType}
+                          onChange={handleInputChange}
+                          required
+                          className="dash-input"
+                        >
+                          <option value="bike">Bike</option>
+                          <option value="car">Car</option>
+                          <option value="van">Van</option>
+                          <option value="truck">Truck</option>
+                        </select>
                       </div>
 
-                      <div className="flex justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
-                        <button
-                          type="button"
-                          onClick={() => setShowAddModal(false)}
-                          className="px-5 py-2.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-all"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={isSubmitting}
-                          className="px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
-                        >
-                          {isSubmitting ? "Adding..." : "Add Rider"}
-                        </button>
+                      <div>
+                        <label className="dash-label">Vehicle color</label>
+                        <input
+                          type="text"
+                          name="vehicleColor"
+                          value={formData.vehicleColor}
+                          onChange={handleInputChange}
+                          required
+                          className="dash-input"
+                          placeholder="Black"
+                        />
                       </div>
-                    </form>
+
+                      <div className="sm:col-span-2">
+                        <label className="dash-label">Plate number</label>
+                        <input
+                          type="text"
+                          name="plateNumber"
+                          value={formData.plateNumber}
+                          onChange={handleInputChange}
+                          required
+                          className="dash-input uppercase placeholder:normal-case"
+                          placeholder="ABC-123-XY"
+                        />
+                        <p className="mt-1.5 text-xs text-brand-ink-muted">
+                          Saved in uppercase.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+
+                <div className="dash-modal-footer">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="dash-btn dash-btn-secondary"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="dash-btn dash-btn-primary"
+                  >
+                    {isSubmitting ? "Adding..." : "Add rider"}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
 
         {/* Email Verification Modal */}
         {showVerificationModal && verificationData && (
-          <div className="fixed inset-0 z-50">
-            <div className="absolute inset-0">
-              <div className="relative w-full h-full">
-                <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-xl shadow-2xl max-w-md w-full">
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-2xl font-bold text-gray-900">
-                        Verify Driver Email
-                      </h2>
-                      <button
-                        onClick={() => setShowVerificationModal(false)}
-                        className="text-gray-400 hover:text-gray-500 p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                      >
-                        <IconX className="w-6 h-6" />
-                      </button>
+          <div className="dash-overlay">
+            <div className="dash-modal max-w-sm">
+              <div className="dash-modal-header">
+                <h2 className="dash-modal-title">Verify rider email</h2>
+                <button
+                  onClick={() => setShowVerificationModal(false)}
+                  className="dash-icon-btn -mr-1.5"
+                  aria-label="Close"
+                >
+                  <IconX className="size-[18px]" />
+                </button>
+              </div>
+
+              <div className="dash-modal-body">
+                {verificationSuccess ? (
+                  <div className="py-6 text-center">
+                    <span className="mx-auto flex size-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                      <IconCheck className="size-5" />
+                    </span>
+                    <h3 className="mt-3 text-sm font-semibold text-brand-ink">
+                      Email verified
+                    </h3>
+                    <p className="mt-1 text-sm text-brand-ink-muted">
+                      The rider can now log in.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-sm text-brand-ink-muted">
+                      Enter the 6-digit code sent to{" "}
+                      <span className="font-medium break-all text-brand-ink">
+                        {verificationData.email}
+                      </span>
+                      . The rider needs this to log in.
+                    </p>
+
+                    <div>
+                      <label className="dash-label">Verification code</label>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={verificationCode}
+                        onChange={handleVerificationCodeChange}
+                        placeholder="000000"
+                        maxLength={6}
+                        className="dash-input h-12 text-center font-mono text-xl tracking-[0.4em]"
+                      />
+                      {verificationError ? (
+                        <p className="mt-1.5 text-[13px] text-red-600">
+                          {verificationError}
+                        </p>
+                      ) : (
+                        <p className="mt-1.5 text-xs text-brand-ink-muted">
+                          The code expires in 10 minutes. Ask the rider to
+                          check spam if it hasn&apos;t arrived.
+                        </p>
+                      )}
                     </div>
 
-                    {verificationSuccess ? (
-                      <div className="text-center py-8">
-                        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
-                          <IconCheck className="h-8 w-8 text-green-600" />
-                        </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">
-                          Email Verified!
-                        </h3>
-                        <p className="text-gray-600 font-medium">
-                          Driver&apos;s email has been verified successfully.
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="text-center mb-6">
-                          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
-                            <IconMail className="h-8 w-8 text-blue-600" />
-                          </div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-2">
-                            Check Driver&apos;s Email
-                          </h3>
-                          <p className="text-gray-600 font-medium">
-                            A 6-digit verification code has been sent to:
-                          </p>
-                          <p className="text-sm font-semibold text-gray-900 mt-1">
-                            {verificationData.email}
-                          </p>
-                        </div>
+                    <div className="flex flex-col gap-2 pt-1">
+                      <button
+                        onClick={handleVerifyEmail}
+                        disabled={
+                          verificationLoading ||
+                          verificationCode.length !== 6
+                        }
+                        className="dash-btn dash-btn-primary w-full"
+                      >
+                        {verificationLoading
+                          ? "Verifying..."
+                          : "Verify email"}
+                      </button>
 
-                        <div className="space-y-4">
-                          <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-2">
-                              Enter Verification Code
-                            </label>
-                            <input
-                              type="text"
-                              value={verificationCode}
-                              onChange={handleVerificationCodeChange}
-                              placeholder="000000"
-                              maxLength={6}
-                              className="w-full px-4 py-3 text-center text-2xl font-bold tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                            />
-                            {verificationError && (
-                              <p className="text-red-600 text-sm mt-2 font-medium">
-                                {verificationError}
-                              </p>
-                            )}
-                          </div>
+                      <button
+                        onClick={handleResendVerification}
+                        disabled={resendLoading}
+                        className="dash-btn dash-btn-secondary w-full"
+                      >
+                        {resendLoading ? "Sending..." : "Resend code"}
+                      </button>
 
-                          <div className="text-sm text-gray-600 space-y-2 font-medium">
-                            <p>• Code expires in 10 minutes</p>
-                            <p>• Check spam folder if not received</p>
-                            <p>• Driver needs this verification to log in</p>
-                          </div>
-
-                          <div className="flex flex-col gap-3 pt-4">
-                            <button
-                              onClick={handleVerifyEmail}
-                              disabled={
-                                verificationLoading ||
-                                verificationCode.length !== 6
-                              }
-                              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
-                            >
-                              {verificationLoading
-                                ? "Verifying..."
-                                : "Verify Email"}
-                            </button>
-
-                            <button
-                              onClick={handleResendVerification}
-                              disabled={resendLoading}
-                              className="w-full py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 disabled:opacity-50 transition-all"
-                            >
-                              {resendLoading ? "Sending..." : "Resend Code"}
-                            </button>
-
-                            <button
-                              onClick={handleVerifyLater}
-                              className="w-full py-2.5 text-gray-600 hover:text-gray-800 font-medium transition-colors"
-                            >
-                              Verify Later
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
+                      <button
+                        onClick={handleVerifyLater}
+                        className="dash-btn dash-btn-ghost w-full"
+                      >
+                        Verify later
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -1191,256 +1109,157 @@ export default function RidersPage() {
 
         {/* View Profile Modal */}
         {showProfileModal && selectedDriver && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
-              {/* Header with Gradient */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 relative">
-                <button
-                  onClick={() => setShowProfileModal(false)}
-                  className="absolute top-4 right-4 text-white hover:bg-white/20 p-2 rounded-lg transition-all"
-                >
-                  <IconX className="w-6 h-6" />
-                </button>
-                <div className="flex items-center space-x-6">
-                  <div className="h-24 w-24 bg-white rounded-2xl flex items-center justify-center shadow-xl">
-                    <span className="text-blue-600 text-4xl font-bold">
-                      {selectedDriver.userId.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="text-3xl font-bold text-white mb-1">
+          <div className="dash-overlay">
+            <div className="dash-modal max-w-2xl">
+              <div className="dash-modal-header">
+                <div className="flex min-w-0 items-center gap-3.5">
+                  <Avatar name={selectedDriver.userId.name} className="size-11 text-base" />
+                  <div className="min-w-0">
+                    <h2 className="dash-modal-title truncate">
                       {selectedDriver.userId.name}
                     </h2>
-                    <p className="text-blue-100 font-medium mb-3">
+                    <p className="truncate text-[13px] text-brand-ink-muted">
                       {selectedDriver.userId.email}
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedDriver.isOnline ? (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-400 text-white">
-                          <IconCheck className="w-3 h-3 mr-1" />
-                          Online
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gray-400 text-white">
-                          Offline
-                        </span>
-                      )}
-                      {selectedDriver.isVerified && (
-                        <span className="px-3 py-1 text-xs font-bold rounded-full bg-white/20 text-white backdrop-blur-sm">
-                          ✓ Verified
-                        </span>
-                      )}
-                      <span
-                        className={`px-3 py-1 text-xs font-bold rounded-full ${
-                          selectedDriver.approvalStatus === "approved"
-                            ? "bg-green-400 text-white"
-                            : selectedDriver.approvalStatus === "rejected"
-                              ? "bg-red-400 text-white"
-                              : "bg-yellow-400 text-white"
-                        }`}
-                      >
-                        {selectedDriver.approvalStatus.charAt(0).toUpperCase() +
-                          selectedDriver.approvalStatus.slice(1)}
-                      </span>
-                    </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Content */}
-              <div className="overflow-y-auto max-h-[calc(90vh-180px)] p-8">
-                <div className="space-y-8">
-                  {/* Stats Cards */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-xl border border-purple-200">
-                      <IconPackage className="w-8 h-8 text-purple-600 mb-2" />
-                      <p className="text-2xl font-bold text-gray-900">
-                        {selectedDriver.stats?.totalDeliveries || 0}
-                      </p>
-                      <p className="text-sm text-gray-600 font-medium">
-                        Total Deliveries
-                      </p>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-xl border border-green-200">
-                      <IconCash className="w-8 h-8 text-green-600 mb-2" />
-                      <p className="text-2xl font-bold text-gray-900">
-                        ₦
-                        {(
-                          selectedDriver.stats?.totalEarnings || 0
-                        ).toLocaleString()}
-                      </p>
-                      <p className="text-sm text-gray-600 font-medium">
-                        Total Earnings
-                      </p>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 rounded-xl border border-yellow-200">
-                      <IconUser className="w-8 h-8 text-yellow-600 mb-2" />
-                      <p className="text-2xl font-bold text-gray-900">
-                        {selectedDriver.rating?.average || 0}/5
-                      </p>
-                      <p className="text-sm text-gray-600 font-medium">
-                        Average Rating
-                      </p>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-xl border border-blue-200">
-                      <IconCheck className="w-8 h-8 text-blue-600 mb-2" />
-                      <p className="text-2xl font-bold text-gray-900">
-                        {selectedDriver.stats?.acceptanceRate || 0}%
-                      </p>
-                      <p className="text-sm text-gray-600 font-medium">
-                        Acceptance Rate
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Information Sections */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Contact Information */}
-                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                        <IconPhone className="w-5 h-5 mr-2 text-blue-600" />
-                        Contact Information
-                      </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                            Phone Number
-                          </p>
-                          <p className="text-gray-900 font-semibold text-lg">
-                            {selectedDriver.userId.phone}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                            License Number
-                          </p>
-                          <p className="text-gray-900 font-semibold">
-                            {selectedDriver.licenseNumber}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                            License Expiry
-                          </p>
-                          <p className="text-gray-900 font-semibold">
-                            {formatDate(selectedDriver.licenseExpiry)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Vehicle Information */}
-                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                        <IconCar className="w-5 h-5 mr-2 text-blue-600" />
-                        Vehicle Information
-                      </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                            Vehicle
-                          </p>
-                          <p className="text-gray-900 font-semibold text-lg">
-                            {selectedDriver.vehicleMake}{" "}
-                            {selectedDriver.vehicleModel}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Year: {selectedDriver.vehicleYear}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                            Plate Number
-                          </p>
-                          <p className="text-gray-900 font-bold text-lg font-mono">
-                            {selectedDriver.plateNumber}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                              Color
-                            </p>
-                            <p className="text-gray-900 font-semibold capitalize">
-                              {selectedDriver.vehicleColor}
-                            </p>
-                          </div>
-                          <div
-                            className="w-12 h-12 rounded-lg border-2 border-gray-300 shadow-sm"
-                            style={{
-                              backgroundColor:
-                                selectedDriver.vehicleColor.toLowerCase(),
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Activity & Bank Details */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                        <IconMapPin className="w-5 h-5 mr-2 text-blue-600" />
-                        Activity
-                      </h3>
-                      <div className="space-y-3">
-                        <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                            Last Online
-                          </p>
-                          <p className="text-gray-900 font-semibold">
-                            {formatDate(selectedDriver.lastOnlineAt)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 font-semibold uppercase mb-1">
-                            Member Since
-                          </p>
-                          <p className="text-gray-900 font-semibold">
-                            {formatDate(selectedDriver.createdAt)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {selectedDriver.bankDetails && (
-                      <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                          <IconCash className="w-5 h-5 mr-2 text-blue-600" />
-                          Bank Details
-                        </h3>
-                        <div className="flex items-center">
-                          <span
-                            className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-bold ${
-                              selectedDriver.bankDetails.verified
-                                ? "bg-green-100 text-green-800 border border-green-300"
-                                : "bg-yellow-100 text-yellow-800 border border-yellow-300"
-                            }`}
-                          >
-                            {selectedDriver.bankDetails.verified ? (
-                              <>
-                                <IconCheck className="w-4 h-4 mr-2" /> Verified
-                              </>
-                            ) : (
-                              "Not Verified"
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer Actions */}
-              <div className="bg-gray-50 px-8 py-4 border-t border-gray-200 flex justify-end space-x-3">
                 <button
                   onClick={() => setShowProfileModal(false)}
-                  className="px-6 py-2.5 border border-gray-300 text-sm font-semibold rounded-lg text-gray-700 bg-white hover:bg-gray-100 transition-all"
+                  className="dash-icon-btn -mr-1.5"
+                  aria-label="Close"
+                >
+                  <IconX className="size-[18px]" />
+                </button>
+              </div>
+
+              <div className="dash-modal-body space-y-6">
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedDriver.isOnline ? (
+                    <span className="dash-badge dash-badge-success">Online</span>
+                  ) : (
+                    <span className="dash-badge">Offline</span>
+                  )}
+                  {selectedDriver.isVerified && (
+                    <span className="dash-badge dash-badge-info">Verified</span>
+                  )}
+                  <span
+                    className={`dash-badge ${
+                      selectedDriver.approvalStatus === "approved"
+                        ? "dash-badge-success"
+                        : selectedDriver.approvalStatus === "rejected"
+                          ? "dash-badge-danger"
+                          : "dash-badge-warning"
+                    }`}
+                  >
+                    {selectedDriver.approvalStatus.charAt(0).toUpperCase() +
+                      selectedDriver.approvalStatus.slice(1)}
+                  </span>
+                </div>
+
+                <StatStrip className="grid-cols-2 sm:grid-cols-4">
+                  <Stat
+                    label="Deliveries"
+                    value={selectedDriver.stats?.totalDeliveries || 0}
+                    compact
+                  />
+                  <Stat
+                    label="Earnings"
+                    value={`₦${(
+                      selectedDriver.stats?.totalEarnings || 0
+                    ).toLocaleString()}`}
+                    compact
+                  />
+                  <Stat
+                    label="Rating"
+                    value={`${selectedDriver.rating?.average || 0}/5`}
+                    compact
+                  />
+                  <Stat
+                    label="Acceptance"
+                    value={`${selectedDriver.stats?.acceptanceRate || 0}%`}
+                    compact
+                  />
+                </StatStrip>
+
+                <section>
+                  <h3 className="mb-3 text-sm font-semibold text-brand-ink">
+                    Contact and licence
+                  </h3>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+                    <Field label="Phone number">{selectedDriver.userId.phone}</Field>
+                    <Field label="License number">
+                      {selectedDriver.licenseNumber || "—"}
+                    </Field>
+                    <Field label="License expiry">
+                      {formatDate(selectedDriver.licenseExpiry)}
+                    </Field>
+                  </div>
+                </section>
+
+                <section className="border-t border-brand-hairline pt-5">
+                  <h3 className="mb-3 text-sm font-semibold text-brand-ink">
+                    Vehicle
+                  </h3>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+                    <Field label="Vehicle">
+                      {selectedDriver.vehicleMake}{" "}
+                      {selectedDriver.vehicleModel}
+                      <span className="block text-xs text-brand-ink-muted">
+                        Year: {selectedDriver.vehicleYear}
+                      </span>
+                    </Field>
+                    <Field label="Plate number">
+                      <span className="font-mono">{selectedDriver.plateNumber}</span>
+                    </Field>
+                    <Field label="Color">
+                      <span className="flex items-center gap-2 capitalize">
+                        <span
+                          className="size-3 shrink-0 rounded-full ring-1 ring-black/10"
+                          style={{
+                            backgroundColor:
+                              selectedDriver.vehicleColor.toLowerCase(),
+                          }}
+                        />
+                        {selectedDriver.vehicleColor}
+                      </span>
+                    </Field>
+                  </div>
+                </section>
+
+                <section className="border-t border-brand-hairline pt-5">
+                  <h3 className="mb-3 text-sm font-semibold text-brand-ink">
+                    Activity
+                  </h3>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+                    <Field label="Last online">
+                      {formatDate(selectedDriver.lastOnlineAt)}
+                    </Field>
+                    <Field label="Member since">
+                      {formatDate(selectedDriver.createdAt)}
+                    </Field>
+                    {selectedDriver.bankDetails && (
+                      <Field label="Bank details">
+                        <span
+                          className={`dash-badge mt-0.5 ${
+                            selectedDriver.bankDetails.verified
+                              ? "dash-badge-success"
+                              : "dash-badge-warning"
+                          }`}
+                        >
+                          {selectedDriver.bankDetails.verified
+                            ? "Verified"
+                            : "Not verified"}
+                        </span>
+                      </Field>
+                    )}
+                  </div>
+                </section>
+              </div>
+
+              <div className="dash-modal-footer">
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="dash-btn dash-btn-secondary"
                 >
                   Close
                 </button>
@@ -1448,9 +1267,9 @@ export default function RidersPage() {
                   onClick={() =>
                     showToast("Edit functionality coming soon!", "info")
                   }
-                  className="px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
+                  className="dash-btn dash-btn-primary"
                 >
-                  Edit Profile
+                  Edit profile
                 </button>
               </div>
             </div>

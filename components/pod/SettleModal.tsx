@@ -36,47 +36,47 @@ export default function SettleModal({ podId, productAmount, onClose, onSettled }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
-        <div className="flex items-center justify-between p-5 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Settle Merchant</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
-            <IconX className="h-5 w-5 text-gray-500" />
+    <div className="dash-overlay">
+      <div className="dash-modal max-w-md">
+        <div className="dash-modal-header">
+          <h2 className="dash-modal-title">Settle merchant</h2>
+          <button onClick={onClose} className="dash-icon-btn -mr-1.5" aria-label="Close">
+            <IconX className="size-[18px]" />
           </button>
         </div>
 
-        <div className="p-5 space-y-4">
+        <div className="dash-modal-body space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Settlement Amount (₦)</label>
+            <label className="dash-label">Settlement amount (₦)</label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="dash-input tabular-nums"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Note (optional)</label>
+            <label className="dash-label">Note (optional)</label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="e.g. Settled via bank transfer"
-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="dash-input"
             />
           </div>
         </div>
 
-        <div className="p-5 border-t border-gray-200 flex gap-3">
-          <button onClick={onClose} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+        <div className="dash-modal-footer">
+          <button onClick={onClose} className="dash-btn dash-btn-secondary">
             Cancel
           </button>
           <button
             onClick={handleSettle}
             disabled={!amount || settling}
-            className="flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+            className="dash-btn dash-btn-primary"
           >
-            {settling ? "Settling..." : "Confirm Settlement"}
+            {settling ? "Settling..." : "Confirm settlement"}
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { IconX, IconUser, IconAlertCircle } from "@tabler/icons-react";
+import { IconX, IconAlertCircle } from "@tabler/icons-react";
+import { Field, RouteStops, Avatar } from "@/components/dashboard/primitives";
 import { ApiClient } from "@/app/lib/api-client";
 import { API_CONFIG } from "@/app/lib/config";
 
@@ -66,92 +67,83 @@ export default function ErrandAssignModal({ errand, onClose, onAssigned }: Props
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="bg-white w-full max-w-lg rounded-xl shadow-xl overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
-          <div>
-            <p className="text-xs text-gray-500 font-mono">{errand.referenceId}</p>
-            <h3 className="font-semibold text-gray-900">Assign Rider</h3>
+    <div className="dash-overlay">
+      <div className="dash-modal max-w-lg">
+        <div className="dash-modal-header">
+          <div className="min-w-0">
+            <h3 className="dash-modal-title">Assign rider</h3>
+            <p className="mt-0.5 font-mono text-[13px] text-brand-ink-muted">{errand.referenceId}</p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-            <IconX className="h-5 w-5 text-gray-500" />
+          <button onClick={onClose} className="dash-icon-btn -mr-1.5" aria-label="Close">
+            <IconX className="size-[18px]" />
           </button>
         </div>
 
-        <div className="px-5 py-4 bg-gray-50 border-b border-gray-200 space-y-1.5 text-sm">
-          <div className="flex gap-2">
-            <span className="text-gray-500 w-20 shrink-0">Type</span>
-            <span className="font-medium text-gray-800">{errand.errandType}</span>
-          </div>
-          <div className="flex gap-2">
-            <span className="text-gray-500 w-20 shrink-0">Customer</span>
-            <span className="font-medium text-gray-800">{errand.customerName}</span>
-          </div>
-          <div className="flex gap-2">
-            <span className="text-gray-500 w-20 shrink-0">Pickup</span>
-            <span className="text-gray-700 line-clamp-1">{errand.pickupLocation?.address}</span>
-          </div>
-          <div className="flex gap-2">
-            <span className="text-gray-500 w-20 shrink-0">Dropoff</span>
-            <span className="text-gray-700 line-clamp-1">{errand.destination?.address}</span>
-          </div>
-          <div className="flex gap-4 pt-1">
-            <span className="text-gray-500">
-              Limit: <span className="font-semibold text-gray-800">₦{errand.spendingLimit?.toLocaleString()}</span>
-            </span>
-            <span className="text-gray-500">
-              Advance: <span className="font-semibold text-gray-800">₦{errand.customerAdvance?.toLocaleString()}</span>
-            </span>
-          </div>
-        </div>
-
-        <div className="px-5 py-4">
-          <p className="text-sm font-medium text-gray-700 mb-3">Available Riders</p>
-
-          {error && (
-            <div className="flex items-center gap-2 text-red-600 text-sm mb-3 bg-red-50 px-3 py-2 rounded-lg">
-              <IconAlertCircle className="h-4 w-4 shrink-0" />
-              {error}
+        <div className="dash-modal-body space-y-5">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3.5">
+            <Field label="Type">{errand.errandType}</Field>
+            <Field label="Customer">{errand.customerName}</Field>
+            <div className="col-span-2">
+              <p className="dash-eyebrow mb-1.5">Route</p>
+              <RouteStops
+                pickup={errand.pickupLocation?.address}
+                dropoff={errand.destination?.address}
+              />
             </div>
-          )}
+            <Field label="Spending limit">
+              <span className="tabular-nums">₦{errand.spendingLimit?.toLocaleString()}</span>
+            </Field>
+            <Field label="Advance">
+              <span className="tabular-nums">₦{errand.customerAdvance?.toLocaleString()}</span>
+            </Field>
+          </div>
 
-          {loading ? (
-            <div className="space-y-2">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-14 bg-gray-100 animate-pulse rounded-lg" />
-              ))}
-            </div>
-          ) : drivers.length === 0 ? (
-            <p className="text-center py-8 text-gray-500 text-sm">No available riders right now</p>
-          ) : (
-            <div className="space-y-2 max-h-60 overflow-y-auto">
-              {drivers.map((driver) => (
-                <div
-                  key={driver._id}
-                  className="flex items-center justify-between border border-gray-200 rounded-lg px-3 py-2.5"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#1E91D6]/10 rounded-full">
-                      <IconUser className="h-4 w-4 text-[#1E91D6]" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{driver.userId?.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {driver.vehicle?.type} · {driver.vehicle?.plateNumber}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => assign(driver._id)}
-                    disabled={!!assigning}
-                    className="px-3 py-1.5 bg-[#1E91D6] hover:bg-[#0072BB] text-white text-sm rounded-lg transition-colors disabled:opacity-50 font-medium"
+          <div className="border-t border-brand-hairline pt-5">
+            <p className="mb-2.5 text-sm font-semibold text-brand-ink">Available riders</p>
+
+            {error && (
+              <div className="dash-notice dash-notice-danger mb-3">
+                <IconAlertCircle className="mt-0.5 size-4 shrink-0" />
+                {error}
+              </div>
+            )}
+
+            {loading ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="dash-skeleton h-[52px] rounded-md" />
+                ))}
+              </div>
+            ) : drivers.length === 0 ? (
+              <p className="py-6 text-center text-sm text-brand-ink-muted">No available riders right now</p>
+            ) : (
+              <div className="max-h-60 divide-y divide-brand-hairline overflow-y-auto rounded-md border border-brand-hairline">
+                {drivers.map((driver) => (
+                  <div
+                    key={driver._id}
+                    className="flex items-center justify-between gap-3 px-3 py-2.5"
                   >
-                    {assigning === driver._id ? "Assigning…" : "Assign"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Avatar name={driver.userId?.name} />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-brand-ink">{driver.userId?.name}</p>
+                        <p className="truncate text-xs text-brand-ink-muted">
+                          {driver.vehicle?.type} · {driver.vehicle?.plateNumber}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => assign(driver._id)}
+                      disabled={!!assigning}
+                      className="dash-btn dash-btn-sm dash-btn-primary"
+                    >
+                      {assigning === driver._id ? "Assigning…" : "Assign"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

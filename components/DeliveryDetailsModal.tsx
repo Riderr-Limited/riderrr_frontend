@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  IconX,
-  IconMapPin,
-  IconCash,
-  IconPackage,
-  IconTruck,
-  IconClock,
-} from "@tabler/icons-react";
+import { IconX, IconMapPin } from "@tabler/icons-react";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 interface DeliveryDetailsModalProps {
   isOpen: boolean;
@@ -80,333 +74,185 @@ export default function DeliveryDetailsModal({
     });
   };
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      pending: "bg-yellow-100 text-yellow-800",
-      assigned: "bg-blue-100 text-blue-800",
-      picked_up: "bg-purple-100 text-purple-800",
-      in_transit: "bg-indigo-100 text-indigo-800",
-      delivered: "bg-green-100 text-green-800",
-      cancelled: "bg-red-100 text-red-800",
-      failed: "bg-red-100 text-red-800",
-    };
-    return colors[status.toLowerCase()] || "bg-gray-100 text-gray-800";
-  };
+  const row = (label: string, value: React.ReactNode) => (
+    <div className="flex justify-between gap-4 py-1.5 text-sm">
+      <span className="shrink-0 text-brand-ink-muted">{label}</span>
+      <span className="text-right text-brand-ink">{value}</span>
+    </div>
+  );
+
+  const timeline = [
+    { label: "Created", date: delivery.createdAt },
+    { label: "Assigned", date: delivery.assignedAt },
+    { label: "Picked up", date: delivery.pickedUpAt },
+    { label: "Delivered", date: delivery.deliveredAt },
+  ].filter((step) => step.date);
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200">
+    <div className="dash-overlay">
+      <div className="dash-modal max-w-2xl">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-linear-to-r from-blue-600 to-indigo-600 px-6 py-4 z-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-white mb-1">
-                Delivery Details
-              </h2>
-              <p className="text-sm text-white/80">#{delivery.referenceId}</p>
+        <div className="dash-modal-header">
+          <div className="min-w-0">
+            <h2 className="dash-modal-title">Delivery details</h2>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <span className="font-mono text-[13px] text-brand-ink-muted">
+                #{delivery.referenceId}
+              </span>
+              <StatusBadge status={delivery.status} />
+              {delivery.payment.method.toLowerCase() !== "cash" && (
+                <span className="text-[13px] text-brand-ink-muted">
+                  Payment: {delivery.payment.status}
+                </span>
+              )}
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-lg transition-all duration-200 group"
-            >
-              <IconX className="h-6 w-6 text-white group-hover:rotate-90 transition-transform duration-200" />
-            </button>
           </div>
+          <button
+            onClick={onClose}
+            className="dash-icon-btn -mr-1.5"
+            aria-label="Close"
+          >
+            <IconX className="size-[18px]" />
+          </button>
         </div>
 
         {/* Modal Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div className="p-6 space-y-6">
-            {/* Status Banner */}
-            <div
-              className={`p-4 rounded-xl ${getStatusColor(delivery.status)} border-2 border-current/20`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-base font-bold mb-1">
-                    {delivery.statusDisplay || delivery.status}
-                  </p>
-                  {delivery.payment.method.toLowerCase() !== "cash" && (
-                    <p className="text-sm opacity-90">
-                      Payment: {delivery.payment.status}
-                    </p>
-                  )}
-                </div>
-                <IconTruck className="h-8 w-8 opacity-80" />
+        <div className="dash-modal-body space-y-6">
+          {/* Pickup & Dropoff Locations */}
+          <section>
+            <h3 className="mb-2.5 text-sm font-semibold text-brand-ink">Route</h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <p className="dash-eyebrow">Pickup location</p>
+                <p className="mt-0.5 text-sm text-brand-ink">{delivery.pickup.address}</p>
+              </div>
+              <div>
+                <p className="dash-eyebrow">Dropoff location</p>
+                <p className="mt-0.5 text-sm text-brand-ink">{delivery.dropoff.address}</p>
               </div>
             </div>
+          </section>
 
-            {/* Pickup & Dropoff Locations */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-2 bg-blue-600 rounded-lg">
-                    <IconMapPin className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="font-bold text-gray-900">Pickup Location</h3>
-                </div>
-                <p className="text-sm text-gray-700">{delivery.pickup.address}</p>
-              </div>
-
-              <div className="bg-linear-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-2 bg-green-600 rounded-lg">
-                    <IconMapPin className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="font-bold text-gray-900">Dropoff Location</h3>
-                </div>
-                <p className="text-sm text-gray-700">{delivery.dropoff.address}</p>
-              </div>
-            </div>
-
-            {/* Item & Fare Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {delivery.itemDetails && (
-                <div className="bg-linear-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="p-2 bg-purple-600 rounded-lg">
-                      <IconPackage className="h-5 w-5 text-white" />
-                    </div>
-                    <h3 className="font-bold text-gray-900">Item Details</h3>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Type:</span>
-                      <span className="font-medium text-gray-900">
-                        {delivery.itemDetails.type}
-                      </span>
-                    </div>
-                    {delivery.itemDetails.description && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Description:</span>
-                        <span className="font-medium text-gray-900">
-                          {delivery.itemDetails.description}
-                        </span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Weight:</span>
-                      <span className="font-medium text-gray-900">
-                        {delivery.itemDetails.weight} kg
-                      </span>
-                    </div>
-                    {delivery.estimatedDistanceKm && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Distance:</span>
-                        <span className="font-medium text-gray-900">
-                          {delivery.estimatedDistanceKm.toFixed(2)} km
-                        </span>
-                      </div>
-                    )}
-                    {delivery.estimatedDurationMin && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Duration:</span>
-                        <span className="font-medium text-gray-900">
-                          {delivery.estimatedDurationMin} mins
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="bg-linear-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="p-2 bg-emerald-600 rounded-lg">
-                    <IconCash className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="font-bold text-gray-900">Fare Details</h3>
-                </div>
-                <div className="space-y-2">
-                  {delivery.fare.baseFare && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Base Fare:</span>
-                      <span className="font-medium text-gray-900">
-                        {delivery.fare.currency}{" "}
-                        {delivery.fare.baseFare?.toLocaleString() || "0"}
-                      </span>
-                    </div>
-                  )}
-                  {delivery.fare.distanceFare && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Distance Fare:</span>
-                      <span className="font-medium text-gray-900">
-                        {delivery.fare.currency}{" "}
-                        {delivery.fare.distanceFare?.toFixed(2) || "0"}
-                      </span>
-                    </div>
-                  )}
-                  <div className="border-t-2 border-emerald-300 pt-2 mt-2">
-                    <div className="flex justify-between">
-                      <span className="font-bold text-gray-900">Total Fare:</span>
-                      <span className="font-bold text-emerald-700 text-lg">
-                        {delivery.fare.currency}{" "}
-                        {(
-                          delivery.fare.totalFare || delivery.fare.amount
-                        )?.toLocaleString() || "0"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Method:</span>
-                    <span className="font-medium text-gray-900">
-                      {delivery.payment.method}
-                    </span>
-                  </div>
-                  {delivery.payment.method.toLowerCase() !== "cash" && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Status:</span>
-                      <span className="font-medium text-gray-900">
-                        {delivery.payment.status}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Rider Info (if assigned) */}
-            {delivery.driverDetails && (
-              <div className="bg-linear-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-indigo-600 rounded-lg">
-                      <IconTruck className="h-5 w-5 text-white" />
-                    </div>
-                    <h3 className="font-bold text-gray-900">Rider Information</h3>
-                  </div>
-                  {delivery.driverDetails.currentLocation && onViewLocation && (
-                    <button
-                      onClick={() =>
-                        onViewLocation(
-                          delivery.driverDetails!.currentLocation!.lat,
-                          delivery.driverDetails!.currentLocation!.lng,
-                          "Rider Location",
-                          `${delivery.driverDetails!.name}'s current location`,
-                          delivery.driverDetails!.currentLocation!.updatedAt,
-                        )
-                      }
-                      className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all duration-200 text-sm font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
-                    >
-                      <IconMapPin className="h-4 w-4" />
-                      View Location
-                    </button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Name:</span>
-                      <span className="font-medium text-gray-900">
-                        {delivery.driverDetails.name}
-                      </span>
-                    </div>
-                    {delivery.driverDetails.phone && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Phone:</span>
-                        <span className="font-medium text-gray-900">
-                          {delivery.driverDetails.phone}
-                        </span>
-                      </div>
-                    )}
-                    {delivery.driverDetails.rating !== undefined && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Rating:</span>
-                        <span className="font-medium text-gray-900">
-                          ⭐ {delivery.driverDetails.rating}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {delivery.driverDetails.vehicle && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Vehicle:</span>
-                        <span className="font-medium text-gray-900">
-                          {delivery.driverDetails.vehicle.make}{" "}
-                          {delivery.driverDetails.vehicle.model}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Plate:</span>
-                        <span className="font-medium text-gray-900">
-                          {delivery.driverDetails.vehicle.plateNumber}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Type:</span>
-                        <span className="font-medium text-gray-900">
-                          {delivery.driverDetails.vehicle.type}
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+          {/* Item & Fare Details */}
+          <div className="grid gap-x-8 gap-y-6 border-t border-brand-hairline pt-5 sm:grid-cols-2">
+            {delivery.itemDetails && (
+              <section>
+                <h3 className="mb-1.5 text-sm font-semibold text-brand-ink">Item</h3>
+                {row("Type", delivery.itemDetails.type)}
+                {delivery.itemDetails.description &&
+                  row("Description", delivery.itemDetails.description)}
+                {row("Weight", `${delivery.itemDetails.weight} kg`)}
+                {delivery.estimatedDistanceKm &&
+                  row("Distance", `${delivery.estimatedDistanceKm.toFixed(2)} km`)}
+                {delivery.estimatedDurationMin &&
+                  row("Duration", `${delivery.estimatedDurationMin} mins`)}
+              </section>
             )}
 
-            {/* Timeline */}
-            <div className="bg-linear-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="p-2 bg-orange-600 rounded-lg">
-                  <IconClock className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="font-bold text-gray-900">Timeline</h3>
+            <section>
+              <h3 className="mb-1.5 text-sm font-semibold text-brand-ink">Fare</h3>
+              {delivery.fare.baseFare &&
+                row(
+                  "Base fare",
+                  <span className="tabular-nums">
+                    {delivery.fare.currency}{" "}
+                    {delivery.fare.baseFare?.toLocaleString() || "0"}
+                  </span>,
+                )}
+              {delivery.fare.distanceFare &&
+                row(
+                  "Distance fare",
+                  <span className="tabular-nums">
+                    {delivery.fare.currency}{" "}
+                    {delivery.fare.distanceFare?.toFixed(2) || "0"}
+                  </span>,
+                )}
+              {row("Method", delivery.payment.method)}
+              {delivery.payment.method.toLowerCase() !== "cash" &&
+                row("Status", delivery.payment.status)}
+              <div className="mt-1.5 flex justify-between gap-4 border-t border-brand-hairline pt-2.5 text-sm font-semibold text-brand-ink">
+                <span>Total fare</span>
+                <span className="tabular-nums">
+                  {delivery.fare.currency}{" "}
+                  {(
+                    delivery.fare.totalFare || delivery.fare.amount
+                  )?.toLocaleString() || "0"}
+                </span>
               </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-3 h-3 rounded-full bg-blue-600 mt-1 ring-4 ring-blue-200"></div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900">Created</p>
-                    <p className="text-xs text-gray-600">
-                      {formatDate(delivery.createdAt)}
-                    </p>
-                  </div>
-                </div>
-                {delivery.assignedAt && (
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 rounded-full bg-purple-600 mt-1 ring-4 ring-purple-200"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-900">Assigned</p>
-                      <p className="text-xs text-gray-600">
-                        {formatDate(delivery.assignedAt)}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {delivery.pickedUpAt && (
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 rounded-full bg-indigo-600 mt-1 ring-4 ring-indigo-200"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-900">Picked Up</p>
-                      <p className="text-xs text-gray-600">
-                        {formatDate(delivery.pickedUpAt)}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {delivery.deliveredAt && (
-                  <div className="flex items-start gap-3">
-                    <div className="w-3 h-3 rounded-full bg-green-600 mt-1 ring-4 ring-green-200"></div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-900">Delivered</p>
-                      <p className="text-xs text-gray-600">
-                        {formatDate(delivery.deliveredAt)}
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+            </section>
           </div>
+
+          {/* Rider Info (if assigned) */}
+          {delivery.driverDetails && (
+            <section className="border-t border-brand-hairline pt-5">
+              <div className="mb-1.5 flex items-center justify-between gap-3">
+                <h3 className="text-sm font-semibold text-brand-ink">Rider</h3>
+                {delivery.driverDetails.currentLocation && onViewLocation && (
+                  <button
+                    onClick={() =>
+                      onViewLocation(
+                        delivery.driverDetails!.currentLocation!.lat,
+                        delivery.driverDetails!.currentLocation!.lng,
+                        "Rider Location",
+                        `${delivery.driverDetails!.name}'s current location`,
+                        delivery.driverDetails!.currentLocation!.updatedAt,
+                      )
+                    }
+                    className="dash-btn dash-btn-sm dash-btn-secondary"
+                  >
+                    <IconMapPin className="size-4" stroke={1.75} />
+                    View location
+                  </button>
+                )}
+              </div>
+              <div className="grid gap-x-8 sm:grid-cols-2">
+                <div>
+                  {row("Name", delivery.driverDetails.name)}
+                  {delivery.driverDetails.phone &&
+                    row("Phone", <span className="tabular-nums">{delivery.driverDetails.phone}</span>)}
+                  {delivery.driverDetails.rating !== undefined &&
+                    row("Rating", `${delivery.driverDetails.rating} / 5`)}
+                </div>
+                {delivery.driverDetails.vehicle && (
+                  <div>
+                    {row(
+                      "Vehicle",
+                      `${delivery.driverDetails.vehicle.make} ${delivery.driverDetails.vehicle.model}`,
+                    )}
+                    {row(
+                      "Plate",
+                      <span className="font-mono">{delivery.driverDetails.vehicle.plateNumber}</span>,
+                    )}
+                    {row("Type", delivery.driverDetails.vehicle.type)}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Timeline */}
+          <section className="border-t border-brand-hairline pt-5">
+            <h3 className="mb-3 text-sm font-semibold text-brand-ink">Timeline</h3>
+            <ol>
+              {timeline.map((step, i) => (
+                <li key={step.label} className="relative flex gap-3 pb-4 last:pb-0">
+                  {i < timeline.length - 1 && (
+                    <span className="absolute top-3 bottom-0 left-[3.5px] w-px bg-brand-hairline" />
+                  )}
+                  <span className="relative mt-[5px] size-2 shrink-0 rounded-full bg-brand-ink-faint" />
+                  <div className="-mt-px">
+                    <p className="text-sm font-medium text-brand-ink">{step.label}</p>
+                    <p className="text-xs text-brand-ink-muted">{formatDate(step.date!)}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
         </div>
 
         {/* Modal Footer */}
-        <div className="sticky bottom-0 bg-gray-50 px-6 py-4 border-t border-gray-200 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-6 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
+        <div className="dash-modal-footer">
+          <button onClick={onClose} className="dash-btn dash-btn-secondary">
             Close
           </button>
         </div>

@@ -176,3 +176,110 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Dashboard primitives — scoped by the dash- prefix so the marketing site is unaffected */
+@layer components {
+  .dash-card {
+    @apply rounded-lg border border-brand-hairline bg-white;
+  }
+
+  .dash-btn {
+    @apply inline-flex h-9 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md px-3.5 text-sm font-medium whitespace-nowrap transition-colors select-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .dash-btn-sm {
+    @apply h-8 gap-1.5 px-3 text-[13px];
+  }
+  .dash-btn-primary {
+    @apply bg-brand-primary text-white hover:bg-brand-primary-active;
+  }
+  .dash-btn-secondary {
+    @apply border border-brand-hairline bg-white text-brand-ink-secondary hover:bg-brand-canvas-soft;
+  }
+  .dash-btn-ghost {
+    @apply text-brand-ink-muted hover:bg-brand-canvas-soft hover:text-brand-ink;
+  }
+  .dash-btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+  .dash-btn-danger-outline {
+    @apply border border-brand-hairline bg-white text-red-600 hover:border-red-200 hover:bg-red-50;
+  }
+  .dash-icon-btn {
+    @apply inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-brand-ink-muted transition-colors hover:bg-brand-canvas-soft hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .dash-input {
+    @apply block w-full rounded-md border border-brand-hairline bg-white px-3 py-2 text-sm text-brand-ink transition-[border-color,box-shadow] outline-none placeholder:text-brand-ink-faint focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/15 disabled:cursor-not-allowed disabled:bg-brand-canvas-soft disabled:text-brand-ink-faint;
+  }
+  select.dash-input {
+    @apply cursor-pointer pr-8;
+  }
+  .dash-label {
+    @apply mb-1.5 block text-[13px] font-medium text-brand-ink-secondary;
+  }
+  .dash-eyebrow {
+    @apply text-xs text-brand-ink-muted;
+  }
+
+  .dash-badge {
+    @apply inline-flex items-center gap-1.5 rounded-md bg-brand-canvas-soft px-2 py-0.5 text-xs font-medium whitespace-nowrap text-brand-ink-muted before:size-1.5 before:shrink-0 before:rounded-full before:bg-current before:content-[''];
+  }
+  .dash-badge-info {
+    @apply bg-brand-primary/10 text-brand-primary-active;
+  }
+  .dash-badge-success {
+    @apply bg-emerald-50 text-emerald-700;
+  }
+  .dash-badge-warning {
+    @apply bg-amber-50 text-amber-700;
+  }
+  .dash-badge-danger {
+    @apply bg-red-50 text-red-700;
+  }
+
+  .dash-tabs {
+    @apply inline-flex w-fit gap-0.5 rounded-lg bg-brand-canvas-soft p-0.5;
+  }
+  .dash-tab {
+    @apply inline-flex h-8 cursor-pointer items-center gap-2 rounded-md border border-transparent px-3 text-sm font-medium text-brand-ink-muted transition-colors hover:text-brand-ink;
+  }
+  .dash-tab[aria-selected="true"] {
+    @apply border-brand-hairline bg-white text-brand-ink;
+  }
+
+  .dash-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4;
+  }
+  .dash-modal {
+    @apply flex max-h-[90vh] w-full flex-col overflow-hidden rounded-xl border border-brand-hairline bg-white shadow-elevated;
+  }
+  .dash-modal-header {
+    @apply flex shrink-0 items-start justify-between gap-4 border-b border-brand-hairline px-5 py-4;
+  }
+  .dash-modal-title {
+    @apply text-base leading-6 font-semibold text-brand-ink;
+  }
+  .dash-modal-body {
+    @apply min-h-0 flex-1 overflow-y-auto px-5 py-5;
+  }
+  .dash-modal-footer {
+    @apply flex shrink-0 items-center justify-end gap-2 border-t border-brand-hairline px-5 py-3.5;
+  }
+
+  .dash-notice {
+    @apply flex items-start gap-2.5 rounded-md border px-3.5 py-2.5 text-sm;
+  }
+  .dash-notice-danger {
+    @apply border-red-200 bg-red-50 text-red-700;
+  }
+  .dash-notice-success {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-800;
+  }
+  .dash-notice-info {
+    @apply border-brand-hairline bg-brand-canvas-soft text-brand-ink-secondary;
+  }
+
+  .dash-skeleton {
+    @apply animate-pulse rounded bg-brand-canvas-soft;
+  }
+}

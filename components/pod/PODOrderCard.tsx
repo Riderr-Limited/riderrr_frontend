@@ -1,6 +1,7 @@
 "use client";
 
-import { IconMapPin, IconPhone, IconPackage, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+import { RouteStops } from "@/components/dashboard/primitives";
 import { useState } from "react";
 
 export interface PODOrder {
@@ -22,15 +23,15 @@ export interface PODOrder {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  POD_REQUESTED: "bg-yellow-100 text-yellow-800",
-  CONFIRMED: "bg-blue-100 text-blue-800",
-  READY_FOR_DELIVERY: "bg-indigo-100 text-indigo-800",
-  OUT_FOR_DELIVERY: "bg-purple-100 text-purple-800",
-  AWAITING_CUSTOMER: "bg-orange-100 text-orange-800",
-  DELIVERED_PAID: "bg-teal-100 text-teal-800",
-  SETTLED: "bg-green-100 text-green-800",
-  CANCELLED: "bg-red-100 text-red-800",
-  REJECTED_RETURN: "bg-red-100 text-red-800",
+  POD_REQUESTED: "dash-badge-warning",
+  CONFIRMED: "dash-badge-info",
+  READY_FOR_DELIVERY: "dash-badge-info",
+  OUT_FOR_DELIVERY: "dash-badge-info",
+  AWAITING_CUSTOMER: "dash-badge-warning",
+  DELIVERED_PAID: "dash-badge-success",
+  SETTLED: "dash-badge-success",
+  CANCELLED: "dash-badge-danger",
+  REJECTED_RETURN: "dash-badge-danger",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -54,78 +55,76 @@ export default function PODOrderCard({ order, actions }: Props) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-gray-900">{order.referenceId}</span>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_STYLES[order.status] || "bg-gray-100 text-gray-700"}`}>
+    <div className="dash-card overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b border-brand-hairline px-5 py-3">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="font-mono text-[13px] font-medium text-brand-ink">{order.referenceId}</span>
+          <span className={`dash-badge ${STATUS_STYLES[order.status] || ""}`}>
             {STATUS_LABELS[order.status] || order.status}
           </span>
         </div>
-        <button onClick={() => setExpanded(!expanded)} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
-          {expanded ? <IconChevronUp className="h-4 w-4 text-gray-500" /> : <IconChevronDown className="h-4 w-4 text-gray-500" />}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="dash-icon-btn -mr-1.5 size-7"
+          aria-expanded={expanded}
+          aria-label={expanded ? "Hide details" : "Show details"}
+        >
+          {expanded ? <IconChevronUp className="size-4" /> : <IconChevronDown className="size-4" />}
         </button>
       </div>
 
-      <div className="p-4 space-y-3">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-blue-50 rounded-lg mt-0.5">
-            <IconPackage className="h-4 w-4 text-blue-600" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900">{order.product.name}</p>
+      <div className="space-y-3.5 px-5 py-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-brand-ink">{order.product.name}</p>
             {order.product.description && (
-              <p className="text-xs text-gray-500">{order.product.description}</p>
+              <p className="mt-0.5 text-[13px] text-brand-ink-muted">{order.product.description}</p>
             )}
           </div>
-          <p className="text-sm font-bold text-gray-900">₦{order.amountToCollect.toLocaleString()}</p>
-        </div>
-
-        <div className="space-y-2">
-          {order.pickup?.address && (
-            <div className="flex gap-2 text-sm">
-              <IconMapPin className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-              <span className="text-gray-600 text-xs">{order.pickup.address}</span>
-            </div>
-          )}
-          {order.dropoff?.address && (
-            <div className="flex gap-2 text-sm">
-              <IconMapPin className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-              <span className="text-gray-600 text-xs">{order.dropoff.address}</span>
-            </div>
-          )}
-        </div>
-
-        {expanded && (
-          <div className="pt-2 border-t border-gray-100 space-y-2 text-xs text-gray-600">
-            <div className="flex justify-between">
-              <span>Customer</span>
-              <span className="font-medium text-gray-900 flex items-center gap-1">
-                <IconPhone className="h-3 w-3" /> {order.customerName} · {order.customerPhone}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>Recipient</span>
-              <span className="font-medium text-gray-900">{order.dropoff?.recipientName} · {order.dropoff?.recipientPhone}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Product Amount</span>
-              <span className="font-medium text-gray-900">₦{order.productAmount.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Delivery Fee</span>
-              <span className="font-medium text-gray-900">₦{order.deliveryFee.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Inspection Allowed</span>
-              <span className={`font-medium ${order.inspectionAllowed ? "text-green-600" : "text-red-500"}`}>
-                {order.inspectionAllowed ? "Yes" : "No"}
-              </span>
-            </div>
+          <div className="shrink-0 text-right">
+            <p className="text-sm font-semibold text-brand-ink tabular-nums">
+              ₦{order.amountToCollect.toLocaleString()}
+            </p>
+            <p className="text-xs text-brand-ink-muted">to collect</p>
           </div>
+        </div>
+
+        {(order.pickup?.address || order.dropoff?.address) && (
+          <RouteStops pickup={order.pickup?.address} dropoff={order.dropoff?.address} />
         )}
 
-        {actions && <div className="pt-2 border-t border-gray-100 flex gap-2">{actions}</div>}
+        {expanded && (
+          <dl className="space-y-2 border-t border-brand-hairline pt-3.5 text-[13px]">
+            <div className="flex justify-between gap-4">
+              <dt className="text-brand-ink-muted">Customer</dt>
+              <dd className="text-right text-brand-ink">
+                {order.customerName} · {order.customerPhone}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-brand-ink-muted">Recipient</dt>
+              <dd className="text-right text-brand-ink">{order.dropoff?.recipientName} · {order.dropoff?.recipientPhone}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-brand-ink-muted">Product amount</dt>
+              <dd className="text-brand-ink tabular-nums">₦{order.productAmount.toLocaleString()}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-brand-ink-muted">Delivery fee</dt>
+              <dd className="text-brand-ink tabular-nums">₦{order.deliveryFee.toLocaleString()}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-brand-ink-muted">Inspection allowed</dt>
+              <dd className="text-brand-ink">
+                {order.inspectionAllowed ? "Yes" : "No"}
+              </dd>
+            </div>
+          </dl>
+        )}
+
+        {actions && (
+          <div className="flex gap-2 border-t border-brand-hairline pt-3.5 sm:justify-end">{actions}</div>
+        )}
       </div>
     </div>
   );

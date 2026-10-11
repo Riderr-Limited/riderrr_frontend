@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { IconRefresh, IconAlertCircle } from "@tabler/icons-react";
 import {
-  IconRefresh,
-  IconMapPin,
-  IconPhone,
-  IconClock,
-  IconPackage,
-  IconAlertCircle,
-} from "@tabler/icons-react";
+  PageHeader,
+  EmptyState,
+  Field,
+  RouteStops,
+  humanize,
+} from "@/components/dashboard/primitives";
 import { ApiClient } from "@/app/lib/api-client";
 import ErrandAssignModal, { Errand } from "@/components/errand/ErrandAssignModal";
 
@@ -19,16 +19,16 @@ const TABS = [
 ];
 
 const STATUS_STYLES: Record<string, string> = {
-  REQUESTED: "bg-yellow-100 text-yellow-800",
-  SEARCHING_RIDER: "bg-orange-100 text-orange-800",
-  RIDER_ASSIGNED: "bg-blue-100 text-blue-800",
-  ACCEPTED: "bg-indigo-100 text-indigo-800",
-  IN_PROGRESS: "bg-purple-100 text-purple-800",
-  AT_PICKUP: "bg-cyan-100 text-cyan-800",
-  AWAITING_CONFIRMATION: "bg-teal-100 text-teal-800",
-  COMPLETED: "bg-green-100 text-green-800",
-  CANCELLED: "bg-red-100 text-red-800",
-  FAILED: "bg-gray-100 text-gray-700",
+  REQUESTED: "dash-badge-warning",
+  SEARCHING_RIDER: "dash-badge-warning",
+  RIDER_ASSIGNED: "dash-badge-info",
+  ACCEPTED: "dash-badge-info",
+  IN_PROGRESS: "dash-badge-info",
+  AT_PICKUP: "dash-badge-info",
+  AWAITING_CONFIRMATION: "dash-badge-warning",
+  COMPLETED: "dash-badge-success",
+  CANCELLED: "dash-badge-danger",
+  FAILED: "dash-badge-danger",
 };
 
 function formatDate(d: string) {
@@ -90,170 +90,158 @@ export default function ErrandPage() {
     ["REQUESTED", "SEARCHING_RIDER", "RIDER_ASSIGNED", "ACCEPTED"].includes(status);
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-900">Errands</h1>
+    <div>
+      <PageHeader
+        title="Errands"
+        description="Assign riders to errand requests and follow their progress."
+      >
         <button
           onClick={fetchErrands}
           disabled={loading}
-          className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+          className="dash-btn dash-btn-secondary"
         >
-          <IconRefresh className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <IconRefresh className={`size-4 ${loading ? "animate-spin" : ""}`} stroke={1.75} />
           Refresh
         </button>
-      </div>
+      </PageHeader>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
-        {TABS.map((t) => {
-          const count = errands.filter((e) => t.statuses.includes(e.status)).length;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                tab === t.key
-                  ? "bg-white text-gray-900 shadow-sm"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
-            >
-              {t.label}
-              {count > 0 && (
-                <span
-                  className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${
-                    tab === t.key ? "bg-[#1E91D6] text-white" : "bg-gray-300 text-gray-600"
-                  }`}
-                >
-                  {count}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Error */}
-      {error && (
-        <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 px-4 py-3 rounded-lg border border-red-200">
-          <IconAlertCircle className="h-4 w-4 shrink-0" />
-          {error}
-        </div>
-      )}
-
-      {/* List */}
-      {loading && errands.length === 0 ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 p-5">
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-100 animate-pulse rounded w-1/3" />
-                <div className="h-4 bg-gray-100 animate-pulse rounded w-2/3" />
-                <div className="h-4 bg-gray-100 animate-pulse rounded w-1/2" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <IconPackage className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-          <p className="text-gray-500 text-sm">No errands here</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {filtered.map((errand) => (
-            <div
-              key={errand._id}
-              className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-colors overflow-hidden"
-            >
-              {/* Card top */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 bg-gray-50">
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono text-gray-500">{errand.referenceId}</span>
+      <div className="space-y-5">
+        {/* Tabs */}
+        <div className="dash-tabs" role="tablist">
+          {TABS.map((t) => {
+            const count = errands.filter((e) => t.statuses.includes(e.status)).length;
+            return (
+              <button
+                key={t.key}
+                role="tab"
+                aria-selected={tab === t.key}
+                onClick={() => setTab(t.key)}
+                className="dash-tab"
+              >
+                {t.label}
+                {count > 0 && (
                   <span
-                    className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      STATUS_STYLES[errand.status] || "bg-gray-100 text-gray-700"
+                    className={`text-xs tabular-nums ${
+                      tab === t.key ? "text-brand-ink-muted" : "text-brand-ink-faint"
                     }`}
                   >
-                    {errand.status.replace(/_/g, " ")}
+                    {count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Error */}
+        {error && (
+          <div className="dash-notice dash-notice-danger">
+            <IconAlertCircle className="mt-0.5 size-4 shrink-0" />
+            {error}
+          </div>
+        )}
+
+        {/* List */}
+        {loading && errands.length === 0 ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="dash-card space-y-2.5 px-5 py-4">
+                <div className="dash-skeleton h-3.5 w-1/3" />
+                <div className="dash-skeleton h-3.5 w-2/3" />
+                <div className="dash-skeleton h-3.5 w-1/2" />
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="dash-card">
+            <EmptyState title="No errands here" />
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {filtered.map((errand) => (
+              <div key={errand._id} className="dash-card overflow-hidden">
+                {/* Card top */}
+                <div className="flex items-center justify-between gap-3 border-b border-brand-hairline px-5 py-3">
+                  <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                    <span className="font-mono text-[13px] font-medium text-brand-ink">
+                      {errand.referenceId}
+                    </span>
+                    <span className={`dash-badge ${STATUS_STYLES[errand.status] || ""}`}>
+                      {humanize(errand.status)}
+                    </span>
+                  </div>
+                  <span className="shrink-0 text-xs text-brand-ink-muted">
+                    {formatDate(errand.createdAt)}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                  <IconClock className="h-3.5 w-3.5" />
-                  {formatDate(errand.createdAt)}
-                </div>
-              </div>
 
-              {/* Card body */}
-              <div className="px-5 py-4 grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2.5">
-                  <div>
-                    <p className="text-xs text-gray-400 mb-0.5">Type</p>
-                    <p className="text-sm font-medium text-gray-800">{errand.errandType}</p>
+                {/* Card body */}
+                <div className="grid gap-5 px-5 py-4 sm:grid-cols-2">
+                  <div className="space-y-3">
+                    <Field label="Type">{errand.errandType}</Field>
+                    <Field label="Description">
+                      <span className="line-clamp-2 text-brand-ink-secondary">
+                        {errand.description}
+                      </span>
+                    </Field>
+                    <Field label="Customer">
+                      {errand.customerName}
+                      <span className="text-brand-ink-faint"> · </span>
+                      <span className="text-brand-ink-secondary tabular-nums">
+                        {errand.customerPhone}
+                      </span>
+                    </Field>
                   </div>
-                  <div>
-                    <p className="text-xs text-gray-400 mb-0.5">Description</p>
-                    <p className="text-sm text-gray-700 line-clamp-2">{errand.description}</p>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-700">
-                    <IconPhone className="h-3.5 w-3.5 text-gray-400 shrink-0" />
-                    <span>{errand.customerName}</span>
-                    <span className="text-gray-400">·</span>
-                    <span>{errand.customerPhone}</span>
-                  </div>
-                </div>
 
-                <div className="space-y-2.5">
-                  <div className="flex gap-2">
-                    <IconMapPin className="h-4 w-4 text-[#1E91D6] shrink-0 mt-0.5" />
+                  <div className="space-y-3">
                     <div>
-                      <p className="text-xs text-gray-400">Pickup</p>
-                      <p className="text-sm text-gray-700">{errand.pickupLocation?.address}</p>
+                      <p className="dash-eyebrow mb-1.5">Route</p>
+                      <RouteStops
+                        pickup={errand.pickupLocation?.address}
+                        dropoff={errand.destination?.address}
+                      />
+                    </div>
+                    <div className="flex gap-8">
+                      <Field label="Spending limit">
+                        <span className="tabular-nums">
+                          ₦{errand.spendingLimit?.toLocaleString()}
+                        </span>
+                      </Field>
+                      <Field label="Service fee">
+                        <span className="tabular-nums">
+                          ₦{errand.serviceFee?.toLocaleString()}
+                        </span>
+                      </Field>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <IconMapPin className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-xs text-gray-400">Dropoff</p>
-                      <p className="text-sm text-gray-700">{errand.destination?.address}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4 text-sm pt-1">
-                    <span className="text-gray-500">
-                      Limit: <span className="font-semibold text-gray-800">₦{errand.spendingLimit?.toLocaleString()}</span>
-                    </span>
-                    <span className="text-gray-500">
-                      Fee: <span className="font-semibold text-gray-800">₦{errand.serviceFee?.toLocaleString()}</span>
-                    </span>
-                  </div>
                 </div>
-              </div>
 
-              {/* Actions */}
-              {(tab === "incoming" || canCancel(errand.status)) && (
-                <div className="px-5 py-3 border-t border-gray-100 flex gap-2 justify-end">
-                  {canCancel(errand.status) && (
-                    <button
-                      onClick={() => setCancelTarget(errand)}
-                      className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
-                    >
-                      Cancel
-                    </button>
-                  )}
-                  {tab === "incoming" && (
-                    <button
-                      onClick={() => setAssignTarget(errand)}
-                      className="px-4 py-1.5 text-sm bg-[#1E91D6] hover:bg-[#0072BB] text-white rounded-lg transition-colors font-medium"
-                    >
-                      Assign Rider
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+                {/* Actions */}
+                {(tab === "incoming" || canCancel(errand.status)) && (
+                  <div className="flex justify-end gap-2 border-t border-brand-hairline px-5 py-3">
+                    {canCancel(errand.status) && (
+                      <button
+                        onClick={() => setCancelTarget(errand)}
+                        className="dash-btn dash-btn-sm dash-btn-secondary"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                    {tab === "incoming" && (
+                      <button
+                        onClick={() => setAssignTarget(errand)}
+                        className="dash-btn dash-btn-sm dash-btn-primary"
+                      >
+                        Assign rider
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Assign Modal */}
       {assignTarget && (
@@ -269,32 +257,40 @@ export default function ErrandPage() {
 
       {/* Cancel Modal */}
       {cancelTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white w-full max-w-sm rounded-xl shadow-xl p-5 space-y-4">
-            <h3 className="font-semibold text-gray-900">Cancel Errand</h3>
-            <p className="text-sm text-gray-500">
-              Cancelling <span className="font-mono text-gray-700">{cancelTarget.referenceId}</span>
-            </p>
-            <textarea
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-              placeholder="Reason for cancellation…"
-              rows={3}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#1E91D6] focus:border-transparent resize-none"
-            />
-            <div className="flex gap-2 justify-end">
+        <div className="dash-overlay">
+          <div className="dash-modal max-w-sm">
+            <div className="dash-modal-body space-y-4">
+              <div>
+                <h3 className="dash-modal-title">Cancel errand</h3>
+                <p className="mt-1 text-sm text-brand-ink-muted">
+                  Cancelling{" "}
+                  <span className="font-mono text-brand-ink-secondary">
+                    {cancelTarget.referenceId}
+                  </span>
+                  . This can&apos;t be undone.
+                </p>
+              </div>
+              <textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Reason for cancellation"
+                rows={3}
+                className="dash-input resize-none"
+              />
+            </div>
+            <div className="dash-modal-footer">
               <button
                 onClick={() => { setCancelTarget(null); setCancelReason(""); }}
-                className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="dash-btn dash-btn-secondary"
               >
                 Back
               </button>
               <button
                 onClick={handleCancel}
                 disabled={!cancelReason.trim() || cancelling}
-                className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50 font-medium"
+                className="dash-btn dash-btn-danger"
               >
-                {cancelling ? "Cancelling…" : "Confirm Cancel"}
+                {cancelling ? "Cancelling…" : "Cancel errand"}
               </button>
             </div>
           </div>

@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  IconX,
-  IconDownload,
-  IconCheck,
-  IconClock,
-  IconUser,
-  IconMapPin,
-} from "@tabler/icons-react";
+import { IconX, IconDownload, IconCheck } from "@tabler/icons-react";
+import { Field, RouteStops } from "@/components/dashboard/primitives";
 
 export interface Payment {
   _id: string;
@@ -36,9 +30,9 @@ const fmtDate = (d: string) =>
   });
 
 const escrowColors: Record<string, string> = {
-  settled: "text-green-600 bg-green-50",
-  pending: "text-orange-600 bg-orange-50",
-  held: "text-blue-600 bg-blue-50",
+  settled: "dash-badge-success",
+  pending: "dash-badge-warning",
+  held: "dash-badge-info",
 };
 
 function downloadReceipt(p: Payment) {
@@ -110,156 +104,123 @@ export default function PaymentDetailModal({
   ];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      onClick={onClose}
-    >
+    <div className="dash-overlay" onClick={onClose}>
       <div
-        className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="dash-modal max-w-lg"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-200">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="dash-modal-header">
+          <div className="min-w-0">
+            <h2 className="dash-modal-title font-mono">
               {payment.delivery.referenceId}
             </h2>
-            <p className="text-sm text-gray-500">{fmtDate(payment.paidAt)}</p>
+            <p className="mt-0.5 text-[13px] text-brand-ink-muted">{fmtDate(payment.paidAt)}</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5">
             <button
               onClick={() => downloadReceipt(payment)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50"
+              className="dash-btn dash-btn-sm dash-btn-secondary"
             >
-              <IconDownload className="h-4 w-4" />
+              <IconDownload className="size-4" stroke={1.75} />
               Receipt
             </button>
-            <button onClick={onClose} className="p-1.5 hover:bg-gray-100 rounded-lg">
-              <IconX className="h-5 w-5 text-gray-500" />
+            <button onClick={onClose} className="dash-icon-btn -mr-1.5" aria-label="Close">
+              <IconX className="size-[18px]" />
             </button>
           </div>
         </div>
 
-        <div className="p-5 space-y-5">
+        <div className="dash-modal-body space-y-6">
           {/* Commission Breakdown */}
-          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Payment Breakdown</h3>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Total Charged</span>
-              <span className="font-medium">{fmt(payment.amount)}</span>
+          <section>
+            <h3 className="mb-1.5 text-sm font-semibold text-brand-ink">Payment breakdown</h3>
+            <div className="flex justify-between py-1.5 text-sm">
+              <span className="text-brand-ink-muted">Total charged</span>
+              <span className="text-brand-ink tabular-nums">{fmt(payment.amount)}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Platform Fee</span>
-              <span className="text-red-600">− {fmt(payment.platformFee)}</span>
+            <div className="flex justify-between py-1.5 text-sm">
+              <span className="text-brand-ink-muted">Platform fee</span>
+              <span className="text-brand-ink-secondary tabular-nums">− {fmt(payment.platformFee)}</span>
             </div>
-            <div className="border-t border-gray-200 pt-2 flex justify-between text-sm font-semibold">
-              <span>Your Earnings</span>
-              <span className="text-green-600">{fmt(payment.companyAmount)}</span>
+            <div className="mt-1.5 flex justify-between border-t border-brand-hairline pt-2.5 text-sm font-semibold text-brand-ink">
+              <span>Your earnings</span>
+              <span className="tabular-nums">{fmt(payment.companyAmount)}</span>
             </div>
-            <div className="flex justify-between text-xs text-gray-500 pt-1">
-              <span>Settlement Status</span>
-              <span
-                className={`px-2 py-0.5 rounded-full font-medium capitalize ${
-                  escrowColors[payment.escrowStatus] || "text-gray-600 bg-gray-100"
-                }`}
-              >
+            <div className="mt-3 flex items-center justify-between text-sm">
+              <span className="text-brand-ink-muted">Settlement status</span>
+              <span className={`dash-badge capitalize ${escrowColors[payment.escrowStatus] || ""}`}>
                 {payment.escrowStatus}
               </span>
             </div>
-          </div>
+            <div className="mt-2 flex items-center justify-between text-sm">
+              <span className="text-brand-ink-muted">Payment method</span>
+              <span className="text-brand-ink capitalize">{payment.paymentMethod}</span>
+            </div>
+          </section>
 
           {/* Customer & Driver */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="border border-gray-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <IconUser className="h-4 w-4 text-gray-400" />
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  Customer
-                </span>
-              </div>
-              <p className="text-sm font-medium text-gray-900">{payment.customer.name}</p>
-              <p className="text-xs text-gray-500">{payment.customer.phone}</p>
-            </div>
+          <section className="grid grid-cols-2 gap-x-6 border-t border-brand-hairline pt-5">
+            <Field label="Customer">
+              <span className="font-medium">{payment.customer.name}</span>
+              <span className="block text-[13px] text-brand-ink-muted tabular-nums">
+                {payment.customer.phone}
+              </span>
+            </Field>
             {payment.driver && (
-              <div className="border border-gray-200 rounded-lg p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <IconUser className="h-4 w-4 text-gray-400" />
-                  <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                    Driver
-                  </span>
-                </div>
-                <p className="text-sm font-medium text-gray-900">{payment.driver.name}</p>
-                <p className="text-xs text-gray-500">{payment.driver.phone}</p>
-              </div>
+              <Field label="Driver">
+                <span className="font-medium">{payment.driver.name}</span>
+                <span className="block text-[13px] text-brand-ink-muted tabular-nums">
+                  {payment.driver.phone}
+                </span>
+              </Field>
             )}
-          </div>
+          </section>
 
           {/* Route */}
-          <div className="border border-gray-200 rounded-lg p-3 space-y-2">
-            <div className="flex items-start gap-2">
-              <IconMapPin className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-              <div>
-                <p className="text-xs text-gray-500">Pickup</p>
-                <p className="text-sm text-gray-900">{payment.delivery.pickup}</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <IconMapPin className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
-              <div>
-                <p className="text-xs text-gray-500">Dropoff</p>
-                <p className="text-sm text-gray-900">{payment.delivery.dropoff}</p>
-              </div>
-            </div>
-          </div>
+          <section className="border-t border-brand-hairline pt-5">
+            <p className="dash-eyebrow mb-1.5">Route</p>
+            <RouteStops pickup={payment.delivery.pickup} dropoff={payment.delivery.dropoff} />
+          </section>
 
           {/* Timeline */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Settlement Timeline</h3>
-            <div>
+          <section className="border-t border-brand-hairline pt-5">
+            <h3 className="mb-3 text-sm font-semibold text-brand-ink">Settlement timeline</h3>
+            <ol>
               {steps.map((step, i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-                        step.done ? "bg-green-100" : "bg-gray-100"
+                <li key={i} className="relative flex gap-3 pb-4 last:pb-0">
+                  {i < steps.length - 1 && (
+                    <span
+                      className={`absolute top-[18px] bottom-0 left-[8.5px] w-px ${
+                        step.done ? "bg-emerald-200" : "bg-brand-hairline"
                       }`}
-                    >
-                      {step.done ? (
-                        <IconCheck className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <IconClock className="h-4 w-4 text-gray-400" />
-                      )}
-                    </div>
-                    {i < steps.length - 1 && (
-                      <div
-                        className={`w-0.5 h-6 ${step.done ? "bg-green-200" : "bg-gray-200"}`}
-                      />
-                    )}
-                  </div>
-                  <div className="pb-4">
+                    />
+                  )}
+                  <span
+                    className={`relative flex size-[18px] shrink-0 items-center justify-center rounded-full ${
+                      step.done
+                        ? "bg-emerald-600 text-white"
+                        : "border border-brand-hairline bg-white"
+                    }`}
+                  >
+                    {step.done && <IconCheck className="size-3" stroke={3} />}
+                  </span>
+                  <div className="-mt-px">
                     <p
-                      className={`text-sm font-medium ${
-                        step.done ? "text-gray-900" : "text-gray-400"
+                      className={`text-sm ${
+                        step.done ? "font-medium text-brand-ink" : "text-brand-ink-faint"
                       }`}
                     >
                       {step.label}
                     </p>
                     {step.date && (
-                      <p className="text-xs text-gray-500">{fmtDate(step.date)}</p>
+                      <p className="text-xs text-brand-ink-muted">{fmtDate(step.date)}</p>
                     )}
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
-          </div>
-
-          {/* Payment Method */}
-          <div className="flex items-center justify-between text-sm text-gray-500 border-t border-gray-100 pt-3">
-            <span>Payment Method</span>
-            <span className="capitalize font-medium text-gray-700">
-              {payment.paymentMethod}
-            </span>
-          </div>
+            </ol>
+          </section>
         </div>
       </div>
     </div>

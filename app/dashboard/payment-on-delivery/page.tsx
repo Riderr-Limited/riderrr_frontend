@@ -6,6 +6,7 @@ import { API_CONFIG } from "@/app/lib/config";
 import { TokenUtils } from "@/lib/tokenUtils";
 import { useAuth } from "@/contexts/AuthContext";
 import PODOrderCard, { PODOrder } from "@/components/pod/PODOrderCard";
+import { PageHeader, EmptyState } from "@/components/dashboard/primitives";
 import AssignDriverModal from "@/components/pod/AssignDriverModal";
 import SettleModal from "@/components/pod/SettleModal";
 
@@ -86,12 +87,12 @@ export default function PaymentOnDeliveryPage() {
 
   const getActions = (order: PODOrder) => {
     const busy = actionLoading === order._id;
-    const btn = (label: string, onClick: () => void, cls = "bg-blue-600 hover:bg-blue-700 text-white") => (
+    const btn = (label: string, onClick: () => void, cls = "dash-btn-primary") => (
       <button
         key={label}
         onClick={onClick}
         disabled={busy}
-        className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${cls}`}
+        className={`dash-btn dash-btn-sm flex-1 sm:flex-none ${cls}`}
       >
         {busy ? "..." : label}
       </button>
@@ -104,7 +105,7 @@ export default function PaymentOnDeliveryPage() {
         return (
           <>
             {btn("Confirm", () => patchOrder(order._id, "confirm"))}
-            {btn("Cancel", () => patchOrder(order._id, "cancel", { reason: "Declined by company" }), "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200")}
+            {btn("Cancel", () => patchOrder(order._id, "cancel", { reason: "Declined by company" }), "dash-btn-danger-outline")}
           </>
         );
       }
@@ -112,13 +113,13 @@ export default function PaymentOnDeliveryPage() {
         return (
           <>
             {btn("Mark Ready", () => patchOrder(order._id, "ready"))}
-            {btn("Assign Driver", () => setAssignModal(order._id), "bg-purple-600 hover:bg-purple-700 text-white")}
+            {btn("Assign Driver", () => setAssignModal(order._id), "dash-btn-secondary")}
           </>
         );
       case "READY_FOR_DELIVERY":
-        return btn("Assign Driver", () => setAssignModal(order._id), "bg-purple-600 hover:bg-purple-700 text-white");
+        return btn("Assign Driver", () => setAssignModal(order._id));
       case "DELIVERED_PAID":
-        return btn("Settle Merchant", () => setSettleModal({ id: order._id, amount: order.productAmount }), "bg-green-600 hover:bg-green-700 text-white");
+        return btn("Settle Merchant", () => setSettleModal({ id: order._id, amount: order.productAmount }));
       default:
         return null;
     }
@@ -131,52 +132,57 @@ export default function PaymentOnDeliveryPage() {
   ];
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">Payment on Delivery</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Manage POD orders from request to settlement</p>
-        </div>
+    <div>
+      <PageHeader
+        title="Payment on Delivery"
+        description="Manage POD orders from request to settlement."
+      >
         <button
           onClick={() => fetchOrders(tab)}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+          className="dash-btn dash-btn-secondary"
         >
-          <IconRefresh className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          <IconRefresh className={`size-4 ${loading ? "animate-spin" : ""}`} stroke={1.75} />
           Refresh
         </button>
-      </div>
+      </PageHeader>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
-        {tabs.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setTab(t.key)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              tab === t.key ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <div className="space-y-5">
+        {/* Tabs */}
+        <div className="dash-tabs" role="tablist">
+          {tabs.map((t) => (
+            <button
+              key={t.key}
+              role="tab"
+              aria-selected={tab === t.key}
+              onClick={() => setTab(t.key)}
+              className="dash-tab"
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
 
-      {/* Orders */}
-      <div className="space-y-3">
-        {loading ? (
-          Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-36 bg-white rounded-xl border border-gray-200 animate-pulse" />
-          ))
-        ) : orders.length === 0 ? (
-          <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <p className="text-gray-400 text-sm">No {tab} orders</p>
-          </div>
-        ) : (
-          orders.map((order) => (
-            <PODOrderCard key={order._id} order={order} actions={getActions(order)} />
-          ))
-        )}
+        {/* Orders */}
+        <div className="space-y-3">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="dash-card space-y-2.5 px-5 py-4">
+                <div className="dash-skeleton h-3.5 w-1/3" />
+                <div className="dash-skeleton h-3.5 w-2/3" />
+                <div className="dash-skeleton h-3.5 w-1/2" />
+              </div>
+            ))
+          ) : orders.length === 0 ? (
+            <div className="dash-card">
+              <EmptyState title={`No ${tab} orders`} />
+            </div>
+          ) : (
+            orders.map((order) => (
+              <PODOrderCard key={order._id} order={order} actions={getActions(order)} />
+            ))
+          )}
+        </div>
       </div>
 
       {assignModal && (
