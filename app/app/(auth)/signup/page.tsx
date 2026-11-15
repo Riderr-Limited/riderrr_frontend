@@ -7,6 +7,7 @@ import { Button, Notice } from "@/components/app/ui";
 import { PasswordInput } from "@/components/app/auth/PasswordInput";
 import { errorMessage } from "@/lib/app/api";
 import { useSession } from "@/lib/app/session";
+import { PHONE_HINT, isValidNigerianPhone, normalizeNigerianPhone } from "@/lib/app/format";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -24,9 +25,9 @@ export default function SignupPage() {
   const set = (key: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [key]: v }));
 
   const validate = (): string | null => {
-    if (!form.name.trim()) return "Enter your full name.";
+    if (form.name.trim().length < 2) return "Enter your full name.";
     if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return "Enter a valid email address.";
-    if (form.phone.replace(/\D/g, "").length < 10) return "Enter a valid phone number.";
+    if (!isValidNigerianPhone(form.phone)) return PHONE_HINT;
     if (form.password.length < 6) return "Use at least 6 characters for your password.";
     if (form.password !== form.confirm) return "Passwords don't match.";
     if (!agreed) return "Please accept the terms to continue.";
@@ -44,7 +45,7 @@ export default function SignupPage() {
     setBusy(true);
     try {
       const email = form.email.trim();
-      await signup({ name: form.name.trim(), email, phone: form.phone.trim(), password: form.password });
+      await signup({ name: form.name.trim(), email, phone: normalizeNigerianPhone(form.phone), password: form.password });
       router.replace(`/app/verify?email=${encodeURIComponent(email)}`);
     } catch (err) {
       setError(errorMessage(err, "We couldn't create your account. Please try again."));

@@ -71,12 +71,30 @@ api.interceptors.response.use(
   },
 );
 
+/** Backend validation errors arrive as [{ field: "message" }], [{ msg }] or plain strings. */
+function fieldErrors(errors: unknown[] | undefined): string[] {
+  if (!Array.isArray(errors)) return [];
+  const out: string[] = [];
+  for (const e of errors) {
+    if (typeof e === "string") out.push(e);
+    else if (e && typeof e === "object") {
+      const obj = e as Record<string, unknown>;
+      if (typeof obj.msg === "string") out.push(obj.msg);
+      else if (typeof obj.message === "string") out.push(obj.message);
+      else out.push(...Object.values(obj).filter((v): v is string => typeof v === "string"));
+    }
+  }
+  return out.map((m) => (/[.!?]$/.test(m) ? m : `${m}.`));
+}
+
 /** Turn any thrown value from an API call into a sentence a person can read. */
 export function errorMessage(error: unknown, fallback = "Something went wrong. Please try again."): string {
   if (axios.isAxiosError(error)) {
     if (error.code === "ECONNABORTED") return "The server took too long to respond. Please try again.";
     if (!error.response) return "You appear to be offline. Check your connection and try again.";
-    const data = error.response.data as { message?: string; error?: string } | undefined;
+    const data = error.response.data as { message?: string; error?: string; errors?: unknown[] } | undefined;
+    const details = fieldErrors(data?.errors);
+    if (details.length) return details.join(" ");
     return data?.message || data?.error || fallback;
   }
   if (error instanceof Error && error.message) return error.message;

@@ -197,3 +197,24 @@ export function isPaymentSettled(d: { payment?: { method?: string; status?: stri
   const status = d.payment?.status;
   return method === "cash" || status === "paid" || status === "successful";
 }
+
+/* ------------------------------- Phone ------------------------------ */
+
+/**
+ * The backend accepts Nigerian numbers only as 08012345678 or +2348012345678.
+ * Tidy what people actually type ("0801 234 5678", "234801…", "801…") into that shape.
+ */
+export function normalizeNigerianPhone(input: string): string {
+  const raw = input.trim();
+  const digits = raw.replace(/\D/g, "");
+  if (/^234\d{10}$/.test(digits)) return `+${digits}`;
+  if (/^0\d{10}$/.test(digits)) return digits;
+  if (/^[789]\d{9}$/.test(digits)) return `0${digits}`;
+  return raw.replace(/[\s()-]/g, "");
+}
+
+export function isValidNigerianPhone(input: string): boolean {
+  return /^(0\d{10}|\+234\d{10})$/.test(normalizeNigerianPhone(input));
+}
+
+export const PHONE_HINT = "Enter a Nigerian number, e.g. 08012345678 or +2348012345678.";

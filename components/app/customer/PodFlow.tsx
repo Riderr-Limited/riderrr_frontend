@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { errorMessage } from "@/lib/app/api";
-import { naira } from "@/lib/app/format";
+import { PHONE_HINT, isValidNigerianPhone, naira, normalizeNigerianPhone } from "@/lib/app/format";
 import { pod } from "@/lib/app/services";
 import { useSession } from "@/lib/app/session";
 import type { Company, Place } from "@/lib/app/types";
@@ -45,7 +45,7 @@ export function PodFlow() {
       if (!pickup) return "Choose the merchant's pickup address.";
       if (!dropoff) return "Choose where it should be delivered.";
       if (!recipient.trim()) return "Enter the recipient's name.";
-      if (phone.replace(/\D/g, "").length < 10) return "Enter the recipient's phone number.";
+      if (!isValidNigerianPhone(phone)) return `Recipient's phone: ${PHONE_HINT}`;
     }
     return null;
   };
@@ -75,7 +75,7 @@ export function PodFlow() {
         dropoffLat: dropoff.lat,
         dropoffLng: dropoff.lng,
         recipientName: recipient.trim(),
-        recipientPhone: phone.trim(),
+        recipientPhone: normalizeNigerianPhone(phone),
         dropoffInstructions: dropoffNotes.trim(),
         paymentMethod: "CASH_ON_DELIVERY",
         inspectionAllowed: true,

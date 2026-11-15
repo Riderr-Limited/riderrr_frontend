@@ -6,7 +6,7 @@ import { Banknote, Bike, Clock, Landmark, Navigation } from "lucide-react";
 import { RouteStops } from "@/components/dashboard/primitives";
 import { cn } from "@/lib/utils";
 import { errorMessage } from "@/lib/app/api";
-import { naira } from "@/lib/app/format";
+import { PHONE_HINT, isValidNigerianPhone, naira, normalizeNigerianPhone } from "@/lib/app/format";
 import { getCurrentPosition, reverseGeocode } from "@/lib/app/maps";
 import { deliveries } from "@/lib/app/services";
 import { useSession } from "@/lib/app/session";
@@ -102,7 +102,7 @@ export function DeliveryFlow() {
       if (pickup.address === dropoff.address) return setError("Pickup and drop-off can't be the same place.");
       setStep(1);
     } else if (step === 1) {
-      if (phone.replace(/\D/g, "").length < 10) return setError("Enter the recipient's phone number.");
+      if (!isValidNigerianPhone(phone)) return setError(`Recipient's phone: ${PHONE_HINT}`);
       if (!item.trim()) return setError("Describe what you're sending.");
       setStep(2);
       loadQuote();
@@ -126,7 +126,7 @@ export function DeliveryFlow() {
         dropoffLat: dropoff.lat,
         dropoffLng: dropoff.lng,
         recipientName: user.name ?? "",
-        recipientPhone: phone.trim(),
+        recipientPhone: normalizeNigerianPhone(phone),
         companyId: user.companyId ?? undefined,
         itemWeight: 2,
         itemValue: 5000,
