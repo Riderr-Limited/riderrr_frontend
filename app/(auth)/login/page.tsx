@@ -112,7 +112,7 @@ function LoginFormContent() {
         // Check if user role is company_admin
         if (user.role !== "company_admin") {
           // Logout the user
-          setError("This is an organization dashboard. Please login on the mobile app.");
+          setError("This is the organization dashboard. Customers and riders can sign in to the Riderr web app or the mobile app.");
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
           localStorage.removeItem("user");
@@ -165,6 +165,11 @@ function LoginFormContent() {
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
               <p className="font-medium">Error</p>
               <p className="text-sm">{error}</p>
+              {error.includes("Riderr web app") && (
+                <Link href="/app/login" className="mt-2 inline-block text-sm font-medium text-brand-primary hover:underline">
+                  Go to the web app
+                </Link>
+              )}
             </div>
           )}
 

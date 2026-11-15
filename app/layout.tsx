@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ToastProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { PwaProvider } from "@/components/pwa/PwaProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,6 +14,8 @@ const inter = Inter({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#175acc",
 };
 
 export const metadata: Metadata = {
@@ -44,6 +47,20 @@ export const metadata: Metadata = {
       "Connect with nearby riders instantly for fast, affordable deliveries.",
   },
   robots: "index, follow",
+  applicationName: "Riderr",
+  appleWebApp: {
+    capable: true,
+    title: "Riderr",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  formatDetection: { telephone: false },
 };
 
 export default function RootLayout({
@@ -66,6 +83,7 @@ export default function RootLayout({
         <AuthProvider>
           <ToastProvider>
             <main className="">{children}</main>
+            <PwaProvider />
           </ToastProvider>
         </AuthProvider>
       </body>

@@ -283,3 +283,11 @@
     @apply animate-pulse rounded bg-brand-canvas-soft;
   }
 }
+/* Indeterminate bar on the "finding a rider" screen */
+@keyframes searching {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[searching_1\.6s_ease-in-out_infinite\] { animation: none; }
+}

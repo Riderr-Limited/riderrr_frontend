@@ -30,6 +30,12 @@ export default function Hero() {
               Get Started
             </Link>
             <Link
+              href="/app"
+              className="px-7 py-3.5 bg-white border border-brand-hairline text-brand-ink font-semibold rounded-full shadow-soft hover:border-brand-primary/40 transition-colors duration-200"
+            >
+              Use the web app
+            </Link>
+            <Link
               href="#how-it-works"
               className="px-7 py-3.5 bg-white border border-brand-hairline text-brand-ink font-semibold rounded-full shadow-soft hover:border-brand-primary/40 transition-colors duration-200"
             >

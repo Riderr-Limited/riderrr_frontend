@@ -79,6 +79,12 @@ export default function Navbar() {
           {/* DESKTOP LOGIN & MOBILE MENU BUTTON */}
           <div className="flex items-center gap-3">
             <Link
+              href="/app"
+              className="hidden md:inline-flex items-center px-2 py-2 text-sm font-medium text-brand-ink hover:text-brand-primary transition-colors duration-150"
+            >
+              Web app
+            </Link>
+            <Link
               href="/login"
               className="hidden sm:inline-flex items-center rounded-lg border border-brand-hairline bg-white px-4 py-2 text-sm font-medium text-brand-ink hover:border-brand-primary/40 hover:text-brand-primary transition-colors duration-150"
             >
@@ -157,6 +163,11 @@ export default function Navbar() {
                     </button>
                   )
                 ))}
+                <Link href="/app" onClick={() => setMobileMenuOpen(false)}>
+                  <div className="w-full mt-2 text-center rounded-lg border border-brand-hairline px-6 py-3 text-base font-medium text-brand-ink">
+                    Open the web app
+                  </div>
+                </Link>
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                   <div className="w-full mt-2 text-center rounded-lg border border-brand-hairline px-6 py-3 text-base font-medium text-brand-ink">
                     Log in
